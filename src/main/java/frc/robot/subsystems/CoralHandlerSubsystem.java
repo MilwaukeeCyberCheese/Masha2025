@@ -1,12 +1,12 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.Rev2mDistanceSensor.Unit;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HandlerConstants;
 import frc.robot.Constants.Sensors;
 import frc.robot.Robot;
-import frc.robot.Constants.Sensors;
-import frc.robot.Constants.HandlerConstants;
 import org.dyn4j.geometry.Rectangle;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
@@ -30,6 +30,16 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   private boolean m_hasCoral = false;
 
   public CoralHandlerSubsystem(AbstractDriveTrainSimulation driveSim) {
+
+    HandlerConstants.m_left.configure(
+        HandlerConstants.m_leftConfig,
+        ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
+    HandlerConstants.m_right.configure(
+        HandlerConstants.m_rightConfig,
+        ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
+
     m_intakeSim = new IntakeSimulation("Coral", driveSim, new Rectangle(.762, 1.007), 1);
   }
 

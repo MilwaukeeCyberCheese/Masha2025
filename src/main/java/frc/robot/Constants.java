@@ -24,6 +24,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.utils.PIDConstants;
 import java.util.function.BooleanSupplier;
 
 /**
@@ -54,10 +55,30 @@ public final class Constants {
     public static final SparkMaxConfig m_leftConfig = new SparkMaxConfig();
     public static final SparkMaxConfig m_rightConfig = new SparkMaxConfig();
 
-    // set PID values
+    public static final PIDConstants m_pidConstants = new PIDConstants(0.1, 0, 0);
 
-    public static final double kIntakeSpeed = 1;
-    public static final double kOuttakeSpeed = -1;
+    public static final boolean kLeftInverted = true;
+    public static final boolean kRightInverted = false;
+
+    static {
+      m_leftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kLeftInverted);
+      m_rightConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kRightInverted);
+
+      m_leftConfig
+          .closedLoop
+          .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+          .pid(m_pidConstants.kP, m_pidConstants.kI, m_pidConstants.kD)
+          .outputRange(-1, 1);
+
+      m_rightConfig
+          .closedLoop
+          .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+          .pid(m_pidConstants.kP, m_pidConstants.kI, m_pidConstants.kD)
+          .outputRange(-1, 1);
+    }
+
+    public static final double kIntakeSpeed = 50;
+    public static final double kOuttakeSpeed = 200;
 
     public static final double kDetectionDelayTimeMS = 1000;
   }
