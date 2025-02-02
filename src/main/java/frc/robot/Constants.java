@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.revrobotics.Rev2mDistanceSensor;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -35,6 +37,27 @@ import java.util.function.BooleanSupplier;
 public final class Constants {
   public static class Sensors {
     public static final AHRS gyro = new AHRS(NavXComType.kUSB1);
+    public static final Rev2mDistanceSensor handlerDistanceSensor = new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard);
+  }
+
+  // TODO: find like all of these
+  public static class HandlerConstants {
+    public static final int kLeftMotorPort = 9;
+    public static final int kRightMotorPort = 10;
+
+    public static final SparkMax m_left = new SparkMax(kLeftMotorPort, SparkMax.MotorType.kBrushless);
+    public static final SparkMax m_right = new SparkMax(kRightMotorPort, SparkMax.MotorType.kBrushless);
+
+    public static final SparkMaxConfig m_leftConfig = new SparkMaxConfig();
+    public static final SparkMaxConfig m_rightConfig = new SparkMaxConfig();
+
+    //set PID values
+
+
+    public static final double kIntakeSpeed = 1;
+    public static final double kOuttakeSpeed = -1;
+
+    public static final double kDetectionDelayTimeMS = 1000;
   }
 
   public static class OIConstants {

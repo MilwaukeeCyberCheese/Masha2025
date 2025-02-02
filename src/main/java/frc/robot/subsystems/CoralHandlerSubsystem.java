@@ -1,11 +1,10 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.Rev2mDistanceSensor;
 import com.revrobotics.Rev2mDistanceSensor.Unit;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.Constants.Sensors;
+import frc.robot.Constants.HandlerConstants;
 import org.dyn4j.geometry.Rectangle;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
@@ -16,11 +15,6 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   // counterclockwise is
   // outtake.
   // vice versa for the other
-  // TODO: move all of the hardcoded values to Constants
-
-  public final SparkMax m_left;
-  public final SparkMax m_right;
-  private final Rev2mDistanceSensor m_sensor;
 
   public final IntakeSimulation m_intakeSim;
 
@@ -34,14 +28,6 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   private boolean m_hasCoral = false;
 
   public CoralHandlerSubsystem(AbstractDriveTrainSimulation driveSim) {
-    m_left = new SparkMax(9, MotorType.kBrushless);
-    m_right = new SparkMax(10, MotorType.kBrushless);
-    Robot.getInstance();
-    if (Robot.isReal()) {
-      m_sensor = new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard);
-    } else {
-      m_sensor = null;
-    }
     m_intakeSim = new IntakeSimulation("Coral", driveSim, new Rectangle(.762, 1.007), 1);
   }
 
@@ -57,25 +43,27 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     m_mode = mode;
     switch (mode) {
       case kInactive:
-        m_left.set(0);
-        m_right.set(0);
+        setSpeed(0);
         break;
       case kIntake:
-        m_left.set(1);
-        m_right.set(-1);
+        setSpeed(HandlerConstants.kIntakeSpeed);
         break;
       case kOuttake:
-        m_left.set(-1);
-        m_right.set(1);
+        setSpeed(HandlerConstants.kOuttakeSpeed);
         break;
     }
+  }
+
+  private void setSpeed(double speed) {
+    HandlerConstants.m_left.set(speed);
+    HandlerConstants.m_right.set(speed);
   }
 
   @Override
   public void periodic() {
     Robot.getInstance();
     if (Robot.isReal()) {
-      m_hasCoral = m_sensor.getRange(Unit.kInches) < 5;
+      m_hasCoral = Sensors.handlerDistanceSensor.getRange(Unit.kInches) < 5;
     } else {
       if (m_mode == Mode.kIntake) {
         m_intakeSim.startIntake();
