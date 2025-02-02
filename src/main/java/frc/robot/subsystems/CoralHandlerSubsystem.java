@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HandlerConstants;
 import frc.robot.Constants.Sensors;
 import frc.robot.Robot;
+import frc.robot.Constants.Sensors;
+import frc.robot.Constants.HandlerConstants;
 import org.dyn4j.geometry.Rectangle;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
