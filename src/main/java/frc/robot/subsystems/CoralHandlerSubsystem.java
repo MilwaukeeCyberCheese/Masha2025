@@ -36,7 +36,8 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   public CoralHandlerSubsystem(AbstractDriveTrainSimulation driveSim) {
     m_left = new SparkMax(9, MotorType.kBrushless);
     m_right = new SparkMax(10, MotorType.kBrushless);
-    if (Robot.getInstance().isReal()) {
+    Robot.getInstance();
+    if (Robot.isReal()) {
       m_sensor = new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard);
     } else {
       m_sensor = null;
@@ -72,7 +73,8 @@ public class CoralHandlerSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (Robot.getInstance().isReal()) {
+    Robot.getInstance();
+    if (Robot.isReal()) {
       m_hasCoral = m_sensor.getRange(Unit.kInches) < 5;
     } else {
       if (m_mode == Mode.kIntake) {

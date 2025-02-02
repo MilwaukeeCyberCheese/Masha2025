@@ -31,9 +31,8 @@ public class RobotContainer {
   SwerveInputStream driveInput =
       SwerveInputStream.of(
               m_drive.getSwerveDrive(),
-              () -> m_driverController.getLeftY(),
-              () -> m_driverController.getLeftX())
-          .withControllerRotationAxis(() -> -m_driverController.getRightX())
+              m_driverController::getLeftY, m_driverController::getLeftX)
+          .withControllerRotationAxis(m_driverController::getRightX)
           .deadband(0.1)
           .scaleTranslation(0.8)
           .allianceRelativeControl(true);
