@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -22,6 +24,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.utils.PIDConstants;
 import java.util.function.BooleanSupplier;
 
 /**
@@ -60,6 +63,43 @@ public final class Constants {
     // (Fake values. Experiment and determine estimation noise on an actual robot.)
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+  }
+
+  // TODO: figure out the best way to run the elevator
+  // is it separate PIDs running locally? (also this one means another encoder is needed)
+  // or is it a single PID running on the roborio?
+  // or is it a single PID running locally, and one slaved to it?
+  public static class Elevator {
+    public static final int kLeftElevatorMotorPort = 9;
+    public static final int kRightElevatorMotorPort = 10;
+
+    public static final SparkMax kLeftElevatorSparkMax =
+        new SparkMax(kLeftElevatorMotorPort, MotorType.kBrushless);
+    public static final SparkMax kRightElevatorSparkMax =
+        new SparkMax(kRightElevatorMotorPort, MotorType.kBrushless);
+
+    public static final SparkMaxConfig kLeftElevatorConfig = new SparkMaxConfig();
+    public static final SparkMaxConfig kRightElevatorConfig = new SparkMaxConfig();
+
+    public static final boolean kLeftInverted = false;
+    public static final boolean kRightInverted = true;
+
+    public static final PIDConstants kElevatorPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
+
+    static {
+      kLeftElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kLeftInverted);
+      kRightElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kRightInverted);
+
+      kLeftElevatorConfig
+          .closedLoop
+          .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
+
+      kRightElevatorConfig
+          .closedLoop
+          .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
+    }
   }
 
   public static final class MAXSwerveModule {
