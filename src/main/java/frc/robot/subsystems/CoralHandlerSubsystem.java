@@ -84,6 +84,12 @@ public class CoralHandlerSubsystem extends SubsystemBase {
       }
       m_hasCoral = m_intakeSim.getGamePiecesAmount() != 0;
     }
+
+    log();
+  }
+
+  public void log() {
+    // SmartDashboard.putBoolean("Coral Handler Has Coral", m_hasCoral);
   }
 
   public void intake() {
