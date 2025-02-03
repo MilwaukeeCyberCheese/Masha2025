@@ -5,7 +5,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.HandlerConstants;
+import frc.robot.Constants.Handler.Coral;
 import frc.robot.Constants.Sensors;
 import frc.robot.Robot;
 import org.dyn4j.geometry.Rectangle;
@@ -21,30 +21,26 @@ public class CoralHandlerSubsystem extends SubsystemBase {
 
   public final IntakeSimulation m_intakeSim;
 
-  public enum Mode {
+  public enum CoralHandlerState {
     kInactive,
     kIntake,
     kOuttake,
   }
 
-  private Mode m_mode = Mode.kInactive;
+  private CoralHandlerState m_mode = CoralHandlerState.kInactive;
   private boolean m_hasCoral = false;
 
   public CoralHandlerSubsystem(AbstractDriveTrainSimulation driveSim) {
 
-    HandlerConstants.m_left.configure(
-        HandlerConstants.m_leftConfig,
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
-    HandlerConstants.m_right.configure(
-        HandlerConstants.m_rightConfig,
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
+    Coral.m_left.configure(
+        Coral.m_leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    Coral.m_right.configure(
+        Coral.m_rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     m_intakeSim = new IntakeSimulation("Coral", driveSim, new Rectangle(.762, 1.007), 1);
   }
 
-  public Mode getMode() {
+  public CoralHandlerState getMode() {
     return m_mode;
   }
 
@@ -52,33 +48,24 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     return m_hasCoral;
   }
 
-  public void setMode(Mode mode) {
+  public void setMode(CoralHandlerState mode) {
     m_mode = mode;
-    switch (mode) {
-      case kInactive:
-        setSpeed(0);
-        break;
-      case kIntake:
-        setSpeed(HandlerConstants.kIntakeSpeed);
-        break;
-      case kOuttake:
-        setSpeed(HandlerConstants.kOuttakeSpeed);
-        break;
-    }
+    setSpeed(Coral.kSpeeds.get(mode));
   }
 
   private void setSpeed(double speed) {
-    HandlerConstants.m_leftController.setReference(speed, ControlType.kMAXMotionVelocityControl);
-    HandlerConstants.m_rightController.setReference(speed, ControlType.kMAXMotionVelocityControl);
+    Coral.m_leftController.setReference(speed, ControlType.kMAXMotionVelocityControl);
+    Coral.m_rightController.setReference(speed, ControlType.kMAXMotionVelocityControl);
   }
 
   @Override
   public void periodic() {
     Robot.getInstance();
+    // TODO: think about if we want to do this logic in a command instead (we probably do)
     if (Robot.isReal()) {
       m_hasCoral = Sensors.handlerDistanceSensor.getRange(Unit.kInches) < 5;
     } else {
-      if (m_mode == Mode.kIntake) {
+      if (m_mode == CoralHandlerState.kIntake) {
         m_intakeSim.startIntake();
       } else {
         m_intakeSim.stopIntake();
@@ -94,10 +81,10 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   }
 
   public void intake() {
-    setMode(Mode.kIntake);
+    setMode(CoralHandlerState.kIntake);
   }
 
   public void outtake() {
-    setMode(Mode.kOuttake);
+    setMode(CoralHandlerState.kOuttake);
   }
 }

@@ -25,7 +25,9 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.CoralHandlerSubsystem.CoralHandlerState;
 import frc.robot.utils.PIDConstants;
+import java.util.HashMap;
 import java.util.function.BooleanSupplier;
 
 /**
@@ -39,54 +41,64 @@ import java.util.function.BooleanSupplier;
 public final class Constants {
   public static class Sensors {
     public static final AHRS gyro = new AHRS(NavXComType.kUSB1);
+    // Apparently you gotta add the deps for this baby manually, so do that ig
     public static final Rev2mDistanceSensor handlerDistanceSensor =
         new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard);
   }
 
   // TODO: find like all of these
-  public static class HandlerConstants {
-    public static final int kLeftMotorPort = 9;
-    public static final int kRightMotorPort = 10;
+  public static class Handler {
+    public static class Coral {
+      public static final int kLeftMotorCANid = 9;
+      public static final int kRightMotorCANid = 10;
 
-    public static final SparkMax m_left =
-        new SparkMax(kLeftMotorPort, SparkMax.MotorType.kBrushless);
-    public static final SparkMax m_right =
-        new SparkMax(kRightMotorPort, SparkMax.MotorType.kBrushless);
+      public static final SparkMax m_left =
+          new SparkMax(kLeftMotorCANid, SparkMax.MotorType.kBrushless);
+      public static final SparkMax m_right =
+          new SparkMax(kRightMotorCANid, SparkMax.MotorType.kBrushless);
 
-    public static final SparkMaxConfig m_leftConfig = new SparkMaxConfig();
-    public static final SparkMaxConfig m_rightConfig = new SparkMaxConfig();
+      public static final SparkMaxConfig m_leftConfig = new SparkMaxConfig();
+      public static final SparkMaxConfig m_rightConfig = new SparkMaxConfig();
 
-    public static final SparkClosedLoopController m_leftController =
-        m_left.getClosedLoopController();
-    public static final SparkClosedLoopController m_rightController =
-        m_right.getClosedLoopController();
+      public static final SparkClosedLoopController m_leftController =
+          m_left.getClosedLoopController();
+      public static final SparkClosedLoopController m_rightController =
+          m_right.getClosedLoopController();
 
-    public static final PIDConstants m_pidConstants = new PIDConstants(0.1, 0, 0);
+      public static final PIDConstants m_pidConstants = new PIDConstants(0.1, 0, 0);
 
-    public static final boolean kLeftInverted = true;
-    public static final boolean kRightInverted = false;
+      public static final boolean kLeftInverted = true;
+      public static final boolean kRightInverted = false;
 
-    static {
-      m_leftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kLeftInverted);
-      m_rightConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kRightInverted);
+      // TODO: find these
+      public static final HashMap<CoralHandlerState, Double> kSpeeds =
+          new HashMap<>() {
+            {
+              put(CoralHandlerState.kInactive, 0.0);
+              put(CoralHandlerState.kIntake, 50.0);
+              put(CoralHandlerState.kOuttake, 20.00);
+            }
+          };
 
-      m_leftConfig
-          .closedLoop
-          .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-          .pid(m_pidConstants.kP, m_pidConstants.kI, m_pidConstants.kD)
-          .outputRange(-1, 1);
+      static {
+        m_leftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kLeftInverted);
+        m_rightConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kRightInverted);
 
-      m_rightConfig
-          .closedLoop
-          .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-          .pid(m_pidConstants.kP, m_pidConstants.kI, m_pidConstants.kD)
-          .outputRange(-1, 1);
+        m_leftConfig
+            .closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pid(m_pidConstants.kP, m_pidConstants.kI, m_pidConstants.kD)
+            .outputRange(-1, 1);
+
+        m_rightConfig
+            .closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pid(m_pidConstants.kP, m_pidConstants.kI, m_pidConstants.kD)
+            .outputRange(-1, 1);
+      }
+
+      public static final double kDetectionDelayTimeMS = 1000;
     }
-
-    public static final double kIntakeSpeed = 50;
-    public static final double kOuttakeSpeed = 200;
-
-    public static final double kDetectionDelayTimeMS = 1000;
   }
 
   public static class OIConstants {
