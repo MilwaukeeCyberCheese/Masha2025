@@ -25,6 +25,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.utils.PIDConstants;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import java.util.function.BooleanSupplier;
 public final class Constants {
   public static class Sensors {
     public static final AHRS gyro = new AHRS(NavXComType.kUSB1);
+    public static final DigitalInput elevatorLimitSwitch = new DigitalInput(0);
   }
 
   public static class OIConstants {

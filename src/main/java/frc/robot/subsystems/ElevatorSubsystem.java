@@ -87,4 +87,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private void setHeight(double height) {
     Elevator.kElevatorController.setReference(height, ControlType.kMAXMotionPositionControl);
   }
+
+  // TODO: zero the elevator using the limit switch
+  public void zero() {}
 }
