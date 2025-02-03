@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Climber;
 
@@ -14,7 +16,8 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public ClimberSubsystem() {
-    // Initialize motors, sensors, etc. here
+    Climber.kClimberSparkMax.configure(
+        Climber.kClimberConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   // TODO: add logic for limits
