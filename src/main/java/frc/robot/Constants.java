@@ -68,6 +68,7 @@ public final class Constants {
     // TODO: confirm that this is right
     public static final double kConversionFactor = Math.PI * 2;
 
+    // TODO: find these
     public static final HashMap<ClimberState, Double> kClimberPositions =
         new HashMap<ClimberState, Double>() {
           {
@@ -77,7 +78,11 @@ public final class Constants {
           }
         };
 
+    // TODO: find this
     public static final double[] kClimberLimits = {0.0, 0.0};
+
+    // TODO: find this
+    public static final double kClimberTolerance = 0.01;
 
     static {
       kClimberConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kClimberInverted);
