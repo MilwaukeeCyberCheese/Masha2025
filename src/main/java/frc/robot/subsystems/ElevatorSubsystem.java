@@ -98,7 +98,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   // TODO: test this and make sure the
-  //disabling works as expected
+  // disabling works
   /**
    * Zero the absolute encoder of the elevator
    *
