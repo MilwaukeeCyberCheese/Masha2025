@@ -42,7 +42,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
 
   /**
    * Get the current state of the coral handler
-   * 
+   *
    * @return {@link CoralHandlerState}
    */
   public CoralHandlerState getState() {
@@ -51,7 +51,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
 
   /**
    * Check if the coral handler has a coral
-   * 
+   *
    * @return boolean
    */
   public boolean hasCoral() {
@@ -60,7 +60,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
 
   /**
    * Set the state of the coral handler
-   * 
+   *
    * @param state {@link CoralHandlerState}
    */
   public void setState(CoralHandlerState state) {
@@ -70,7 +70,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
 
   /**
    * Set the speed of the coral handler
-   * 
+   *
    * @param speed double
    */
   private void setSpeed(double speed) {
@@ -100,16 +100,12 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     // SmartDashboard.putBoolean("Coral Handler Has Coral", m_hasCoral);
   }
 
-  /**
-   * Set state to index
-   */
+  /** Set state to index */
   public void index() {
     setState(CoralHandlerState.kIndex);
   }
 
-  /**
-   * Set state to score
-   */
+  /** Set state to score */
   public void score() {
     setState(CoralHandlerState.kScore);
   }
