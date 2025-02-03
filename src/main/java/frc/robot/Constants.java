@@ -26,6 +26,8 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import java.util.function.BooleanSupplier;
+import java.util.HashMap;
+import frc.robot.subsystems.ClimberSubsystem.ClimberState;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -61,20 +63,32 @@ public final class Constants {
 
     public static final PIDConstants kClimberPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
 
+    //TODO: confirm that this is right
+    public static final double kConversionFactor = Math.PI * 2;
+
+    public static final HashMap<ClimberState, Double> kClimberPositions = new HashMap<ClimberState, Double>();
+
+    public static final double[] kClimberLimits = {0.0, 0.0};
+
     static {
       kClimberConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kClimberInverted);
+
+      kClimberConfig
+          .absoluteEncoder
+          .positionConversionFactor(kConversionFactor)
+          .velocityConversionFactor(kConversionFactor / 60.0);
 
       kClimberConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
           .pid(kClimberPIDConstants.kP, kClimberPIDConstants.kI, kClimberPIDConstants.kD)
           .outputRange(-1, 1);
-    }
 
-    //TODO: find 'em and set a reference for 0 (probably parallel to the floor)
-    public static final double kUpPosition = 0;
-    public static final double kDownPosition = 0;
-    public static final double kClimbPosition = 0;
+      //TODO: find 'em
+      kClimberPositions.put(ClimberState.WAITING, 0.0);
+      kClimberPositions.put(ClimberState.STOWED, 0.0);
+      kClimberPositions.put(ClimberState.CLIMB, 0.0);
+    }
   }
 
   public static class Vision {
