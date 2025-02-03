@@ -21,10 +21,20 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   // TODO: add logic for limits
+  /**
+   * Set the state of the climber
+   * 
+   * @param state options from {@link ClimberState}
+   */
   public void setState(ClimberState state) {
     setPosition(Climber.kClimberPositions.get(state));
   }
 
+  /**
+   * Set the position of the climber
+   * 
+   * @param position
+   */
   private void setPosition(double position) {
     Climber.kClimberController.setReference(position, ControlType.kMAXMotionPositionControl);
   }
