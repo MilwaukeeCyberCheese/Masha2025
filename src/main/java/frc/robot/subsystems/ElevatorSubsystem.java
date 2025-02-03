@@ -96,7 +96,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     Elevator.kElevatorController.setReference(height, ControlType.kMAXMotionPositionControl);
   }
 
-  // TODO: zero the elevator using the limit switch
+  // TODO: test this
   /**
    * Zero the absolute encoder of the elevator
    * 
