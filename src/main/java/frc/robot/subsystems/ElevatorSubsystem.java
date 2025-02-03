@@ -4,6 +4,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Elevator;
 
+// TODO: add sim support
 public class ElevatorSubsystem extends SubsystemBase {
 
   public static enum ElevatorState {
@@ -33,6 +34,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Log sensor data, etc. here
   }
 
+  // TODO: add limits logic
   /**
    * Set the elevator to a specific state
    *
