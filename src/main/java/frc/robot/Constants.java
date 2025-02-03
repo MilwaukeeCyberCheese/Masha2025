@@ -80,9 +80,15 @@ public final class Constants {
             }
           };
 
+      // TODO: find this
+      public static final double kConversionFactor = 1.0;
+
       static {
         m_leftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kLeftInverted);
         m_rightConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kRightInverted);
+
+        m_leftConfig.encoder.velocityConversionFactor(kConversionFactor);
+        m_rightConfig.encoder.velocityConversionFactor(kConversionFactor);
 
         m_leftConfig
             .closedLoop
