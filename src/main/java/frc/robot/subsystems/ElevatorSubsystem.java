@@ -49,7 +49,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   /**
    * Set the elevator to a specific state
    *
-   * @param state a state from {@link}ElevatorState
+   * @param state a state from {@link ElevatorState}
    */
   public void setState(ElevatorState state) {
     m_state = state;
