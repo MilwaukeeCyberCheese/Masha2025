@@ -25,9 +25,9 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import java.util.function.BooleanSupplier;
-import java.util.HashMap;
 import frc.robot.subsystems.ClimberSubsystem.ClimberState;
+import java.util.HashMap;
+import java.util.function.BooleanSupplier;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -51,22 +51,25 @@ public final class Constants {
 
   public static class Climber {
     public static final int kClimberMotorCanId = 20;
-    
-    public static final SparkMax kClimberSparkMax = new SparkMax(kClimberMotorCanId, SparkMax.MotorType.kBrushless);
+
+    public static final SparkMax kClimberSparkMax =
+        new SparkMax(kClimberMotorCanId, SparkMax.MotorType.kBrushless);
 
     public static final SparkMaxConfig kClimberConfig = new SparkMaxConfig();
 
-    //TODO: find out if it's inverted
+    // TODO: find out if it's inverted
     public static final boolean kClimberInverted = false;
 
-    public static final SparkClosedLoopController kClimberController = kClimberSparkMax.getClosedLoopController();
+    public static final SparkClosedLoopController kClimberController =
+        kClimberSparkMax.getClosedLoopController();
 
     public static final PIDConstants kClimberPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
 
-    //TODO: confirm that this is right
+    // TODO: confirm that this is right
     public static final double kConversionFactor = Math.PI * 2;
 
-    public static final HashMap<ClimberState, Double> kClimberPositions = new HashMap<ClimberState, Double>();
+    public static final HashMap<ClimberState, Double> kClimberPositions =
+        new HashMap<ClimberState, Double>();
 
     public static final double[] kClimberLimits = {0.0, 0.0};
 
@@ -84,7 +87,7 @@ public final class Constants {
           .pid(kClimberPIDConstants.kP, kClimberPIDConstants.kI, kClimberPIDConstants.kD)
           .outputRange(-1, 1);
 
-      //TODO: find 'em
+      // TODO: find 'em
       kClimberPositions.put(ClimberState.WAITING, 0.0);
       kClimberPositions.put(ClimberState.STOWED, 0.0);
       kClimberPositions.put(ClimberState.CLIMB, 0.0);
