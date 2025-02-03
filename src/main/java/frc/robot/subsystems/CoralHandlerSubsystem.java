@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.Rev2mDistanceSensor.Unit;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -67,8 +68,8 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   }
 
   private void setSpeed(double speed) {
-    HandlerConstants.m_left.set(speed);
-    HandlerConstants.m_right.set(speed);
+    HandlerConstants.m_leftController.setReference(speed, ControlType.kMAXMotionVelocityControl);
+    HandlerConstants.m_rightController.setReference(speed, ControlType.kMAXMotionVelocityControl);
   }
 
   @Override

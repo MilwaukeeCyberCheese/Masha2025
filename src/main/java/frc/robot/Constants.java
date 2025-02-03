@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.revrobotics.Rev2mDistanceSensor;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -54,6 +55,11 @@ public final class Constants {
 
     public static final SparkMaxConfig m_leftConfig = new SparkMaxConfig();
     public static final SparkMaxConfig m_rightConfig = new SparkMaxConfig();
+
+    public static final SparkClosedLoopController m_leftController =
+        m_left.getClosedLoopController();
+    public static final SparkClosedLoopController m_rightController =
+        m_right.getClosedLoopController();
 
     public static final PIDConstants m_pidConstants = new PIDConstants(0.1, 0, 0);
 
