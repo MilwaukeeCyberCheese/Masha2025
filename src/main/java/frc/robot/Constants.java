@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.config.PIDConstants;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -46,8 +49,32 @@ public final class Constants {
 
   public static class Climber {
     public static final int kClimberMotorCanId = 20;
-    public static final int kClimberSolenoidForwardId = 0;
-    public static final int kClimberSolenoidReverseId = 1;
+    
+    public static final SparkMax kClimberSparkMax = new SparkMax(kClimberMotorCanId, SparkMax.MotorType.kBrushless);
+
+    public static final SparkMaxConfig kClimberConfig = new SparkMaxConfig();
+
+    //TODO: find out if it's inverted
+    public static final boolean kClimberInverted = false;
+
+    public static final SparkClosedLoopController kClimberController = kClimberSparkMax.getClosedLoopController();
+
+    public static final PIDConstants kClimberPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
+
+    static {
+      kClimberConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kClimberInverted);
+
+      kClimberConfig
+          .closedLoop
+          .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+          .pid(kClimberPIDConstants.kP, kClimberPIDConstants.kI, kClimberPIDConstants.kD)
+          .outputRange(-1, 1);
+    }
+
+    //TODO: find 'em and set a reference for 0 (probably parallel to the floor)
+    public static final double kUpPosition = 0;
+    public static final double kDownPosition = 0;
+    public static final double kClimbPosition = 0;
   }
 
   public static class Vision {
