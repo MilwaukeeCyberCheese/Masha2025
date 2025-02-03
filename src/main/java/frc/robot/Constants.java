@@ -94,7 +94,18 @@ public final class Constants {
 
     public static final PIDConstants kElevatorPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
 
-    public static final HashMap<ElevatorState, Double> kElevatorHeights = new HashMap<>();
+    //TODO: figure out the heights
+    public static final HashMap<ElevatorState, Double> kElevatorHeights = new HashMap<>() {
+      {
+        put(ElevatorState.DOWN, 0.0);
+        put(ElevatorState.L1, 0.1);
+        put(ElevatorState.L2, 0.2);
+        put(ElevatorState.L3, 0.3);
+        put(ElevatorState.L4, 0.4);
+        put(ElevatorState.ALGAE_FROM_REEF, 0.5);
+        put(ElevatorState.ALGAE_FROM_FLOOR, 0.6);
+      }
+    };
 
     //TODO: figure out the conversion factor
     public static final double kConversionFactor = 1.0;
@@ -118,15 +129,6 @@ public final class Constants {
           .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
 
       kLeftElevatorConfig.absoluteEncoder.positionConversionFactor(kConversionFactor);
-
-      // TODO: figure out the heights
-      kElevatorHeights.put(ElevatorState.DOWN, 0.0);
-      kElevatorHeights.put(ElevatorState.L1, 0.1);
-      kElevatorHeights.put(ElevatorState.L2, 0.2);
-      kElevatorHeights.put(ElevatorState.L3, 0.3);
-      kElevatorHeights.put(ElevatorState.L4, 0.4);
-      kElevatorHeights.put(ElevatorState.ALGAE_FROM_REEF, 0.5);
-      kElevatorHeights.put(ElevatorState.ALGAE_FROM_FLOOR, 0.6);
     }
   }
 
