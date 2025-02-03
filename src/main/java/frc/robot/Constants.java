@@ -44,6 +44,12 @@ public final class Constants {
     public static final double kDriveDeadband = 0.05;
   }
 
+  public static class Climber {
+    public static final int kClimberMotorCanId = 20;
+    public static final int kClimberSolenoidForwardId = 0;
+    public static final int kClimberSolenoidReverseId = 1;
+  }
+
   public static class Vision {
     public static final String kCameraName = "Brio_100";
     // Cam mounted facing forward, half a meter forward of center, half a meter up
