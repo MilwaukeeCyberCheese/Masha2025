@@ -26,6 +26,14 @@ jobs:
     # Declares the repository safe and not under dubious ownership.
     - name: Add repository to git safe directories
       run: git config --global --add safe.directory $GITHUB_WORKSPACE
+    # Fix for the distance sensor
+    - name: Distance sensor fix
+      run: mkdir temp
+      run: wget https://github.com/REVrobotics/2m-Distance-Sensor/releases/download/v2025.0.0/REV2mDistanceSensor-2025.0.0.zip
+      run: unzip REV2mDistanceSensor-2025.0.0.zip -d temp
+      run: cp -r temp/maven/com/revrobotics /root/wpilib/2025/maven/com
+      run: rm -rf temp
+      run: rm REV2mDistanceSensor-2025.0.0.zip
     # Grant execute permission for gradlew
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
