@@ -17,6 +17,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     ALGAE_FROM_FLOOR // TBD if this is needed depending on how the intake for algae works
   }
 
+  private ElevatorState m_state = ElevatorState.DOWN;
+
   public ElevatorSubsystem() {
     // Initialize motors, sensors, etc. here
   }
@@ -40,8 +42,13 @@ public class ElevatorSubsystem extends SubsystemBase {
    *
    * @param state a state from {@link}ElevatorState
    */
-  public void setElevatorState(ElevatorState state) {
+  public void setState(ElevatorState state) {
+    m_state = state;
     setHeight(Elevator.kElevatorHeights.get(state));
+  }
+
+  public ElevatorState getState() {
+    return m_state;
   }
 
   /**

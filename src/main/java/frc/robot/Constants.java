@@ -96,6 +96,9 @@ public final class Constants {
 
     public static final HashMap<ElevatorState, Double> kElevatorHeights = new HashMap<>();
 
+    //TODO: figure out the conversion factor
+    public static final double kConversionFactor = 1.0;
+
     /*
      * TODO: TEST IN SIMULATION THE DIRECTION THE LIFT MOTORS SPIN
      * ISTFG WE HAVE TO DO THIS CAUSE THEY'RE MECHANICALLY LINKED
@@ -113,6 +116,8 @@ public final class Constants {
           .closedLoop
           .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
           .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
+
+      kLeftElevatorConfig.absoluteEncoder.positionConversionFactor(kConversionFactor);
 
       // TODO: figure out the heights
       kElevatorHeights.put(ElevatorState.DOWN, 0.0);
