@@ -4,6 +4,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
+  public static enum ElevatorState {
+    DOWN,
+    L1,
+    L2,
+    L3,
+    L4,
+    ALGAE_FROM_REEF,
+    ALGAE_FROM_FLOOR // TBD if this is needed depending on how the intake for algae works
+  }
+
   public ElevatorSubsystem() {
     // Initialize motors, sensors, etc. here
   }

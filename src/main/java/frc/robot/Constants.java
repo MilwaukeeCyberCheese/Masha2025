@@ -24,7 +24,9 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.utils.PIDConstants;
+import java.util.HashMap;
 import java.util.function.BooleanSupplier;
 
 /**
@@ -86,6 +88,8 @@ public final class Constants {
 
     public static final PIDConstants kElevatorPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
 
+    public static final HashMap<ElevatorState, Double> kElevatorStateHeights = new HashMap<>();
+
     static {
       kLeftElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kLeftInverted);
       kRightElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kRightInverted);
@@ -99,6 +103,15 @@ public final class Constants {
           .closedLoop
           .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
           .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
+
+      // TODO: figure out the heights
+      kElevatorStateHeights.put(ElevatorState.DOWN, 0.0);
+      kElevatorStateHeights.put(ElevatorState.L1, 0.1);
+      kElevatorStateHeights.put(ElevatorState.L2, 0.2);
+      kElevatorStateHeights.put(ElevatorState.L3, 0.3);
+      kElevatorStateHeights.put(ElevatorState.L4, 0.4);
+      kElevatorStateHeights.put(ElevatorState.ALGAE_FROM_REEF, 0.5);
+      kElevatorStateHeights.put(ElevatorState.ALGAE_FROM_FLOOR, 0.6);
     }
   }
 
