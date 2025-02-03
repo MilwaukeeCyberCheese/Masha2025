@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
@@ -68,9 +69,10 @@ public final class Constants {
   }
 
   // TODO: figure out the best way to run the elevator
-  // is it separate PIDs running locally? (also this one means another encoder is needed)
+  // is it separate PIDs running locally? (also this one means another encoder is
+  // needed)
   // or is it a single PID running on the roborio?
-  // or is it a single PID running locally, and one slaved to it?
+  // or is it a single PID running locally, and one slaved to it? (probably this one)
   public static class Elevator {
     public static final int kLeftElevatorMotorPort = 9;
     public static final int kRightElevatorMotorPort = 10;
@@ -86,20 +88,28 @@ public final class Constants {
     public static final boolean kLeftInverted = false;
     public static final boolean kRightInverted = true;
 
+    // only one cause we slave the other motor to this one
+    public static final SparkClosedLoopController kElevatorController =
+        kLeftElevatorSparkMax.getClosedLoopController();
+
     public static final PIDConstants kElevatorPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
 
     public static final HashMap<ElevatorState, Double> kElevatorStateHeights = new HashMap<>();
 
+    /*
+     * TODO: TEST IN SIMULATION THE DIRECTION THE LIFT MOTORS SPIN
+     * ISTFG WE HAVE TO DO THIS CAUSE THEY'RE MECHANICALLY LINKED
+     * IF IT GETS MESSED UP, I'M LOSING IT
+     */
     static {
       kLeftElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kLeftInverted);
       kRightElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kRightInverted);
 
-      kLeftElevatorConfig
-          .closedLoop
-          .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
+      kRightElevatorConfig.follow(
+          kLeftElevatorSparkMax); // you can pass in an inverted value after the
+      // kLeftElevatorSparkMax, but idk quite how that works yet
 
-      kRightElevatorConfig
+      kLeftElevatorConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
           .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
