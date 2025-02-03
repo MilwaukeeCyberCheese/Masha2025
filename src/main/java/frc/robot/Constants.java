@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.revrobotics.Rev2mDistanceSensor;
-import com.revrobotics.Rev2mDistanceSensor.Port;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -37,7 +35,6 @@ import java.util.function.BooleanSupplier;
 public final class Constants {
   public static class Sensors {
     public static final AHRS gyro = new AHRS(NavXComType.kUSB1);
-    public static final Rev2mDistanceSensor distanceSensor = new Rev2mDistanceSensor(Port.kOnboard);
   }
 
   public static class OIConstants {
