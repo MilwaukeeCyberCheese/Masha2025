@@ -49,13 +49,30 @@ public class ElevatorSubsystem extends SubsystemBase {
   /**
    * Set the elevator to a specific state
    *
-   * @param state a state from {@link ElevatorState}
+   * @param state {@link ElevatorState}
    */
   public void setState(ElevatorState state) {
     m_state = state;
     setHeight(Elevator.kElevatorHeights.get(state));
   }
 
+  /**
+   * Check if the elevator is at the desired height
+   *
+   * @return boolean
+   */
+  public boolean atHeight() {
+    return Math.abs(
+            Elevator.kElevatorHeights.get(m_state)
+                - Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition())
+        < Elevator.kElevatorTolerance;
+  }
+
+  /**
+   * Get the current state of the elevator
+   *
+   * @return {@link ElevatorState}
+   */
   public ElevatorState getState() {
     return m_state;
   }
@@ -63,7 +80,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   /**
    * Set the height of the elevator
    *
-   * @param height
+   * @param height double
    */
   private void setHeight(double height) {
     Elevator.kElevatorController.setReference(height, ControlType.kMAXMotionPositionControl);

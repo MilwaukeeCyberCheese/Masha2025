@@ -111,6 +111,9 @@ public final class Constants {
     // TODO: figure out the conversion factor
     public static final double kConversionFactor = 1.0;
 
+    // TODO: figure out the tolerance
+    public static final double kElevatorTolerance = 0.01;
+
     /*
      * TODO: TEST IN SIMULATION THE DIRECTION THE LIFT MOTORS SPIN
      * ISTFG WE HAVE TO DO THIS CAUSE THEY'RE MECHANICALLY LINKED
