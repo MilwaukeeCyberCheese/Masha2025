@@ -27,7 +27,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     kOuttake,
   }
 
-  private CoralHandlerState m_mode = CoralHandlerState.kInactive;
+  private CoralHandlerState m_state = CoralHandlerState.kInactive;
   private boolean m_hasCoral = false;
 
   public CoralHandlerSubsystem(AbstractDriveTrainSimulation driveSim) {
@@ -40,17 +40,17 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     m_intakeSim = new IntakeSimulation("Coral", driveSim, new Rectangle(.762, 1.007), 1);
   }
 
-  public CoralHandlerState getMode() {
-    return m_mode;
+  public CoralHandlerState getState() {
+    return m_state;
   }
 
   public boolean hasCoral() {
     return m_hasCoral;
   }
 
-  public void setMode(CoralHandlerState mode) {
-    m_mode = mode;
-    setSpeed(Coral.kSpeeds.get(mode));
+  public void setState(CoralHandlerState state) {
+    m_state = state;
+    setSpeed(Coral.kSpeeds.get(state));
   }
 
   private void setSpeed(double speed) {
@@ -65,7 +65,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     if (Robot.isReal()) {
       m_hasCoral = Sensors.handlerDistanceSensor.getRange(Unit.kInches) < 5;
     } else {
-      if (m_mode == CoralHandlerState.kIntake) {
+      if (m_state == CoralHandlerState.kIntake) {
         m_intakeSim.startIntake();
       } else {
         m_intakeSim.stopIntake();
@@ -81,10 +81,10 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   }
 
   public void intake() {
-    setMode(CoralHandlerState.kIntake);
+    setState(CoralHandlerState.kIntake);
   }
 
   public void outtake() {
-    setMode(CoralHandlerState.kOuttake);
+    setState(CoralHandlerState.kOuttake);
   }
 }
