@@ -69,7 +69,13 @@ public final class Constants {
     public static final double kConversionFactor = Math.PI * 2;
 
     public static final HashMap<ClimberState, Double> kClimberPositions =
-        new HashMap<ClimberState, Double>();
+        new HashMap<ClimberState, Double>() {
+          {
+            put(ClimberState.WAITING, 0.0);
+            put(ClimberState.STOWED, 0.0);
+            put(ClimberState.CLIMB, 0.0);
+          }
+        };
 
     public static final double[] kClimberLimits = {0.0, 0.0};
 
@@ -86,11 +92,6 @@ public final class Constants {
           .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
           .pid(kClimberPIDConstants.kP, kClimberPIDConstants.kI, kClimberPIDConstants.kD)
           .outputRange(-1, 1);
-
-      // TODO: find 'em
-      kClimberPositions.put(ClimberState.WAITING, 0.0);
-      kClimberPositions.put(ClimberState.STOWED, 0.0);
-      kClimberPositions.put(ClimberState.CLIMB, 0.0);
     }
   }
 
