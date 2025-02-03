@@ -30,6 +30,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         Elevator.kRightElevatorConfig,
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
+
+    setState(m_state);
   }
 
   // Methods to set motor speeds, etc. go here
