@@ -94,7 +94,7 @@ public final class Constants {
 
     public static final PIDConstants kElevatorPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
 
-    public static final HashMap<ElevatorState, Double> kElevatorStateHeights = new HashMap<>();
+    public static final HashMap<ElevatorState, Double> kElevatorHeights = new HashMap<>();
 
     /*
      * TODO: TEST IN SIMULATION THE DIRECTION THE LIFT MOTORS SPIN
@@ -115,13 +115,13 @@ public final class Constants {
           .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
 
       // TODO: figure out the heights
-      kElevatorStateHeights.put(ElevatorState.DOWN, 0.0);
-      kElevatorStateHeights.put(ElevatorState.L1, 0.1);
-      kElevatorStateHeights.put(ElevatorState.L2, 0.2);
-      kElevatorStateHeights.put(ElevatorState.L3, 0.3);
-      kElevatorStateHeights.put(ElevatorState.L4, 0.4);
-      kElevatorStateHeights.put(ElevatorState.ALGAE_FROM_REEF, 0.5);
-      kElevatorStateHeights.put(ElevatorState.ALGAE_FROM_FLOOR, 0.6);
+      kElevatorHeights.put(ElevatorState.DOWN, 0.0);
+      kElevatorHeights.put(ElevatorState.L1, 0.1);
+      kElevatorHeights.put(ElevatorState.L2, 0.2);
+      kElevatorHeights.put(ElevatorState.L3, 0.3);
+      kElevatorHeights.put(ElevatorState.L4, 0.4);
+      kElevatorHeights.put(ElevatorState.ALGAE_FROM_REEF, 0.5);
+      kElevatorHeights.put(ElevatorState.ALGAE_FROM_FLOOR, 0.6);
     }
   }
 

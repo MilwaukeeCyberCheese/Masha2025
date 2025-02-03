@@ -33,8 +33,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Log sensor data, etc. here
   }
 
+  /**
+   * Set the elevator to a specific state
+   *
+   * @param state a state from {@link}ElevatorState
+   */
   public void setElevatorState(ElevatorState state) {
-    // Set the elevator to the desired state
+    setHeight(Elevator.kElevatorHeights.get(state));
   }
 
   /**
