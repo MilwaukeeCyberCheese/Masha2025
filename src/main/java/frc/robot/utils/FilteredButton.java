@@ -20,93 +20,48 @@ public class FilteredButton {
   }
 
   /**
-   * Returns if the top left button has been pressed
+   * Returns if the L1 button has been pressed
    *
    * @return boolean
    */
-  public boolean getOneA() {
+  public boolean getL1() {
     return controller.getRawButton(1);
   }
 
   /**
-   * Returns if the top middle button has been pressed
+   * Returns if the L2 button has been pressed
    *
    * @return boolean
    */
-  public boolean getOneB() {
+  public boolean getL2() {
     return controller.getRawButton(2);
   }
 
   /**
-   * Returns if the top right button has been pressed
+   * Returns if the L3 button has been pressed
    *
    * @return boolean
    */
-  public boolean getOneC() {
+  public boolean getL3() {
     return controller.getRawButton(3);
   }
 
   /**
-   * Returns if the middle left button has been pressed
+   * Returns if the L4 button has been pressed
    *
    * @return boolean
    */
-  public boolean getTwoA() {
+  public boolean getL4() {
     return controller.getRawButton(4);
   }
 
   /**
-   * Returns if the middle middle button has been pressed
+   * returns if the chute switch is on or off
    *
    * @return boolean
    */
-  public boolean getTwoB() {
-    return controller.getRawButton(5);
-  }
-
-  /**
-   * Returns if the middle right button has been pressed
-   *
-   * @return boolean
-   */
-  public boolean getTwoC() {
-    return controller.getRawButton(6);
-  }
-
-  /**
-   * Returns if the bottom left button has been pressed
-   *
-   * @return boolean
-   */
-  public boolean getThreeA() {
-    return controller.getRawButton(7);
-  }
-
-  /**
-   * Returns if the bottom middle button has been pressed
-   *
-   * @return boolean
-   */
-  public boolean getThreeB() {
-    return controller.getRawButton(8);
-  }
-
-  /**
-   * Returns if the bottom right button has been pressed
-   *
-   * @return boolean
-   */
-  public boolean getThreeC() {
-    return controller.getRawButton(9);
-  }
-
-  /**
-   * returns if the top switch is on or off
-   *
-   * @return boolean
-   */
-  public boolean getTopSwitch() {
-    return (controller.isConnected()) ? controller.getRawButton(10) : false;
+  public boolean getChuteSwitch() {
+    return (controller.isConnected()) ? controller.getRawButton(5) : false;
   }
 
   /**
@@ -114,7 +69,7 @@ public class FilteredButton {
    *
    * @return boolean
    */
-  public boolean getBottomSwitch() {
-    return controller.getRawButton(11);
+  public boolean getCoralSwitch() {
+    return controller.getRawButton(6);
   }
 }
