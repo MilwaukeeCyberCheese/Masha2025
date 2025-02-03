@@ -75,8 +75,8 @@ public final class Constants {
           new HashMap<>() {
             {
               put(CoralHandlerState.kInactive, 0.0);
-              put(CoralHandlerState.kIntake, 50.0);
-              put(CoralHandlerState.kOuttake, 20.00);
+              put(CoralHandlerState.kIndex, 50.0);
+              put(CoralHandlerState.kScore, 20.00);
             }
           };
 

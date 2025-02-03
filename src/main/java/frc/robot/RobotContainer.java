@@ -55,8 +55,8 @@ public class RobotContainer {
     m_driverController.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
 
     // Lock wheels with left bumper
-    m_driverController.rightBumper().onTrue(Commands.runOnce(m_coral::intake));
-    m_driverController.leftBumper().onTrue(Commands.runOnce(m_coral::outtake));
+    m_driverController.rightBumper().onTrue(Commands.runOnce(m_coral::index));
+    m_driverController.leftBumper().onTrue(Commands.runOnce(m_coral::score));
   }
 
   /**

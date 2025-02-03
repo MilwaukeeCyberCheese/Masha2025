@@ -23,8 +23,8 @@ public class CoralHandlerSubsystem extends SubsystemBase {
 
   public enum CoralHandlerState {
     kInactive,
-    kIntake,
-    kOuttake,
+    kIndex,
+    kScore,
   }
 
   private CoralHandlerState m_state = CoralHandlerState.kInactive;
@@ -40,19 +40,39 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     m_intakeSim = new IntakeSimulation("Coral", driveSim, new Rectangle(.762, 1.007), 1);
   }
 
+  /**
+   * Get the current state of the coral handler
+   * 
+   * @return {@link CoralHandlerState}
+   */
   public CoralHandlerState getState() {
     return m_state;
   }
 
+  /**
+   * Check if the coral handler has a coral
+   * 
+   * @return boolean
+   */
   public boolean hasCoral() {
     return m_hasCoral;
   }
 
+  /**
+   * Set the state of the coral handler
+   * 
+   * @param state {@link CoralHandlerState}
+   */
   public void setState(CoralHandlerState state) {
     m_state = state;
     setSpeed(Coral.kSpeeds.get(state));
   }
 
+  /**
+   * Set the speed of the coral handler
+   * 
+   * @param speed double
+   */
   private void setSpeed(double speed) {
     Coral.m_leftController.setReference(speed, ControlType.kMAXMotionVelocityControl);
     Coral.m_rightController.setReference(speed, ControlType.kMAXMotionVelocityControl);
@@ -65,7 +85,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     if (Robot.isReal()) {
       m_hasCoral = Sensors.handlerDistanceSensor.getRange(Unit.kInches) < 5;
     } else {
-      if (m_state == CoralHandlerState.kIntake) {
+      if (m_state == CoralHandlerState.kIndex) {
         m_intakeSim.startIntake();
       } else {
         m_intakeSim.stopIntake();
@@ -80,11 +100,17 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     // SmartDashboard.putBoolean("Coral Handler Has Coral", m_hasCoral);
   }
 
-  public void intake() {
-    setState(CoralHandlerState.kIntake);
+  /**
+   * Set state to index
+   */
+  public void index() {
+    setState(CoralHandlerState.kIndex);
   }
 
-  public void outtake() {
-    setState(CoralHandlerState.kOuttake);
+  /**
+   * Set state to score
+   */
+  public void score() {
+    setState(CoralHandlerState.kScore);
   }
 }
