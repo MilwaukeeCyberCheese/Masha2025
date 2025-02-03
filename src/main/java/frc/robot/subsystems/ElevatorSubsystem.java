@@ -10,6 +10,7 @@ import frc.robot.Constants.Elevator;
 public class ElevatorSubsystem extends SubsystemBase {
 
   public static enum ElevatorState {
+    DISABLED,
     DOWN,
     L1,
     L2,
@@ -55,6 +56,14 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public void setState(ElevatorState state) {
     m_state = state;
+
+    // TODO: check that this overrides the PID
+    if (m_state == ElevatorState.DISABLED) {
+      Elevator.kLeftElevatorSparkMax.set(0);
+      Elevator.kRightElevatorSparkMax.set(0);
+      return;
+    }
+
     setHeight(Elevator.kElevatorHeights.get(state));
   }
 
@@ -65,9 +74,8 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public boolean atHeight() {
     return Math.abs(
-            Elevator.kElevatorHeights.get(m_state)
-                - Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition())
-        < Elevator.kElevatorTolerance;
+        Elevator.kElevatorHeights.get(m_state)
+            - Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition()) < Elevator.kElevatorTolerance;
   }
 
   /**
@@ -89,5 +97,26 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   // TODO: zero the elevator using the limit switch
-  public void zero() {}
+  /**
+   * Zero the absolute encoder of the elevator
+   * 
+   * <p>
+   * Should only be called when the elevator is at the bottom
+   */
+  public void zero() {
+    setState(ElevatorState.DISABLED);
+
+    // Zero the offset, as we don't know what the prior one was
+    Elevator.kLeftElevatorConfig.absoluteEncoder.zeroOffset(0);
+    Elevator.kLeftElevatorSparkMax.configure(Elevator.kLeftElevatorConfig, ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
+
+    // Set the offset to the current position
+    Elevator.kLeftElevatorConfig.absoluteEncoder
+        .zeroOffset(Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition());
+    Elevator.kLeftElevatorSparkMax.configure(Elevator.kLeftElevatorConfig, ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
+
+    setState(ElevatorState.DOWN);
+  }
 }
