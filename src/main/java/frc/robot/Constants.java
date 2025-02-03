@@ -94,20 +94,21 @@ public final class Constants {
 
     public static final PIDConstants kElevatorPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
 
-    //TODO: figure out the heights
-    public static final HashMap<ElevatorState, Double> kElevatorHeights = new HashMap<>() {
-      {
-        put(ElevatorState.DOWN, 0.0);
-        put(ElevatorState.L1, 0.1);
-        put(ElevatorState.L2, 0.2);
-        put(ElevatorState.L3, 0.3);
-        put(ElevatorState.L4, 0.4);
-        put(ElevatorState.ALGAE_FROM_REEF, 0.5);
-        put(ElevatorState.ALGAE_FROM_FLOOR, 0.6);
-      }
-    };
+    // TODO: figure out the heights
+    public static final HashMap<ElevatorState, Double> kElevatorHeights =
+        new HashMap<>() {
+          {
+            put(ElevatorState.DOWN, 0.0);
+            put(ElevatorState.L1, 0.1);
+            put(ElevatorState.L2, 0.2);
+            put(ElevatorState.L3, 0.3);
+            put(ElevatorState.L4, 0.4);
+            put(ElevatorState.ALGAE_FROM_REEF, 0.5);
+            put(ElevatorState.ALGAE_FROM_FLOOR, 0.6);
+          }
+        };
 
-    //TODO: figure out the conversion factor
+    // TODO: figure out the conversion factor
     public static final double kConversionFactor = 1.0;
 
     /*

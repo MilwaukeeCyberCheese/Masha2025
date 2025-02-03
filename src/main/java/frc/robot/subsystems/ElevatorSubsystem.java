@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Elevator;
 
@@ -20,7 +22,14 @@ public class ElevatorSubsystem extends SubsystemBase {
   private ElevatorState m_state = ElevatorState.DOWN;
 
   public ElevatorSubsystem() {
-    // Initialize motors, sensors, etc. here
+    Elevator.kLeftElevatorSparkMax.configure(
+        Elevator.kLeftElevatorConfig,
+        ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
+    Elevator.kRightElevatorSparkMax.configure(
+        Elevator.kRightElevatorConfig,
+        ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
   }
 
   // Methods to set motor speeds, etc. go here
