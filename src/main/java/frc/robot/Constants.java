@@ -24,6 +24,8 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.AlgaeHandlerSubsystem.AlgaeHandlerIntakeState;
+import frc.robot.subsystems.AlgaeHandlerSubsystem.AlgaeHandlerPositionState;
 import frc.robot.utils.PIDConstants;
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
@@ -143,9 +145,20 @@ public final class Constants {
     public static final double kIntakeConversionFactor = 1.0;
 
     // TODO: find these
-    public static final HashMap<AlgaeHandlerState, Double> kAlgaeHandlerStates =
-        new HashMap<AlgaehandlerState, Double>() {
+    public static final HashMap<AlgaeHandlerPositionState, Double> kPositionStates =
+        new HashMap<AlgaeHandlerPositionState, Double>() {
           {
+            put(AlgaeHandlerPositionState.STOWED, 0.0);
+            put(AlgaeHandlerPositionState.GRAB_FROM_REEF, 0.0);
+            put(AlgaeHandlerPositionState.GRAB_FROM_GROUND, 0.0);
+          }
+        };
+    public static final HashMap<AlgaeHandlerIntakeState, Double> kIntakeStates =
+        new HashMap<AlgaeHandlerIntakeState, Double>() {
+          {
+            put(AlgaeHandlerIntakeState.INTAKE, 0.0);
+            put(AlgaeHandlerIntakeState.OUTTAKE, 0.0);
+            put(AlgaeHandlerIntakeState.STOPPED, 0.0);
           }
         };
 
