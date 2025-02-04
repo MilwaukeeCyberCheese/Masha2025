@@ -4,7 +4,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.AlgaeHandler;
+import frc.robot.Constants.Handler.Algae;
 
 // TODO: add sim support
 public class AlgaeHandlerSubsystem extends SubsystemBase {
@@ -25,13 +25,11 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
   private AlgaeHandlerIntakeState m_intakeState = AlgaeHandlerIntakeState.STOPPED;
 
   public AlgaeHandlerSubsystem() {
-    AlgaeHandler.kPositionSparkMax.configure(
-        AlgaeHandler.kPositionConfig,
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
+    Algae.kPositionSparkMax.configure(
+        Algae.kPositionConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    AlgaeHandler.kIntakeSparkMax.configure(
-        AlgaeHandler.kIntakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    Algae.kIntakeSparkMax.configure(
+        Algae.kIntakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     setPositionState(AlgaeHandlerPositionState.STOWED);
     setIntakeState(AlgaeHandlerIntakeState.STOPPED);
@@ -45,7 +43,7 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
    */
   public void setPositionState(AlgaeHandlerPositionState state) {
     m_positionState = state;
-    setPosition(AlgaeHandler.kPositionStates.get(state));
+    setPosition(Algae.kPositionStates.get(state));
   }
 
   /**
@@ -54,7 +52,7 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
    * @param position
    */
   private void setPosition(double position) {
-    AlgaeHandler.kPositionController.setReference(position, ControlType.kMAXMotionPositionControl);
+    Algae.kPositionController.setReference(position, ControlType.kMAXMotionPositionControl);
   }
 
   /**
@@ -64,9 +62,9 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
    */
   public boolean atState() {
     return Math.abs(
-            AlgaeHandler.kPositionStates.get(m_positionState)
-                - AlgaeHandler.kPositionSparkMax.getAbsoluteEncoder().getPosition())
-        < AlgaeHandler.kPositionTolerance;
+            Algae.kPositionStates.get(m_positionState)
+                - Algae.kPositionSparkMax.getAbsoluteEncoder().getPosition())
+        < Algae.kPositionTolerance;
   }
 
   /**
@@ -85,7 +83,7 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
    */
   public void setIntakeState(AlgaeHandlerIntakeState state) {
     m_intakeState = state;
-    setIntake(AlgaeHandler.kIntakeStates.get(state));
+    setIntake(Algae.kIntakeStates.get(state));
   }
 
   /**
@@ -94,7 +92,7 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
    * @param speed
    */
   private void setIntake(double speed) {
-    AlgaeHandler.kIntakeController.setReference(speed, ControlType.kMAXMotionVelocityControl);
+    Algae.kIntakeController.setReference(speed, ControlType.kMAXMotionVelocityControl);
   }
 
   /**
@@ -104,9 +102,9 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
    */
   public boolean atIntakeState() {
     return Math.abs(
-            AlgaeHandler.kIntakeStates.get(m_intakeState)
-                - AlgaeHandler.kIntakeSparkMax.getEncoder().getVelocity())
-        < AlgaeHandler.kIntakeTolerance;
+            Algae.kIntakeStates.get(m_intakeState)
+                - Algae.kIntakeSparkMax.getEncoder().getVelocity())
+        < Algae.kIntakeTolerance;
   }
 
   /**
