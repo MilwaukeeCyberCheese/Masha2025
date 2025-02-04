@@ -14,19 +14,6 @@
                 "reveal": "always"
             }
             
-        },
-        {
-            "label": "Update All Git Branches (Windows)",
-            "type": "shell",
-            "command": "git fetch --all && for /f \"tokens=*\" %i in ('git branch') do git pull origin %i",
-            "problemMatcher": [],
-            "group": {
-                "kind": "build",
-                "isDefault": false
-            },
-            "presentation": {
-                "reveal": "always"
-            }
         }
     ]
 }
