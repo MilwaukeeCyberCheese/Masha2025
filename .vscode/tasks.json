@@ -1,0 +1,19 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Update All Git Branches (Linux/macOS)",
+            "type": "shell",
+            "command": "git fetch --all && git branch | sed 's/* //' | xargs -I {} git pull origin {}",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "presentation": {
+                "reveal": "always"
+            }
+            
+        }
+    ]
+}
