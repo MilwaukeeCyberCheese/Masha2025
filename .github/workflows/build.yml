@@ -27,8 +27,8 @@ jobs:
     - name: Distance sensor fix
       run: |
         git clone https://github.com/REVrobotics/2m-Distance-Sensor.git
-        chmod +x Source/build_and_publish_locally.sh
-        ./Source/build_and_publish_locally.sh
+        chmod +x 2m-Distance-Sensor/Source/build_and_publish_locally.sh
+        ./2m-Distance-Sensor/Source/build_and_publish_locally.sh
     # Grant execute permission for gradlew
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
