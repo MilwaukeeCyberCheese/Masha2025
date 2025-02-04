@@ -1,21 +1,19 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Radians;
+
 import com.revrobotics.Rev2mDistanceSensor.Unit;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Handler.Coral;
 import frc.robot.Constants.Sensors;
 import frc.robot.Robot;
-
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Radians;
-
 import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.IntakeSimulation;
@@ -106,19 +104,18 @@ public class CoralHandlerSubsystem extends SubsystemBase {
       }
       if (m_state == CoralHandlerState.kRelease && m_intakeSim.obtainGamePieceFromIntake()) {
         // TODO: make this dependent on elevator position
-        SimulatedArena
-            .getInstance()
+        SimulatedArena.getInstance()
             .addGamePieceProjectile(
-              new ReefscapeCoralOnFly(
-                m_drive.getSimulatedDriveTrainPose().getTranslation(),
-                new Translation2d(0.35, 0), // mechanism position, this is where elevator comes into play i think
-                m_drive.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
-                m_drive.getSimulatedDriveTrainPose().getRotation(),
-                Meters.of(1.28), // eject height
-                MetersPerSecond.of(2), // eject speed
-                Radians.of(0.610865238)
-              )
-            );
+                new ReefscapeCoralOnFly(
+                    m_drive.getSimulatedDriveTrainPose().getTranslation(),
+                    new Translation2d(
+                        0.35,
+                        0), // mechanism position, this is where elevator comes into play i think
+                    m_drive.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+                    m_drive.getSimulatedDriveTrainPose().getRotation(),
+                    Meters.of(1.28), // eject height
+                    MetersPerSecond.of(2), // eject speed
+                    Radians.of(0.610865238)));
       }
       m_hasCoral = m_intakeSim.getGamePiecesAmount() != 0;
     }
