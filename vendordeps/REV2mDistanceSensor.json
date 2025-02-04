@@ -3,6 +3,7 @@
     "name": "REV2mDistanceSensor",
     "version": "0.4.0",
     "uuid": "9e352acd-4eec-40f7-8490-3357b5ed65ae",
+    "year": "2025",
     "mavenUrls": [
         "https://tk2217.github.io/rev-distance-repo/maven/"
     ],
