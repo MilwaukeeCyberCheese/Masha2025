@@ -23,15 +23,6 @@ jobs:
     # Declares the repository safe and not under dubious ownership.
     - name: Add repository to git safe directories
       run: git config --global --add safe.directory $GITHUB_WORKSPACE
-    # Distance sensor fix
-    - name: Distance sensor fix
-      run: |
-        git clone https://github.com/REVrobotics/2m-Distance-Sensor/
-        cd 2m-Distance-Sensor/Source
-        chmod +x build_and_publish_locally.sh gradlew
-        sh build_and_publish_locally.sh
-        cd ../..
-        rm -rf 2m-Distance-Sensor
     # Grant execute permission for gradlew
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
