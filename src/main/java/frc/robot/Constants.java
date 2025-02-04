@@ -43,6 +43,85 @@ public final class Constants {
     public static final AHRS gyro = new AHRS(NavXComType.kUSB1);
   }
 
+  public static class Handler {
+    public static class Algae {
+      public static final int kPositionMotorCanId = 21;
+      public static final int kIntakeMotorCanId = 22;
+
+      public static final SparkMax kPositionSparkMax =
+          new SparkMax(kPositionMotorCanId, SparkMax.MotorType.kBrushless);
+      public static final SparkMax kIntakeSparkMax =
+          new SparkMax(kIntakeMotorCanId, SparkMax.MotorType.kBrushless);
+
+      public static final SparkMaxConfig kPositionConfig = new SparkMaxConfig();
+      public static final SparkMaxConfig kIntakeConfig = new SparkMaxConfig();
+
+      // TODO: find out if it's inverted
+      public static final boolean kPositionInverted = false;
+      public static final boolean kIntakeInverted = false;
+
+      public static final SparkClosedLoopController kPositionController =
+          kPositionSparkMax.getClosedLoopController();
+      public static final SparkClosedLoopController kIntakeController =
+          kIntakeSparkMax.getClosedLoopController();
+
+      public static final PIDConstants kPositionPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
+      public static final PIDConstants kIntakePIDConstants = new PIDConstants(0.1, 0.0, 0.0);
+
+      // TODO: confirm that this is right
+      public static final double kPositionConversionFactor = Math.PI * 2;
+      public static final double kIntakeConversionFactor = 1.0;
+
+      // TODO: find these
+      public static final HashMap<AlgaeHandlerPositionState, Double> kPositions =
+          new HashMap<AlgaeHandlerPositionState, Double>() {
+            {
+              put(AlgaeHandlerPositionState.STOWED, 0.0);
+              put(AlgaeHandlerPositionState.GRAB_FROM_REEF, 0.0);
+              put(AlgaeHandlerPositionState.GRAB_FROM_GROUND, 0.0);
+            }
+          };
+      public static final HashMap<AlgaeHandlerIntakeState, Double> kSpeeds =
+          new HashMap<AlgaeHandlerIntakeState, Double>() {
+            {
+              put(AlgaeHandlerIntakeState.INTAKE, 0.0);
+              put(AlgaeHandlerIntakeState.OUTTAKE, 0.0);
+              put(AlgaeHandlerIntakeState.STOPPED, 0.0);
+            }
+          };
+
+      // TODO: find this
+      public static final double[] kPositionLimits = {0.0, 0.0};
+
+      // TODO: find this
+      public static final double kPositionTolerance = 0.01;
+      public static final double kIntakeTolerance = 10;
+
+      static {
+        kPositionConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kPositionInverted);
+        kPositionConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kIntakeInverted);
+
+        kPositionConfig
+            .absoluteEncoder
+            .positionConversionFactor(kPositionConversionFactor)
+            .velocityConversionFactor(kPositionConversionFactor / 60.0);
+        kIntakeConfig.encoder.velocityConversionFactor(kIntakeConversionFactor / 60);
+
+        kPositionConfig
+            .closedLoop
+            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+            .pid(kPositionPIDConstants.kP, kPositionPIDConstants.kI, kPositionPIDConstants.kD)
+            .outputRange(-1, 1);
+
+        kIntakeConfig
+            .closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pid(kIntakePIDConstants.kP, kIntakePIDConstants.kI, kIntakePIDConstants.kD)
+            .outputRange(-1, 1);
+      }
+    }
+  }
+
   public static class OIConstants {
     public static final int kOperatorControllerPort = 0;
     public static final int kLeftJoystickPort = 1;
@@ -113,85 +192,6 @@ public final class Constants {
           // longer route.
           .positionWrappingEnabled(true)
           .positionWrappingInputRange(0, turningFactor);
-    }
-  }
-
-  public static class Handler {
-    public static class Algae {
-      public static final int kPositionMotorCanId = 21;
-      public static final int kIntakeMotorCanId = 22;
-
-      public static final SparkMax kPositionSparkMax =
-          new SparkMax(kPositionMotorCanId, SparkMax.MotorType.kBrushless);
-      public static final SparkMax kIntakeSparkMax =
-          new SparkMax(kIntakeMotorCanId, SparkMax.MotorType.kBrushless);
-
-      public static final SparkMaxConfig kPositionConfig = new SparkMaxConfig();
-      public static final SparkMaxConfig kIntakeConfig = new SparkMaxConfig();
-
-      // TODO: find out if it's inverted
-      public static final boolean kPositionInverted = false;
-      public static final boolean kIntakeInverted = false;
-
-      public static final SparkClosedLoopController kPositionController =
-          kPositionSparkMax.getClosedLoopController();
-      public static final SparkClosedLoopController kIntakeController =
-          kIntakeSparkMax.getClosedLoopController();
-
-      public static final PIDConstants kPositionPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
-      public static final PIDConstants kIntakePIDConstants = new PIDConstants(0.1, 0.0, 0.0);
-
-      // TODO: confirm that this is right
-      public static final double kPositionConversionFactor = Math.PI * 2;
-      public static final double kIntakeConversionFactor = 1.0;
-
-      // TODO: find these
-      public static final HashMap<AlgaeHandlerPositionState, Double> kPositionStates =
-          new HashMap<AlgaeHandlerPositionState, Double>() {
-            {
-              put(AlgaeHandlerPositionState.STOWED, 0.0);
-              put(AlgaeHandlerPositionState.GRAB_FROM_REEF, 0.0);
-              put(AlgaeHandlerPositionState.GRAB_FROM_GROUND, 0.0);
-            }
-          };
-      public static final HashMap<AlgaeHandlerIntakeState, Double> kIntakeStates =
-          new HashMap<AlgaeHandlerIntakeState, Double>() {
-            {
-              put(AlgaeHandlerIntakeState.INTAKE, 0.0);
-              put(AlgaeHandlerIntakeState.OUTTAKE, 0.0);
-              put(AlgaeHandlerIntakeState.STOPPED, 0.0);
-            }
-          };
-
-      // TODO: find this
-      public static final double[] kPositionLimits = {0.0, 0.0};
-
-      // TODO: find this
-      public static final double kPositionTolerance = 0.01;
-      public static final double kIntakeTolerance = 10;
-
-      static {
-        kPositionConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kPositionInverted);
-        kPositionConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kIntakeInverted);
-
-        kPositionConfig
-            .absoluteEncoder
-            .positionConversionFactor(kPositionConversionFactor)
-            .velocityConversionFactor(kPositionConversionFactor / 60.0);
-        kIntakeConfig.encoder.velocityConversionFactor(kIntakeConversionFactor / 60);
-
-        kPositionConfig
-            .closedLoop
-            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-            .pid(kPositionPIDConstants.kP, kPositionPIDConstants.kI, kPositionPIDConstants.kD)
-            .outputRange(-1, 1);
-
-        kIntakeConfig
-            .closedLoop
-            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(kIntakePIDConstants.kP, kIntakePIDConstants.kI, kIntakePIDConstants.kD)
-            .outputRange(-1, 1);
-      }
     }
   }
 

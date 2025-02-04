@@ -43,7 +43,7 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
    */
   public void setPositionState(AlgaeHandlerPositionState state) {
     m_positionState = state;
-    setPosition(Algae.kPositionStates.get(state));
+    setPosition(Algae.kPositions.get(state));
   }
 
   /**
@@ -62,7 +62,7 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
    */
   public boolean atState() {
     return Math.abs(
-            Algae.kPositionStates.get(m_positionState)
+            Algae.kPositions.get(m_positionState)
                 - Algae.kPositionSparkMax.getAbsoluteEncoder().getPosition())
         < Algae.kPositionTolerance;
   }
@@ -83,7 +83,7 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
    */
   public void setIntakeState(AlgaeHandlerIntakeState state) {
     m_intakeState = state;
-    setIntake(Algae.kIntakeStates.get(state));
+    setIntake(Algae.kSpeeds.get(state));
   }
 
   /**
@@ -102,8 +102,7 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
    */
   public boolean atIntakeState() {
     return Math.abs(
-            Algae.kIntakeStates.get(m_intakeState)
-                - Algae.kIntakeSparkMax.getEncoder().getVelocity())
+            Algae.kSpeeds.get(m_intakeState) - Algae.kIntakeSparkMax.getEncoder().getVelocity())
         < Algae.kIntakeTolerance;
   }
 
