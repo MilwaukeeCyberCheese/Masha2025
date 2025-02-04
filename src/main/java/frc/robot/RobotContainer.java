@@ -6,11 +6,17 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
+
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
 import swervelib.SwerveInputStream;
 
 /*
@@ -24,6 +30,9 @@ public class RobotContainer {
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
 
   private final CommandXboxController m_driverController = new CommandXboxController(0);
+
+  private final AutoFactory autoFactory;
+  private final AutoChooser autoChooser;
 
   // Configure drive input stream
   SwerveInputStream driveInput =
@@ -42,6 +51,23 @@ public class RobotContainer {
 
     // Set default drive command
     m_drive.setDefaultCommand(m_drive.driveFieldOriented(driveInput));
+
+        // Set up Auto Factory for Choreo
+    autoFactory = new AutoFactory(
+            m_drive::getPose, // A function that returns the current robot pose
+            m_drive::resetOdometry, // A function that resets the current robot pose to the provided Pose2d
+            m_drive::drive(), // The drive subsystem trajectory follower 
+            true, // If alliance flipping should be enabled 
+            m_drive // The drive subsystem
+        );
+    autoChooser = new AutoChooser();
+
+    //autoChooser.addRoutine("Routine 1", this::routine1);
+    //autoChooser.addCmd("Command 1", this::command1);
+
+    SmartDashboard.putData(autoChooser);
+
+    RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
   }
 
   /**
