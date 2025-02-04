@@ -99,7 +99,7 @@ public final class Constants {
     public static final PIDConstants kElevatorPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
 
     // TODO: figure out the heights
-    public static final HashMap<ElevatorState, Double> kElevatorHeights =
+    public static final HashMap<ElevatorState, Double> kHeights =
         new HashMap<>() {
           {
             put(ElevatorState.DOWN, 0.0);

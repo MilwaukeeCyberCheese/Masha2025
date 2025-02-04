@@ -64,7 +64,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       return;
     }
 
-    setHeight(Elevator.kElevatorHeights.get(state));
+    setHeight(Elevator.kHeights.get(state));
   }
 
   /**
@@ -74,7 +74,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public boolean atHeight() {
     return Math.abs(
-            Elevator.kElevatorHeights.get(m_state)
+            Elevator.kHeights.get(m_state)
                 - Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition())
         < Elevator.kElevatorTolerance;
   }
