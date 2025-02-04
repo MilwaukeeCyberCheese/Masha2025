@@ -51,6 +51,7 @@ public final class Constants {
   // TODO: find like all of these
   public static class Handler {
     public static class Coral {
+      // TODO: figure these out
       public static final int kLeftMotorCANid = 9;
       public static final int kRightMotorCANid = 10;
 
