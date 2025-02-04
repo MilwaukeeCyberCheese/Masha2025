@@ -26,11 +26,9 @@ jobs:
     # Distance sensor fix
     - name: Distance sensor fix
       run: |
-        wget https://github.com/REVrobotics/2m-Distance-Sensor/releases/download/v2025.0.0/REV2mDistanceSensor-2025.0.0.zip
-        mkdir temp
-        unzip REV2mDistanceSensor-2025.0.0.zip -d temp
-        pwd
-        ls
+        git clone https://github.com/REVrobotics/2m-Distance-Sensor/
+        chmod +x 2m-Distance-Sensor/Source/build_and_publish_locally.sh
+        sh 2m-Distance-Sensor/Source/build_and_publish_locally.sh
     # Grant execute permission for gradlew
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
