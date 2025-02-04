@@ -41,6 +41,7 @@ public final class Constants {
     public static final int kOperatorControllerPort = 0;
     public static final int kLeftJoystickPort = 1;
     public static final int kRightJoystickPort = 2;
+    public static final int kButtonBoardPort = 3;
     public static final double kDriveDeadband = 0.05;
   }
 

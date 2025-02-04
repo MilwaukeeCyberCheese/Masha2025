@@ -12,7 +12,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.utils.FilteredButton;
+import frc.robot.utils.FilteredJoystick;
 import java.io.File;
 
 import choreo.auto.AutoChooser;
@@ -29,7 +32,18 @@ public class RobotContainer {
   private final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
 
-  private final CommandXboxController m_driverController = new CommandXboxController(0);
+  // Driver joysticks
+  private final FilteredJoystick m_driverLeftJoystick =
+      new FilteredJoystick(OIConstants.kLeftJoystickPort);
+  private final FilteredJoystick m_driverRightJoystick =
+      new FilteredJoystick(OIConstants.kRightJoystickPort);
+
+  // Operator controller
+  private final CommandXboxController m_driverController =
+      new CommandXboxController(OIConstants.kOperatorControllerPort);
+
+  // Button Board
+  private final FilteredButton m_buttonBoard = new FilteredButton(OIConstants.kButtonBoardPort);
 
   private final AutoFactory autoFactory;
   private final AutoChooser autoChooser;
