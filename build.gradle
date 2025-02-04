@@ -73,9 +73,6 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // This is a fix the distance sensor since it's not packaged with REVs other stuff
-    implementation files('vendor/DistanceSensor-java-2025.0.0.jar')
 }
 
 test {
