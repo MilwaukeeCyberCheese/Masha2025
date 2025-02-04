@@ -45,7 +45,7 @@ public class RobotContainer {
   SwerveInputStream driveInput =
       SwerveInputStream.of(
               m_drive.getSwerveDrive(), m_driverController::getLeftY, m_driverController::getLeftX)
-          .withControllerRotationAxis(m_driverController::getRightX)
+          .withControllerRotationAxis(() -> -m_driverController.getRightX())
           .deadband(0.1)
           .scaleTranslation(0.8)
           .allianceRelativeControl(true);
@@ -67,10 +67,12 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Zero gyro with A button
     m_driverController.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
+    m_driverController.b().onTrue(Commands.runOnce(m_coral::getSimCoral));
 
-    // Lock wheels with left bumper
-    m_driverController.rightBumper().onTrue(Commands.runOnce(m_coral::index));
-    m_driverController.leftBumper().onTrue(Commands.runOnce(m_coral::score));
+    m_driverController.rightBumper().onTrue(Commands.runOnce(m_coral::grab));
+    m_driverController.rightBumper().onFalse(Commands.runOnce(m_coral::idle));
+    m_driverController.leftBumper().onTrue(Commands.runOnce(m_coral::release));
+    m_driverController.leftBumper().onFalse(Commands.runOnce(m_coral::idle));
   }
 
   /**

@@ -4,13 +4,23 @@ import com.revrobotics.Rev2mDistanceSensor.Unit;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Handler.Coral;
 import frc.robot.Constants.Sensors;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import org.dyn4j.geometry.Rectangle;
+import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.IntakeSimulation;
+import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeAlgaeOnField;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnField;
 
 public class CoralHandlerSubsystem extends SubsystemBase {
   // two neo 550s, 9:1 gearing on both, going in opposite directions.
@@ -23,8 +33,8 @@ public class CoralHandlerSubsystem extends SubsystemBase {
 
   public enum CoralHandlerState {
     kInactive,
-    kIndex,
-    kScore,
+    kGrab,
+    kRelease,
   }
 
   private CoralHandlerState m_state = CoralHandlerState.kInactive;
@@ -37,7 +47,9 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     Coral.m_right.configure(
         Coral.m_rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    m_intakeSim = new IntakeSimulation("Coral", driveSim, new Rectangle(.762, 1.007), 1);
+    Rectangle intake = new Rectangle(.762, .245);
+    intake.translate(new Vector2(0, .762));
+    m_intakeSim = new IntakeSimulation("Coral", driveSim, intake, 1);
   }
 
   /**
@@ -80,15 +92,19 @@ public class CoralHandlerSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Robot.getInstance();
+    SmartDashboard.putBoolean("Coral Handler Has Coral", m_hasCoral);
     // TODO: think about if we want to do this logic in a command instead (we probably do)
     if (Robot.isReal()) {
       m_hasCoral = Sensors.handlerDistanceSensor.getRange(Unit.kInches) < 5;
     } else {
-      if (m_state == CoralHandlerState.kIndex) {
+      if (m_state == CoralHandlerState.kGrab) {
         m_intakeSim.startIntake();
       } else {
         m_intakeSim.stopIntake();
+      }
+      if (m_state == CoralHandlerState.kRelease && m_intakeSim.obtainGamePieceFromIntake()) {
+        // TODO: make this dependent on elevator position
+
       }
       m_hasCoral = m_intakeSim.getGamePiecesAmount() != 0;
     }
@@ -101,12 +117,36 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   }
 
   /** Set state to index */
-  public void index() {
-    setState(CoralHandlerState.kIndex);
+  public void grab() {
+    setState(CoralHandlerState.kGrab);
   }
 
   /** Set state to score */
-  public void score() {
-    setState(CoralHandlerState.kScore);
+  public void release() {
+    setState(CoralHandlerState.kRelease);
+  }
+
+  /** Set state to inactive */
+  public void idle() {
+    setState(CoralHandlerState.kInactive);
+  }
+
+  /** Intake a simulated coral from thin air, like magic ✨ */
+  public void getSimCoral() {
+    Class<?> clazz = m_intakeSim.getClass();
+    // we need to increment the private field, gamePiecesInIntakeCount
+    // TODO: upstream this and make it not hacky - see Shenzhen-Robotics-Alliance/maple-sim#106
+    try {
+      java.lang.reflect.Field field = clazz.getDeclaredField("gamePiecesInIntakeCount");
+      field.setAccessible(true);
+      int value = (int) field.get(m_intakeSim);
+      if (value < 1) {
+        field.set(m_intakeSim, value + 1);
+      } else {
+        System.err.println("You already have a coral, you greedy bastard!");
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }

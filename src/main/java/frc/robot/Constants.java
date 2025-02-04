@@ -39,6 +39,8 @@ import java.util.function.BooleanSupplier;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final double kTau = Math.PI * 2;
+
   public static class Sensors {
     public static final AHRS gyro = new AHRS(NavXComType.kUSB1);
     // Apparently you gotta add the deps for this baby manually, so do that ig
@@ -75,8 +77,8 @@ public final class Constants {
           new HashMap<>() {
             {
               put(CoralHandlerState.kInactive, 0.0);
-              put(CoralHandlerState.kIndex, 50.0);
-              put(CoralHandlerState.kScore, 20.00);
+              put(CoralHandlerState.kGrab, 50.0);
+              put(CoralHandlerState.kRelease, 20.00);
             }
           };
 
