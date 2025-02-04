@@ -77,6 +77,7 @@ public final class Constants {
   // or is it a single PID running on the roborio?
   // or is it a single PID running locally, and one slaved to it? (probably this one)
   public static class Elevator {
+    // TODO: figure these out
     public static final int kLeftElevatorCANid = 9;
     public static final int kRightElevatorCANid = 10;
 
