@@ -51,6 +51,7 @@ public final class Constants {
   }
 
   public static class Climber {
+    // TODO: figure this out
     public static final int kClimberMotorCanId = 20;
 
     public static final SparkMax kClimberSparkMax =
@@ -70,7 +71,7 @@ public final class Constants {
     public static final double kConversionFactor = Math.PI * 2;
 
     // TODO: find these
-    public static final HashMap<ClimberState, Double> kClimberPositions =
+    public static final HashMap<ClimberState, Double> kPositions =
         new HashMap<ClimberState, Double>() {
           {
             put(ClimberState.WAITING, 0.0);

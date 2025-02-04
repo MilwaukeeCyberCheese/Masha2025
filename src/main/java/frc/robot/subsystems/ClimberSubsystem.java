@@ -32,7 +32,7 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public void setState(ClimberState state) {
     m_state = state;
-    setPosition(Climber.kClimberPositions.get(state));
+    setPosition(Climber.kPositions.get(state));
   }
 
   /**
@@ -51,7 +51,7 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public boolean atState() {
     return Math.abs(
-            Climber.kClimberPositions.get(m_state)
+            Climber.kPositions.get(m_state)
                 - Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition())
         < Climber.kClimberTolerance;
   }
