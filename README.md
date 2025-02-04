@@ -5,5 +5,5 @@ When cloning locally, copy this script into the .git/hooks/pre-commit file to ru
 ```
 #!/bin/sh
 
-./gradlew spotlessApply
+./gradlew spotlessCheck
 ```
