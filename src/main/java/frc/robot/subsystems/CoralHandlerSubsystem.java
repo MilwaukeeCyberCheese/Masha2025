@@ -141,7 +141,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     setState(CoralHandlerState.kInactive);
   }
 
-  /** Intake a simulated coral from thin air, like magic ✨ */
+  /** Intake a simulated coral from thin air, like magic */
   public void getSimCoral() {
     Class<?> clazz = m_intakeSim.getClass();
     // we need to increment the private field, gamePiecesInIntakeCount
