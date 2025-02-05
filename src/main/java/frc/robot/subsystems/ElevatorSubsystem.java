@@ -114,8 +114,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_simHeight = height;
   }
 
-  // TODO: test this and make sure the
-  // disabling works
+  //TODO: test this
   /**
    * Zero the absolute encoder of the elevator
    *
