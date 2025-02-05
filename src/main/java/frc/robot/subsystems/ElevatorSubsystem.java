@@ -114,31 +114,25 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_simHeight = height;
   }
 
-  //TODO: test this
+  // TODO: test this
   /**
    * Zero the absolute encoder of the elevator
    *
    * <p>Should only be called when the elevator is at the bottom
+   *
+   * @param persistMode {@link PersistMode} only call this when intending to save the new offset,
+   *     note that this will cause the spark to become unresponsive for a short period of time
    */
-  public void zero() {
-    setState(ElevatorState.DISABLED);
+  public void zero(PersistMode persistMode) {
+    double previousOffset =
+        Elevator.kLeftElevatorSparkMax.configAccessor.absoluteEncoder.getZeroOffset();
 
-    // Zero the offset, as we don't know what the prior one was
-    Elevator.kLeftElevatorConfig.absoluteEncoder.zeroOffset(0);
-    Elevator.kLeftElevatorSparkMax.configure(
-        Elevator.kLeftElevatorConfig,
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
-
-    // Set the offset to the current position
     Elevator.kLeftElevatorConfig.absoluteEncoder.zeroOffset(
-        Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition());
+        previousOffset + Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition());
     Elevator.kLeftElevatorSparkMax.configure(
         Elevator.kLeftElevatorConfig,
-        ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
-
-    setState(ElevatorState.DOWN);
+        ResetMode.kNoResetSafeParameters,
+        PersistMode.kNoPersistParameters);
   }
 
   public Translation2d getSimEjectPosition() {
