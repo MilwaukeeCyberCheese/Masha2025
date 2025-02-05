@@ -143,20 +143,8 @@ public class CoralHandlerSubsystem extends SubsystemBase {
 
   /** Intake a simulated coral from thin air, like magic */
   public void getSimCoral() {
-    Class<?> clazz = m_intakeSim.getClass();
-    // we need to increment the private field, gamePiecesInIntakeCount
-    // TODO: upstream this and make it not hacky - see Shenzhen-Robotics-Alliance/maple-sim#106
-    try {
-      java.lang.reflect.Field field = clazz.getDeclaredField("gamePiecesInIntakeCount");
-      field.setAccessible(true);
-      int value = (int) field.get(m_intakeSim);
-      if (value < 1) {
-        field.set(m_intakeSim, value + 1);
-      } else {
-        System.err.println("You already have a coral, you greedy bastard!");
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
+    if (!m_intakeSim.addGamePieceToIntake()) {
+      System.err.println("You already have a coral, you greedy bastard!");
     }
   }
 }
