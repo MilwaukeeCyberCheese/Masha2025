@@ -8,7 +8,6 @@ import com.revrobotics.Rev2mDistanceSensor.Unit;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Handler.Coral;
@@ -40,7 +39,9 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   private CoralHandlerState m_state = CoralHandlerState.kInactive;
   private boolean m_hasCoral = false;
 
-  public CoralHandlerSubsystem(AbstractDriveTrainSimulation driveSim) {
+  private final ElevatorSubsystem m_elevator;
+
+  public CoralHandlerSubsystem(AbstractDriveTrainSimulation driveSim, ElevatorSubsystem elevator) {
     m_drive = driveSim;
     Coral.m_left.configure(
         Coral.m_leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -50,6 +51,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     Rectangle intake = new Rectangle(.762, .245);
     intake.translate(new Vector2(0, .762));
     m_intakeSim = new IntakeSimulation("Coral", driveSim, intake, 1);
+    m_elevator = elevator;
   }
 
   /**
@@ -103,14 +105,11 @@ public class CoralHandlerSubsystem extends SubsystemBase {
         m_intakeSim.stopIntake();
       }
       if (m_state == CoralHandlerState.kRelease && m_intakeSim.obtainGamePieceFromIntake()) {
-        // TODO: make this dependent on elevator position
         SimulatedArena.getInstance()
             .addGamePieceProjectile(
                 new ReefscapeCoralOnFly(
                     m_drive.getSimulatedDriveTrainPose().getTranslation(),
-                    new Translation2d(
-                        0.35,
-                        0), // mechanism position, this is where elevator comes into play i think
+                    m_elevator.getSimEjectPosition(),
                     m_drive.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
                     m_drive.getSimulatedDriveTrainPose().getRotation(),
                     Meters.of(1.28), // eject height

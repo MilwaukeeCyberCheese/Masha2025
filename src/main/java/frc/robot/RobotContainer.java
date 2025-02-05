@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.CoralHandlerSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.FilteredButton;
 import frc.robot.utils.FilteredJoystick;
@@ -27,6 +28,7 @@ public class RobotContainer {
   private final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
   private final CoralHandlerSubsystem m_coral = new CoralHandlerSubsystem(m_drive.getSimDrive());
+  private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
 
   // Driver joysticks
   private final FilteredJoystick m_driverLeftJoystick =
@@ -68,6 +70,12 @@ public class RobotContainer {
     // Zero gyro with A button
     m_driverController.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
     m_driverController.b().onTrue(Commands.runOnce(m_coral::getSimCoral));
+    m_driverController
+        .x()
+        .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
+    m_driverController
+        .y()
+        .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
     m_driverController.rightBumper().onTrue(Commands.runOnce(m_coral::grab));
     m_driverController.rightBumper().onFalse(Commands.runOnce(m_coral::idle));

@@ -1,8 +1,16 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Inches;
+
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Elevator;
 
@@ -22,6 +30,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private ElevatorState m_state = ElevatorState.DOWN;
 
+  private double m_simHeight = 0.0;
+
+  StructArrayPublisher<Pose3d> m_simPoseArray =
+      NetworkTableInstance.getDefault()
+          .getStructArrayTopic("Simulation/ElevatorPose", Pose3d.struct)
+          .publish();
+
   public ElevatorSubsystem() {
     Elevator.kLeftElevatorSparkMax.configure(
         Elevator.kLeftElevatorConfig,
@@ -40,7 +55,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
+    m_simPoseArray.accept(
+        new Pose3d[] {new Pose3d(0.0, 0.0, Units.inchesToMeters(m_simHeight), new Rotation3d())});
     log();
   }
 
@@ -95,6 +111,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   private void setHeight(double height) {
     Elevator.kElevatorController.setReference(height, ControlType.kMAXMotionPositionControl);
+    m_simHeight = height;
   }
 
   // TODO: test this and make sure the
@@ -123,5 +140,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         PersistMode.kPersistParameters);
 
     setState(ElevatorState.DOWN);
+  }
+
+  public Translation2d getSimEjectPosition() {
+    return new Translation2d(Inches.of(m_simHeight), Inches.of(0.0));
   }
 }

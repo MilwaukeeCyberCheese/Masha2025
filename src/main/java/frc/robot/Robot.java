@@ -4,9 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -28,16 +26,15 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   StructArrayPublisher<Pose3d> coralPoses =
-      NetworkTableInstance.getDefault().getStructArrayTopic("Coral", Pose3d.struct).publish();
+      NetworkTableInstance.getDefault()
+          .getStructArrayTopic("Simulation/Coral", Pose3d.struct)
+          .publish();
   StructArrayPublisher<Pose3d> algaePoses =
-      NetworkTableInstance.getDefault().getStructArrayTopic("Algae", Pose3d.struct).publish();
+      NetworkTableInstance.getDefault()
+          .getStructArrayTopic("Simulation/Algae", Pose3d.struct)
+          .publish();
 
   private static Robot m_instance;
-
-  private final Pose2d m_dummyPose = new Pose2d(0, 0, new Rotation2d(0));
-
-  StructArrayPublisher<Pose3d> zeroedPoses =
-      NetworkTableInstance.getDefault().getStructArrayTopic("ZeroedPose", Pose3d.struct).publish();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -80,8 +77,6 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
-    // dummy position for component testing
-    SmartDashboard.putString("Dummy Pose2d", m_dummyPose.toString());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -147,6 +142,5 @@ public class Robot extends TimedRobot {
         SimulatedArena.getInstance().getGamePiecesByType("Coral").toArray(Pose3d[]::new));
     algaePoses.accept(
         SimulatedArena.getInstance().getGamePiecesByType("Algae").toArray(Pose3d[]::new));
-    zeroedPoses.accept(new Pose3d[] {new Pose3d()});
   }
 }
