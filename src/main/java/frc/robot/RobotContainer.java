@@ -27,8 +27,9 @@ import swervelib.SwerveInputStream;
 public class RobotContainer {
   private final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
-  private final CoralHandlerSubsystem m_coral = new CoralHandlerSubsystem(m_drive.getSimDrive());
   private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+  private final CoralHandlerSubsystem m_coral =
+      new CoralHandlerSubsystem(m_drive.getSimDrive(), m_elevator);
 
   // Driver joysticks
   private final FilteredJoystick m_driverLeftJoystick =
