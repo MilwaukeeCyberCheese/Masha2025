@@ -4,8 +4,9 @@
 
 package frc.robot;
 
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.Rev2mDistanceSensor;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -27,6 +28,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
+import frc.robot.subsystems.CoralHandlerSubsystem.CoralHandlerState;
 import frc.robot.utils.PIDConstants;
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
@@ -40,9 +42,76 @@ import java.util.function.BooleanSupplier;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final double kTau = Math.PI * 2;
+
   public static class Sensors {
     public static final AHRS gyro = new AHRS(NavXComType.kUSB1);
     public static final DigitalInput elevatorLimitSwitch = new DigitalInput(0);
+    // Apparently you gotta add the deps for this baby manually, so do that ig
+    public static final Rev2mDistanceSensor handlerDistanceSensor =
+        new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard);
+  }
+
+  // TODO: find like all of these
+  public static class Handler {
+    public static class Coral {
+      // TODO: figure these out
+      public static final int kLeftMotorCANid = 9;
+      public static final int kRightMotorCANid = 10;
+
+      public static final SparkMax m_left =
+          new SparkMax(kLeftMotorCANid, SparkMax.MotorType.kBrushless);
+      public static final SparkMax m_right =
+          new SparkMax(kRightMotorCANid, SparkMax.MotorType.kBrushless);
+
+      public static final SparkMaxConfig m_leftConfig = new SparkMaxConfig();
+      public static final SparkMaxConfig m_rightConfig = new SparkMaxConfig();
+
+      public static final SparkClosedLoopController m_leftController =
+          m_left.getClosedLoopController();
+      public static final SparkClosedLoopController m_rightController =
+          m_right.getClosedLoopController();
+
+      public static final PIDConstants m_pidConstants = new PIDConstants(0.1, 0, 0);
+
+      public static final boolean kLeftInverted = true;
+      public static final boolean kRightInverted = false;
+
+      // TODO: find these
+      public static final HashMap<CoralHandlerState, Double> kSpeeds =
+          new HashMap<>() {
+            {
+              put(CoralHandlerState.kInactive, 0.0);
+              put(CoralHandlerState.kGrab, 50.0);
+              put(CoralHandlerState.kRelease, 20.00);
+            }
+          };
+
+      // TODO: find this
+      public static final double kConversionFactor = 1.0;
+
+      static {
+        m_leftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kLeftInverted);
+        m_rightConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kRightInverted);
+
+        m_leftConfig.encoder.velocityConversionFactor(kConversionFactor);
+        m_rightConfig.encoder.velocityConversionFactor(kConversionFactor);
+
+        m_leftConfig
+            .closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pid(m_pidConstants.kP, m_pidConstants.kI, m_pidConstants.kD)
+            .outputRange(-1, 1);
+
+        m_rightConfig
+            .closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pid(m_pidConstants.kP, m_pidConstants.kI, m_pidConstants.kD)
+            .outputRange(-1, 1);
+      }
+
+      public static final double kDetectionDelayTimeMS = 1000;
+    }
   }
 
   public static class OIConstants {
