@@ -200,9 +200,11 @@ public final class Constants {
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
   }
+
   public static final class VortexMotorConstants {
     public static final double kFreeSpeedRpm = 6784;
   }
+
   // Not digits cause java doesn't like that
   public static final class FiveFiftyMotorConstants {
     public static final double kFreeSpeedRPM = 11000;
