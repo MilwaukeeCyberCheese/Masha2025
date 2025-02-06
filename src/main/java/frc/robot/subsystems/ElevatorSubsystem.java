@@ -117,7 +117,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     return Math.abs(
-            targetHeight - Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition()) 
+            targetHeight - Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition())
         < Elevator.kElevatorTolerance;
   }
 
