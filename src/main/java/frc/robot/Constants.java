@@ -89,6 +89,7 @@ public final class Constants {
 
       // TODO: find this
       public static final double kConversionFactor = 1.0;
+      public static final double kTolerance = 10;
 
       static {
         m_leftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kLeftInverted);

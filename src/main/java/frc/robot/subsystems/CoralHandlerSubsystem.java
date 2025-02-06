@@ -93,6 +93,18 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     Coral.m_rightController.setReference(speed, ControlType.kMAXMotionVelocityControl);
   }
 
+  /**
+   * Get whether the coral handler is at the right speed
+   *
+   * @return boolean
+   */
+  public boolean atSpeed() {
+    return Math.abs(Coral.kSpeeds.get(m_state) - Coral.m_leftEncoder.getVelocity())
+            < Coral.kTolerance
+        && Math.abs(Coral.kSpeeds.get(m_state) - Coral.m_rightEncoder.getVelocity())
+            < Coral.kTolerance;
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("Coral Handler Has Coral", m_hasCoral);
