@@ -11,8 +11,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Elevator;
+import java.util.Optional;
 
 // TODO: add sim support
 public class ElevatorSubsystem extends SubsystemBase {
@@ -25,10 +27,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     L3,
     L4,
     ALGAE_FROM_REEF,
-    ALGAE_FROM_FLOOR // TBD if this is needed depending on how the intake for algae works
+    ALGAE_FROM_FLOOR, // TBD if this is needed depending on how the intake for algae works
+    CUSTOM
   }
 
   private ElevatorState m_state = ElevatorState.DOWN;
+  private Optional<Double> m_customTarget = null;
 
   private double m_simHeight = 0.0;
   private double m_simTargetHeight = 0.0;
@@ -84,7 +88,19 @@ public class ElevatorSubsystem extends SubsystemBase {
       return;
     }
 
-    setHeight(Elevator.kHeights.get(state));
+    setHeight(state != ElevatorState.CUSTOM ? Elevator.kHeights.get(state) : m_customTarget.get());
+  }
+
+  /**
+   * Set the elevator to a custom target state
+   *
+   * @param target double
+   */
+  public void setTarget(double target) {
+    m_state = ElevatorState.CUSTOM;
+    m_customTarget = Optional.of(target);
+    setHeight(target);
+    SmartDashboard.putNumber("Elevator Custom Target", target);
   }
 
   /**
@@ -93,9 +109,15 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return boolean
    */
   public boolean atHeight() {
+    double targetHeight;
+    if (m_state == ElevatorState.CUSTOM && m_customTarget.isPresent()) {
+      targetHeight = m_customTarget.get();
+    } else {
+      targetHeight = Elevator.kHeights.get(m_state);
+    }
+
     return Math.abs(
-            Elevator.kHeights.get(m_state)
-                - Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition())
+            targetHeight - Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition()) 
         < Elevator.kElevatorTolerance;
   }
 
@@ -116,6 +138,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private void setHeight(double height) {
     Elevator.kElevatorController.setReference(height, ControlType.kMAXMotionPositionControl);
     m_simTargetHeight = height;
+    SmartDashboard.putNumber("Elevator/SimTargetHeight", height);
   }
 
   // TODO: test this
