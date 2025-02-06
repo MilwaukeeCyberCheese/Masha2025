@@ -10,6 +10,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.CoralHandlerSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
+import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.FilteredButton;
 import frc.robot.utils.FilteredJoystick;
@@ -25,6 +29,12 @@ import swervelib.SwerveInputStream;
 public class RobotContainer {
   private final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
+  private final ElevatorSubsystem m_elevator =
+      Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
+  private final CoralHandlerSubsystem m_coral =
+      Robot.isReal()
+          ? new CoralHandlerSubsystem()
+          : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
 
   // Driver joysticks
   private final FilteredJoystick m_driverLeftJoystick =
@@ -33,7 +43,7 @@ public class RobotContainer {
       new FilteredJoystick(OIConstants.kRightJoystickPort);
 
   // Operator controller
-  private final CommandXboxController m_driverController =
+  private final CommandXboxController m_operatorController =
       new CommandXboxController(OIConstants.kOperatorControllerPort);
 
   // Button Board
@@ -43,9 +53,9 @@ public class RobotContainer {
   SwerveInputStream driveInput =
       SwerveInputStream.of(
               m_drive.getSwerveDrive(),
-              () -> m_driverController.getLeftY(),
-              () -> m_driverController.getLeftX())
-          .withControllerRotationAxis(() -> -m_driverController.getRightX())
+              m_operatorController::getLeftY,
+              m_operatorController::getLeftX)
+          .withControllerRotationAxis(() -> -m_operatorController.getRightX())
           .deadband(0.1)
           .scaleTranslation(0.8)
           .allianceRelativeControl(true);
@@ -66,12 +76,25 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Zero gyro with A button
-    m_driverController.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
+    m_operatorController.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
 
-    // Lock wheels with left bumper
-    m_driverController
-        .leftBumper()
-        .whileTrue(Commands.runOnce(m_drive::lock, m_drive).repeatedly());
+    if (!Robot.isReal()) {
+      m_operatorController
+          .b()
+          .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
+    }
+
+    m_operatorController
+        .x()
+        .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
+    m_operatorController
+        .y()
+        .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
+
+    m_operatorController.rightBumper().onTrue(Commands.runOnce(m_coral::grab));
+    m_operatorController.rightBumper().onFalse(Commands.runOnce(m_coral::idle));
+    m_operatorController.leftBumper().onTrue(Commands.runOnce(m_coral::release));
+    m_operatorController.leftBumper().onFalse(Commands.runOnce(m_coral::idle));
   }
 
   /**
