@@ -49,6 +49,10 @@ public final class Constants {
     public static final DigitalInput elevatorLimitSwitch = new DigitalInput(0);
     public static final Rev2mDistanceSensor handlerDistanceSensor =
         new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard);
+
+    static {
+      handlerDistanceSensor.setDistanceUnits(Rev2mDistanceSensor.Unit.kInches);
+    }
   }
 
   // TODO: find like all of these
@@ -80,16 +84,17 @@ public final class Constants {
       public static final HashMap<CoralHandlerState, Double> kSpeeds =
           new HashMap<>() {
             {
-              put(CoralHandlerState.kInactive, 0.0);
-              put(CoralHandlerState.kGrab, 50.0);
-              put(CoralHandlerState.kRelease, 20.00);
+              put(CoralHandlerState.INACTIVE, 0.0);
+              put(CoralHandlerState.GRAB, 50.0);
+              put(CoralHandlerState.RELEASE, 20.00);
             }
           };
 
-      // TODO: find this
+      // TODO: find these
       public static final double kConversionFactor = 1.0;
       public static final double kTolerance = 10;
       public static final double kDetectionDelayTimeMS = 1000;
+      public static final double kHasCoralDistance = 2.0;
 
       static {
         kLeftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kLeftInverted);
