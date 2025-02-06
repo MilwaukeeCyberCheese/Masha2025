@@ -7,10 +7,10 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Elevator;
 
@@ -135,7 +135,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         PersistMode.kNoPersistParameters);
   }
 
-  public Translation2d getSimEjectPosition() {
-    return new Translation2d(Inches.of(m_simHeight), Inches.of(0.0));
+  public Distance getSimEjectHeight() {
+    return Inches.of(m_simHeight).plus(Inches.of(28));
   }
 }

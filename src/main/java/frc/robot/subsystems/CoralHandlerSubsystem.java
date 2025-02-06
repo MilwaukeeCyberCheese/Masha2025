@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 
@@ -8,6 +8,7 @@ import com.revrobotics.Rev2mDistanceSensor.Unit;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Handler.Coral;
@@ -109,12 +110,12 @@ public class CoralHandlerSubsystem extends SubsystemBase {
             .addGamePieceProjectile(
                 new ReefscapeCoralOnFly(
                     m_drive.getSimulatedDriveTrainPose().getTranslation(),
-                    m_elevator.getSimEjectPosition(),
+                    new Translation2d(Inches.of(16.0), Inches.of(0)),
                     m_drive.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
                     m_drive.getSimulatedDriveTrainPose().getRotation(),
-                    Meters.of(1.28), // eject height
-                    MetersPerSecond.of(2), // eject speed
-                    Radians.of(0.610865238)));
+                    m_elevator.getSimEjectHeight(),
+                    MetersPerSecond.of(0.8), // eject speed
+                    Radians.of(-Math.PI / 9)));
       }
       m_hasCoral = m_intakeSim.getGamePiecesAmount() != 0;
     }
