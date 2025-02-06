@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import com.revrobotics.Rev2mDistanceSensor;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -22,6 +26,11 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.subsystems.CoralHandlerSubsystem.CoralHandlerState;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
+import frc.robot.utils.PIDConstants;
+import java.util.HashMap;
 import java.util.function.BooleanSupplier;
 
 /**
@@ -33,8 +42,77 @@ import java.util.function.BooleanSupplier;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final double kTau = Math.PI * 2;
+
   public static class Sensors {
     public static final AHRS gyro = new AHRS(NavXComType.kUSB1);
+    public static final DigitalInput elevatorLimitSwitch = new DigitalInput(0);
+    public static final Rev2mDistanceSensor handlerDistanceSensor =
+        new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard);
+
+    static {
+      handlerDistanceSensor.setDistanceUnits(Rev2mDistanceSensor.Unit.kInches);
+    }
+  }
+
+  // TODO: find like all of these
+  public static class Handler {
+    public static class Coral {
+      // TODO: figure these out
+      public static final int kLeftMotorCANid = 9;
+      public static final int kRightMotorCANid = 10;
+
+      public static final SparkMax kLeftSparkMax =
+          new SparkMax(kLeftMotorCANid, SparkMax.MotorType.kBrushless);
+      public static final SparkMax kRightSparkMax =
+          new SparkMax(kRightMotorCANid, SparkMax.MotorType.kBrushless);
+
+      public static final SparkMaxConfig kLeftConfig = new SparkMaxConfig();
+      public static final SparkMaxConfig kRightConfig = new SparkMaxConfig();
+
+      public static final SparkClosedLoopController kLeftController =
+          kLeftSparkMax.getClosedLoopController();
+      public static final SparkClosedLoopController kRightController =
+          kRightSparkMax.getClosedLoopController();
+
+      // Max accel is in RPM
+      public static final PIDConstants kPIDConstants = new PIDConstants(0.1, 0, 0, -1.0, 300.0);
+
+      public static final boolean kLeftInverted = true;
+      public static final boolean kRightInverted = false;
+
+      // TODO: find these
+      public static final HashMap<CoralHandlerState, Double> kSpeeds =
+          new HashMap<>() {
+            {
+              put(CoralHandlerState.INACTIVE, 0.0);
+              put(CoralHandlerState.GRAB, 50.0);
+              put(CoralHandlerState.RELEASE, 20.00);
+            }
+          };
+
+      // TODO: find these
+      public static final double kConversionFactor = 1.0;
+      public static final double kTolerance = 10;
+      public static final double kDetectionDelayTimeMS = 1000;
+      public static final double kHasCoralDistance = 2.0;
+
+      static {
+        kLeftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kLeftInverted);
+
+        kLeftConfig.encoder.velocityConversionFactor(kConversionFactor);
+
+        kLeftConfig
+            .closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pid(kPIDConstants.kP, kPIDConstants.kI, kPIDConstants.kD)
+            .outputRange(-1, 1)
+            .maxMotion
+            .maxAcceleration(kPIDConstants.kMaxAcceleration);
+
+        kRightConfig.apply(kLeftConfig).inverted(kRightInverted);
+      }
+    }
   }
 
   public static class OIConstants {
@@ -61,6 +139,83 @@ public final class Constants {
     // (Fake values. Experiment and determine estimation noise on an actual robot.)
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+  }
+
+  // TODO: figure out the best way to run the elevator
+  // is it separate PIDs running locally? (also this one means another encoder is
+  // needed)
+  // or is it a single PID running on the roborio?
+  // or is it a single PID running locally, and one slaved to it? (probably this
+  // one)
+  public static class Elevator {
+    // TODO: figure these out
+    public static final int kLeftElevatorCANid = 1;
+    public static final int kRightElevatorCANid = 2;
+
+    public static final double kSimLerpSpeed = 60;
+
+    public static final SparkMax kLeftElevatorSparkMax =
+        new SparkMax(kLeftElevatorCANid, MotorType.kBrushless);
+    public static final SparkMax kRightElevatorSparkMax =
+        new SparkMax(kRightElevatorCANid, MotorType.kBrushless);
+
+    public static final SparkMaxConfig kLeftElevatorConfig = new SparkMaxConfig();
+    public static final SparkMaxConfig kRightElevatorConfig = new SparkMaxConfig();
+
+    public static final boolean kLeftInverted = false;
+    public static final boolean kRightInverted = true;
+
+    // only one cause we slave the other motor to this one
+    public static final SparkClosedLoopController kElevatorController =
+        kLeftElevatorSparkMax.getClosedLoopController();
+
+    // TODO: veloc and accel is in inches per second and inches per second squared
+    public static final PIDConstants kElevatorPIDConstants =
+        new PIDConstants(0.1, 0.0, 0.0, 16.0, 20.0);
+
+    // TODO: figure out the heights
+    public static final HashMap<ElevatorState, Double> kHeights =
+        new HashMap<>() {
+          {
+            put(ElevatorState.DOWN, 0.0);
+            put(ElevatorState.L1, 16.5);
+            put(ElevatorState.L2, 20.0);
+            put(ElevatorState.L3, 45.0);
+            put(ElevatorState.L4, 0.4);
+            put(ElevatorState.ALGAE_FROM_REEF, 0.5);
+            put(ElevatorState.ALGAE_FROM_FLOOR, 0.6);
+          }
+        };
+
+    // TODO: figure out the conversion factor
+    public static final double kConversionFactor = 1.0;
+
+    // TODO: figure out the tolerance
+    public static final double kElevatorTolerance = 0.01;
+
+    /*
+     * TODO: TEST IN SIMULATION THE DIRECTION THE LIFT MOTORS SPIN
+     * ISTFG WE HAVE TO DO THIS CAUSE THEY'RE MECHANICALLY LINKED
+     * IF IT GETS MESSED UP, I'M LOSING IT
+     */
+    static {
+      kLeftElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kLeftInverted);
+      kRightElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kRightInverted);
+
+      kRightElevatorConfig.follow(
+          kLeftElevatorSparkMax); // you can pass in an inverted value after the
+      // kLeftElevatorSparkMax, but idk quite how that works yet
+
+      kLeftElevatorConfig
+          .closedLoop
+          .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD)
+          .maxMotion
+          .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
+          .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
+
+      kLeftElevatorConfig.absoluteEncoder.positionConversionFactor(kConversionFactor);
+    }
   }
 
   public static final class MAXSwerveModule {
