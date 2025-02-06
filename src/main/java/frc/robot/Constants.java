@@ -75,7 +75,8 @@ public final class Constants {
       public static final SparkClosedLoopController kRightController =
           kRightSparkMax.getClosedLoopController();
 
-      public static final PIDConstants kPIDConstants = new PIDConstants(0.1, 0, 0);
+      // Max accel is in RPM
+      public static final PIDConstants kPIDConstants = new PIDConstants(0.1, 0, 0, -1.0, 300.0);
 
       public static final boolean kLeftInverted = true;
       public static final boolean kRightInverted = false;
@@ -105,7 +106,9 @@ public final class Constants {
             .closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pid(kPIDConstants.kP, kPIDConstants.kI, kPIDConstants.kD)
-            .outputRange(-1, 1);
+            .outputRange(-1, 1)
+            .maxMotion
+            .maxAcceleration(kPIDConstants.kMaxAcceleration);
 
         kRightConfig.apply(kLeftConfig).inverted(kRightInverted);
       }
@@ -142,7 +145,8 @@ public final class Constants {
   // is it separate PIDs running locally? (also this one means another encoder is
   // needed)
   // or is it a single PID running on the roborio?
-  // or is it a single PID running locally, and one slaved to it? (probably this one)
+  // or is it a single PID running locally, and one slaved to it? (probably this
+  // one)
   public static class Elevator {
     // TODO: figure these out
     public static final int kLeftElevatorCANid = 1;
@@ -165,7 +169,9 @@ public final class Constants {
     public static final SparkClosedLoopController kElevatorController =
         kLeftElevatorSparkMax.getClosedLoopController();
 
-    public static final PIDConstants kElevatorPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
+    // TODO: veloc and accel is in inches per second and inches per second squared
+    public static final PIDConstants kElevatorPIDConstants =
+        new PIDConstants(0.1, 0.0, 0.0, 16.0, 20.0);
 
     // TODO: figure out the heights
     public static final HashMap<ElevatorState, Double> kHeights =
@@ -203,7 +209,10 @@ public final class Constants {
       kLeftElevatorConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
+          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD)
+          .maxMotion
+          .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
+          .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
 
       kLeftElevatorConfig.absoluteEncoder.positionConversionFactor(kConversionFactor);
     }
