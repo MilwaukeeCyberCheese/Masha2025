@@ -31,6 +31,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private ElevatorState m_state = ElevatorState.DOWN;
 
   private double m_simHeight = 0.0;
+  private double m_simTargetHeight = 0.0;
 
   StructArrayPublisher<Pose3d> m_simPoseArray =
       NetworkTableInstance.getDefault()
@@ -52,12 +53,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   // Methods to set motor speeds, etc. go here
 
-  @Override
+  @Override 
   public void periodic() {
-    // This method will be called once per scheduler run
-    m_simPoseArray.accept(
-        new Pose3d[] {new Pose3d(0.0, 0.0, Units.inchesToMeters(m_simHeight), new Rotation3d())});
-    log();
+      double error = m_simTargetHeight - m_simHeight;
+      double maxDelta = Elevator.kSimLerpSpeed * 0.02; // dt assumed to be 20ms
+      m_simHeight += Math.copySign(Math.min(Math.abs(error), maxDelta), error);
+      
+      m_simPoseArray.accept(
+          new Pose3d[] {new Pose3d(0.0, 0.0, Units.inchesToMeters(m_simHeight), new Rotation3d())});
+      log();
   }
 
   public void log() {
@@ -111,7 +115,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   private void setHeight(double height) {
     Elevator.kElevatorController.setReference(height, ControlType.kMAXMotionPositionControl);
-    m_simHeight = height;
+    m_simTargetHeight = height;
   }
 
   // TODO: test this

@@ -150,6 +150,8 @@ public final class Constants {
     public static final int kLeftElevatorCANid = 1;
     public static final int kRightElevatorCANid = 2;
 
+    public static final double kSimLerpSpeed = 60;
+
     public static final SparkMax kLeftElevatorSparkMax =
         new SparkMax(kLeftElevatorCANid, MotorType.kBrushless);
     public static final SparkMax kRightElevatorSparkMax =
