@@ -1,5 +1,7 @@
 package frc.robot.utils;
 
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -43,11 +45,18 @@ public class LivePIDTuner {
    */
   public static void setSparkPID(SparkMax controller, PIDConstants constants) {
     SparkMaxConfig config = new SparkMaxConfig();
-    if (constants.kMaxAcceleration != 0) {
+    if (constants.kMaxAcceleration != -1.0) {
       config.closedLoop.maxMotion.maxVelocity(constants.kMaxAcceleration);
     }
-    if (constants.kMaxVelocity != 0) {
+    if (constants.kMaxVelocity != -1.0) {
       config.closedLoop.maxMotion.maxAcceleration(constants.kMaxVelocity);
     }
+
+    config.closedLoop.pid(constants.kP, constants.kI, constants.kD);
+    config.closedLoop.iZone(constants.kIZone);
+    config.closedLoop.velocityFF(constants.kFF);
+
+    controller.configure(
+        config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 }

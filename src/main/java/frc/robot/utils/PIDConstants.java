@@ -59,7 +59,7 @@ public class PIDConstants {
    * @param kD D
    */
   public PIDConstants(double kP, double kI, double kD) {
-    this(kP, kI, kD, 0.0, 0.0, 0.0, 0.0);
+    this(kP, kI, kD, 0.0, 0.0, -1.0, -1.0);
   }
 
   /**
@@ -71,7 +71,7 @@ public class PIDConstants {
    * @param kFF Feedforward
    */
   public PIDConstants(double kP, double kI, double kD, double kFF) {
-    this(kP, kI, kD, kFF, 0.0, 0.0, 0.0);
+    this(kP, kI, kD, kFF, 0.0, -1.0, -1.0);
   }
 
   /**
