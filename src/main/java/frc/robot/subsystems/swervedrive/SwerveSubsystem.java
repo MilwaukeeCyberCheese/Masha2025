@@ -109,8 +109,8 @@ public class SwerveSubsystem extends SubsystemBase {
         false, 1); // Enable if you want to resynchronize your absolute encoders and motor encoders
     // periodically when they are not moving.
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used
-    // over the
-    // internal encoder and push the offsets onto it. Throws warning if not possible
+    // over the internal encoder and push the offsets onto it.
+    // Throws warning if not possible
     if (visionDriveTest) {
       setupPhotonVision();
       // Stop the odometry thread if we are using vision that way we can synchronize
@@ -195,12 +195,10 @@ public class SwerveSubsystem extends SubsystemBase {
             }
           },
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also
-          // optionally
-          // outputs individual module feedforwards
+          // optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic
-              // drive
-              // trains
+              // drivetrains
               new PIDConstants(5.0, 0.0, 0.0),
               // Translation PID constants
               new PIDConstants(5.0, 0.0, 0.0)
