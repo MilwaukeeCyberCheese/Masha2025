@@ -47,7 +47,6 @@ public final class Constants {
   public static class Sensors {
     public static final AHRS gyro = new AHRS(NavXComType.kUSB1);
     public static final DigitalInput elevatorLimitSwitch = new DigitalInput(0);
-    // Apparently you gotta add the deps for this baby manually, so do that ig
     public static final Rev2mDistanceSensor handlerDistanceSensor =
         new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard);
   }
@@ -59,20 +58,20 @@ public final class Constants {
       public static final int kLeftMotorCANid = 9;
       public static final int kRightMotorCANid = 10;
 
-      public static final SparkMax m_left =
+      public static final SparkMax kLeftSparkMax =
           new SparkMax(kLeftMotorCANid, SparkMax.MotorType.kBrushless);
-      public static final SparkMax m_right =
+      public static final SparkMax kRightSparkMax =
           new SparkMax(kRightMotorCANid, SparkMax.MotorType.kBrushless);
 
-      public static final SparkMaxConfig m_leftConfig = new SparkMaxConfig();
-      public static final SparkMaxConfig m_rightConfig = new SparkMaxConfig();
+      public static final SparkMaxConfig kLeftConfig = new SparkMaxConfig();
+      public static final SparkMaxConfig kRightConfig = new SparkMaxConfig();
 
-      public static final SparkClosedLoopController m_leftController =
-          m_left.getClosedLoopController();
-      public static final SparkClosedLoopController m_rightController =
-          m_right.getClosedLoopController();
+      public static final SparkClosedLoopController kLeftController =
+          kLeftSparkMax.getClosedLoopController();
+      public static final SparkClosedLoopController kRightController =
+          kRightSparkMax.getClosedLoopController();
 
-      public static final PIDConstants m_pidConstants = new PIDConstants(0.1, 0, 0);
+      public static final PIDConstants kPIDConstants = new PIDConstants(0.1, 0, 0);
 
       public static final boolean kLeftInverted = true;
       public static final boolean kRightInverted = false;
@@ -90,28 +89,21 @@ public final class Constants {
       // TODO: find this
       public static final double kConversionFactor = 1.0;
       public static final double kTolerance = 10;
+      public static final double kDetectionDelayTimeMS = 1000;
 
       static {
-        m_leftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kLeftInverted);
-        m_rightConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kRightInverted);
+        kLeftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kLeftInverted);
 
-        m_leftConfig.encoder.velocityConversionFactor(kConversionFactor);
-        m_rightConfig.encoder.velocityConversionFactor(kConversionFactor);
+        kLeftConfig.encoder.velocityConversionFactor(kConversionFactor);
 
-        m_leftConfig
+        kLeftConfig
             .closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(m_pidConstants.kP, m_pidConstants.kI, m_pidConstants.kD)
+            .pid(kPIDConstants.kP, kPIDConstants.kI, kPIDConstants.kD)
             .outputRange(-1, 1);
 
-        m_rightConfig
-            .closedLoop
-            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(m_pidConstants.kP, m_pidConstants.kI, m_pidConstants.kD)
-            .outputRange(-1, 1);
+        kRightConfig.apply(kLeftConfig).inverted(kRightInverted);
       }
-
-      public static final double kDetectionDelayTimeMS = 1000;
     }
   }
 

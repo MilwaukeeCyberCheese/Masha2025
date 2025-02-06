@@ -44,10 +44,10 @@ public class CoralHandlerSubsystem extends SubsystemBase {
 
   public CoralHandlerSubsystem(AbstractDriveTrainSimulation driveSim, ElevatorSubsystem elevator) {
     m_drive = driveSim;
-    Coral.m_left.configure(
-        Coral.m_leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    Coral.m_right.configure(
-        Coral.m_rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    Coral.kLeftSparkMax.configure(
+        Coral.kLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    Coral.kRightSparkMax.configure(
+        Coral.kRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     Rectangle intake = new Rectangle(.762, .245);
     intake.translate(new Vector2(0, .762));
@@ -89,8 +89,8 @@ public class CoralHandlerSubsystem extends SubsystemBase {
    * @param speed double
    */
   private void setSpeed(double speed) {
-    Coral.m_leftController.setReference(speed, ControlType.kMAXMotionVelocityControl);
-    Coral.m_rightController.setReference(speed, ControlType.kMAXMotionVelocityControl);
+    Coral.kLeftController.setReference(speed, ControlType.kMAXMotionVelocityControl);
+    Coral.kRightController.setReference(speed, ControlType.kMAXMotionVelocityControl);
   }
 
   /**
@@ -99,9 +99,9 @@ public class CoralHandlerSubsystem extends SubsystemBase {
    * @return boolean
    */
   public boolean atSpeed() {
-    return Math.abs(Coral.kSpeeds.get(m_state) - Coral.m_leftEncoder.getVelocity())
+    return Math.abs(Coral.kSpeeds.get(m_state) - Coral.kLeftSparkMax.getEncoder().getVelocity())
             < Coral.kTolerance
-        && Math.abs(Coral.kSpeeds.get(m_state) - Coral.m_rightEncoder.getVelocity())
+        && Math.abs(Coral.kSpeeds.get(m_state) - Coral.kRightSparkMax.getEncoder().getVelocity())
             < Coral.kTolerance;
   }
 
