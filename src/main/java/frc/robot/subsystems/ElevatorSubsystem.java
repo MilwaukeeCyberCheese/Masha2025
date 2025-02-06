@@ -53,15 +53,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   // Methods to set motor speeds, etc. go here
 
-  @Override 
+  @Override
   public void periodic() {
-      double error = m_simTargetHeight - m_simHeight;
-      double maxDelta = Elevator.kSimLerpSpeed * 0.02; // dt assumed to be 20ms
-      m_simHeight += Math.copySign(Math.min(Math.abs(error), maxDelta), error);
-      
-      m_simPoseArray.accept(
-          new Pose3d[] {new Pose3d(0.0, 0.0, Units.inchesToMeters(m_simHeight), new Rotation3d())});
-      log();
+    double error = m_simTargetHeight - m_simHeight;
+    double maxDelta = Elevator.kSimLerpSpeed * 0.02; // dt assumed to be 20ms
+    m_simHeight += Math.copySign(Math.min(Math.abs(error), maxDelta), error);
+
+    m_simPoseArray.accept(
+        new Pose3d[] {new Pose3d(0.0, 0.0, Units.inchesToMeters(m_simHeight), new Rotation3d())});
+    log();
   }
 
   public void log() {
