@@ -27,6 +27,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.subsystems.ClimberSubsystem.ClimberState;
 import frc.robot.subsystems.CoralHandlerSubsystem.CoralHandlerState;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.utils.PIDConstants;
@@ -76,7 +77,7 @@ public final class Constants {
           kRightSparkMax.getClosedLoopController();
 
       // Max accel is in RPM
-      public static final PIDConstants kPIDConstants = new PIDConstants(0.1, 0, 0, -1.0, 300.0);
+      public static final PIDConstants kPIDConstants = new PIDConstants(0.1, 0.0, 0.0, -1.0, 300.0);
 
       public static final boolean kLeftInverted = true;
       public static final boolean kRightInverted = false;
@@ -121,6 +122,58 @@ public final class Constants {
     public static final int kRightJoystickPort = 2;
     public static final int kButtonBoardPort = 3;
     public static final double kDriveDeadband = 0.05;
+  }
+
+  public static class Climber {
+    // TODO: figure this out
+    public static final int kClimberMotorCanId = 20;
+
+    public static final SparkMax kClimberSparkMax =
+        new SparkMax(kClimberMotorCanId, SparkMax.MotorType.kBrushless);
+
+    public static final SparkMaxConfig kClimberConfig = new SparkMaxConfig();
+
+    // TODO: find out if it's inverted
+    public static final boolean kClimberInverted = false;
+
+    public static final SparkClosedLoopController kClimberController =
+        kClimberSparkMax.getClosedLoopController();
+
+    public static final PIDConstants kClimberPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
+
+    // TODO: confirm that this is right
+    public static final double kConversionFactor = Math.PI * 2;
+
+    // TODO: find these
+    public static final HashMap<ClimberState, Double> kPositions =
+        new HashMap<ClimberState, Double>() {
+          {
+            put(ClimberState.WAITING, 0.0);
+            put(ClimberState.STOWED, 0.0);
+            put(ClimberState.CLIMB, 0.0);
+          }
+        };
+
+    // TODO: find this
+    public static final double[] kClimberLimits = {0.0, 0.0};
+
+    // TODO: find this
+    public static final double kClimberTolerance = 0.01;
+
+    static {
+      kClimberConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kClimberInverted);
+
+      kClimberConfig
+          .absoluteEncoder
+          .positionConversionFactor(kConversionFactor)
+          .velocityConversionFactor(kConversionFactor / 60.0);
+
+      kClimberConfig
+          .closedLoop
+          .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+          .pid(kClimberPIDConstants.kP, kClimberPIDConstants.kI, kClimberPIDConstants.kD)
+          .outputRange(-1, 1);
+    }
   }
 
   public static class Vision {
