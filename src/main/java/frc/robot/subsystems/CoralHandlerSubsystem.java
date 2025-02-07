@@ -37,6 +37,36 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     setState(m_state);
   }
 
+  @Override
+  public void periodic() {
+    Coral.kLeftController.setReference(m_speed, ControlType.kMAXMotionVelocityControl);
+    Coral.kRightController.setReference(m_speed, ControlType.kMAXMotionVelocityControl);
+
+    m_hasCoral = Sensors.handlerDistanceSensor.getRange() < Coral.kHasCoralDistance;
+
+    log();
+  }
+
+  public void log() {
+    SmartDashboard.putBoolean("Coral Handler Has Coral", m_hasCoral);
+    SmartDashboard.putNumber("Coral Handler Speed", m_speed);
+  }
+
+  /**
+   * Set the state of the coral handler
+   *
+   * @param state {@link CoralHandlerState}
+   */
+  public void setState(CoralHandlerState state) {
+
+    if (state == CoralHandlerState.CUSTOM && m_customSpeed.isEmpty()) {
+      return;
+    }
+
+    m_state = state;
+    m_speed = m_state == CoralHandlerState.CUSTOM ? m_customSpeed.get() : Coral.kSpeeds.get(state);
+  }
+
   /**
    * Get the current state of the coral handler
    *
@@ -44,15 +74,6 @@ public class CoralHandlerSubsystem extends SubsystemBase {
    */
   public CoralHandlerState getState() {
     return m_state;
-  }
-
-  /**
-   * Check if the coral handler has a coral
-   *
-   * @return boolean
-   */
-  public boolean hasCoral() {
-    return m_hasCoral;
   }
 
   /**
@@ -76,21 +97,6 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   }
 
   /**
-   * Set the state of the coral handler
-   *
-   * @param state {@link CoralHandlerState}
-   */
-  public void setState(CoralHandlerState state) {
-
-    if (state == CoralHandlerState.CUSTOM && m_customSpeed.isEmpty()) {
-      return;
-    }
-
-    m_state = state;
-    m_speed = m_state != CoralHandlerState.CUSTOM ? Coral.kSpeeds.get(state) : m_customSpeed.get();
-  }
-
-  /**
    * Get whether the coral handler is at the right speed
    *
    * @return boolean
@@ -100,22 +106,6 @@ public class CoralHandlerSubsystem extends SubsystemBase {
             < Coral.kTolerance
         && Math.abs(Coral.kSpeeds.get(m_state) - Coral.kRightSparkMax.getEncoder().getVelocity())
             < Coral.kTolerance;
-  }
-
-  @Override
-  public void periodic() {
-    SmartDashboard.putBoolean("Coral Handler Has Coral", m_hasCoral);
-
-    Coral.kLeftController.setReference(m_speed, ControlType.kMAXMotionVelocityControl);
-    Coral.kRightController.setReference(m_speed, ControlType.kMAXMotionVelocityControl);
-
-    m_hasCoral = Sensors.handlerDistanceSensor.getRange() < Coral.kHasCoralDistance;
-
-    log();
-  }
-
-  public void log() {
-    // SmartDashboard.putBoolean("Coral Handler Has Coral", m_hasCoral);
   }
 
   /** Set state to index */
@@ -131,5 +121,14 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   /** Set state to inactive */
   public void idle() {
     setState(CoralHandlerState.INACTIVE);
+  }
+
+  /**
+   * Check if the coral handler has a coral
+   *
+   * @return boolean
+   */
+  public boolean hasCoral() {
+    return m_hasCoral;
   }
 }

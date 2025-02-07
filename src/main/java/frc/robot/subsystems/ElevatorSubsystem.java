@@ -76,7 +76,16 @@ public class ElevatorSubsystem extends SubsystemBase {
       return;
     }
 
-    m_height = state != ElevatorState.CUSTOM ? Elevator.kHeights.get(state) : m_customHeight.get();
+    m_height = state == ElevatorState.CUSTOM ? m_customHeight.get() : Elevator.kHeights.get(state);
+  }
+
+  /**
+   * Get the current state of the elevator
+   *
+   * @return {@link ElevatorState}
+   */
+  public ElevatorState getState() {
+    return m_state;
   }
 
   /**
@@ -91,6 +100,15 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   /**
+   * Get the height of the elevator
+   *
+   * @return double
+   */
+  public double getHeight() {
+    return m_height;
+  }
+
+  /**
    * Check if the elevator is at the desired height
    *
    * @return boolean
@@ -100,13 +118,29 @@ public class ElevatorSubsystem extends SubsystemBase {
         < Elevator.kElevatorTolerance;
   }
 
-  /**
-   * Get the current state of the elevator
-   *
-   * @return {@link ElevatorState}
-   */
-  public ElevatorState getState() {
-    return m_state;
+  /** Set elevator state to down */
+  public void down() {
+    setState(ElevatorState.DOWN);
+  }
+
+  /** Set elevator state to L1 */
+  public void L1() {
+    setState(ElevatorState.L1);
+  }
+
+  /** Set elevator state to L2 */
+  public void L2() {
+    setState(ElevatorState.L2);
+  }
+
+  /** Set elevator state to L3 */
+  public void L3() {
+    setState(ElevatorState.L3);
+  }
+
+  /** Set elevator state to L4 */
+  public void L4() {
+    setState(ElevatorState.L4);
   }
 
   // TODO: test this

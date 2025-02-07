@@ -29,6 +29,18 @@ public class ClimberSubsystem extends SubsystemBase {
     setState(m_state);
   }
 
+  @Override
+  public void periodic() {
+    Climber.kClimberController.setReference(m_position, ControlType.kPosition);
+
+    log();
+  }
+
+  public void log() {
+    SmartDashboard.putNumber(
+        "Climber Position", Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition());
+  }
+
   // TODO: add logic for limits
   /**
    * Set the state of the climber
@@ -47,12 +59,30 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   /**
-   * Set the custom position of the climber
+   * Get the current state of the climber
+   *
+   * @return {@link ClimberState}
+   */
+  public ClimberState getState() {
+    return m_state;
+  }
+
+  /**
+   * Set the custom position of the climber Does not change the state of the climber
    *
    * @param position
    */
   public void setCustomPosition(double position) {
     m_customPosition = Optional.of(position);
+  }
+
+  /**
+   * Get the current position of the climber
+   *
+   * @return double
+   */
+  public double getPosition() {
+    return Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition();
   }
 
   /**
@@ -67,36 +97,18 @@ public class ClimberSubsystem extends SubsystemBase {
         < Climber.kClimberTolerance;
   }
 
-  /**
-   * Get the current state of the climber
-   *
-   * @return {@link ClimberState}
-   */
-  public ClimberState getState() {
-    return m_state;
+  /** Set climber state to waiting */
+  public void waiting() {
+    setState(ClimberState.WAITING);
   }
 
-  /**
-   * Get the current position of the climber
-   *
-   * @return double
-   */
-  public double getPosition() {
-    return Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition();
+  /** Set climber state to stowed */
+  public void stowed() {
+    setState(ClimberState.STOWED);
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-
-    Climber.kClimberController.setReference(m_position, ControlType.kPosition);
-
-    log();
-  }
-
-  // TODO; add logging code
-  public void log() {
-    SmartDashboard.putNumber(
-        "Climber Position", Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition());
+  /** Set climber state to climb */
+  public void climb() {
+    setState(ClimberState.CLIMB);
   }
 }

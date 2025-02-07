@@ -58,6 +58,32 @@ public final class Constants {
     }
   }
 
+  public static class OIConstants {
+    public static final int kOperatorControllerPort = 0;
+    public static final int kLeftJoystickPort = 1;
+    public static final int kRightJoystickPort = 2;
+    public static final int kButtonBoardPort = 3;
+    public static final double kDriveDeadband = 0.05;
+  }
+
+  public static class Vision {
+    public static final String kCameraName = "Brio_100";
+    // Cam mounted facing forward, half a meter forward of center, half a meter up
+    // from center.
+    public static final Transform3d kRobotToCam =
+        new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
+
+    // The layout of the AprilTags on the field
+    public static final AprilTagFieldLayout kTagLayout =
+        AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+
+    // The standard deviations of our vision estimated poses, which affect
+    // correction rate
+    // (Fake values. Experiment and determine estimation noise on an actual robot.)
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+  }
+
   // TODO: find like all of these
   public static class Handler {
     public static class Coral {
@@ -195,14 +221,6 @@ public final class Constants {
     }
   }
 
-  public static class OIConstants {
-    public static final int kOperatorControllerPort = 0;
-    public static final int kLeftJoystickPort = 1;
-    public static final int kRightJoystickPort = 2;
-    public static final int kButtonBoardPort = 3;
-    public static final double kDriveDeadband = 0.05;
-  }
-
   public static class Climber {
     // TODO: figure this out
     public static final int kClimberMotorCanId = 20;
@@ -253,24 +271,6 @@ public final class Constants {
           .pid(kClimberPIDConstants.kP, kClimberPIDConstants.kI, kClimberPIDConstants.kD)
           .outputRange(-1, 1);
     }
-  }
-
-  public static class Vision {
-    public static final String kCameraName = "Brio_100";
-    // Cam mounted facing forward, half a meter forward of center, half a meter up
-    // from center.
-    public static final Transform3d kRobotToCam =
-        new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
-
-    // The layout of the AprilTags on the field
-    public static final AprilTagFieldLayout kTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
-
-    // The standard deviations of our vision estimated poses, which affect
-    // correction rate
-    // (Fake values. Experiment and determine estimation noise on an actual robot.)
-    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
   }
 
   // TODO: figure out the best way to run the elevator
