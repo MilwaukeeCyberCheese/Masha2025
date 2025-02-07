@@ -226,7 +226,7 @@ public final class Constants {
       // Use module constants to calculate conversion factors and feed forward gain.
       double drivingFactor =
           ModuleConstants.kWheelDiameterMeters * Math.PI / ModuleConstants.kDrivingMotorReduction;
-      double turningFactor = 2 * Math.PI;
+      double turningFactor = kTau;
       double drivingVelocityFeedForward = 1 / ModuleConstants.kDriveWheelFreeSpeedRps;
 
       drivingConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50);
@@ -272,7 +272,7 @@ public final class Constants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
     public static final double kMaxSpeedMetersPerSecond = 4.8;
-    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
+    public static final double kMaxAngularSpeed = kTau; // radians per second
 
     public static final double kDirectionSlewRate = 1.2; // radians per second
     public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%)
@@ -283,9 +283,9 @@ public final class Constants {
 
     // TODO: what is it?
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(26.5);
+    public static final double kTrackWidth = Units.inchesToMeters(24.5);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(26.5);
+    public static final double kWheelBase = Units.inchesToMeters(28.5);
     // Distance between front and back wheels on robot
     // TODO: make it work with choreo
     public static final SwerveDriveKinematics kDriveKinematics =
