@@ -47,11 +47,20 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   /**
+   * Set the custom position of the climber
+   *
+   * @param position
+   */
+  public void setCustomPosition(double position) {
+    m_customPosition = Optional.of(position);
+  }
+
+  /**
    * Check if the climber is at the desired position
    *
    * @return boolean
    */
-  public boolean atState() {
+  public boolean atPosition() {
     return Math.abs(
             Climber.kPositions.get(m_state)
                 - Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition())
@@ -65,6 +74,15 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public ClimberState getState() {
     return m_state;
+  }
+
+  /**
+   * Get the current position of the climber
+   *
+   * @return double
+   */
+  public double getPosition() {
+    return Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition();
   }
 
   @Override
