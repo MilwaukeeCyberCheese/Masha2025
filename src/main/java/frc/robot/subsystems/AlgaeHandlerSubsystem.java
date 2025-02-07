@@ -3,8 +3,10 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Handler.Algae;
+import java.util.Optional;
 
 // TODO: add sim support
 public class AlgaeHandlerSubsystem extends SubsystemBase {
@@ -12,17 +14,25 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
   public static enum AlgaeHandlerPositionState {
     STOWED,
     GRAB_FROM_REEF,
-    GRAB_FROM_GROUND
+    GRAB_FROM_GROUND,
+    CUSTOM
   }
 
   public static enum AlgaeHandlerIntakeState {
     INTAKE,
     OUTTAKE,
-    STOPPED
+    STOPPED,
+    CUSTOM
   }
 
   private AlgaeHandlerPositionState m_positionState = AlgaeHandlerPositionState.STOWED;
   private AlgaeHandlerIntakeState m_intakeState = AlgaeHandlerIntakeState.STOPPED;
+
+  private double m_position;
+  private double m_speed;
+
+  private Optional<Double> m_customPosition = Optional.empty();
+  private Optional<Double> m_customSpeed = Optional.empty();
 
   public AlgaeHandlerSubsystem() {
     Algae.kPositionSparkMax.configure(
@@ -42,17 +52,25 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
    * @param state options from {@link AlgaeHandlerPositionState}
    */
   public void setPositionState(AlgaeHandlerPositionState state) {
+    if (state == AlgaeHandlerPositionState.CUSTOM && m_customPosition.isEmpty()) {
+      return;
+    }
+
     m_positionState = state;
-    setPosition(Algae.kPositions.get(state));
+
+    m_position =
+        m_positionState == AlgaeHandlerPositionState.CUSTOM
+            ? m_customPosition.get()
+            : Algae.kPositions.get(state);
   }
 
   /**
-   * Set the position of the algae handler
+   * Set custom position for the algae handler This does not change the state of the algae handler
    *
-   * @param position
+   * @param position double
    */
-  private void setPosition(double position) {
-    Algae.kPositionController.setReference(position, ControlType.kMAXMotionPositionControl);
+  public void setCustomPosition(double position) {
+    m_customPosition = Optional.of(position);
   }
 
   /**
@@ -77,22 +95,39 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
   }
 
   /**
+   * Get the position of the algae handler
+   *
+   * @return double
+   */
+  public double getPosition() {
+    return m_position;
+  }
+
+  /**
    * Set the state of the algae handler's intake
    *
    * @param state options from {@link AlgaeHandlerIntakeState}
    */
   public void setIntakeState(AlgaeHandlerIntakeState state) {
+    if (state == AlgaeHandlerIntakeState.CUSTOM && m_customSpeed.isEmpty()) {
+      return;
+    }
+
     m_intakeState = state;
-    setIntake(Algae.kSpeeds.get(state));
+
+    m_speed =
+        m_intakeState == AlgaeHandlerIntakeState.CUSTOM
+            ? m_customSpeed.get()
+            : Algae.kSpeeds.get(state);
   }
 
   /**
-   * Set the speed of the algae handler's intake
+   * Set custom speed for the algae handler's intake
    *
-   * @param speed
+   * @param speed double
    */
-  private void setIntake(double speed) {
-    Algae.kIntakeController.setReference(speed, ControlType.kMAXMotionVelocityControl);
+  public void setCustomSpeed(double speed) {
+    m_customSpeed = Optional.of(speed);
   }
 
   /**
@@ -100,7 +135,7 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
    *
    * @return boolean
    */
-  public boolean atIntakeState() {
+  public boolean atIntakeSpeed() {
     return Math.abs(
             Algae.kSpeeds.get(m_intakeState) - Algae.kIntakeSparkMax.getEncoder().getVelocity())
         < Algae.kIntakeTolerance;
@@ -115,13 +150,30 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
     return m_intakeState;
   }
 
+  /**
+   * Get the speed of the algae handler's intake
+   *
+   * @return double
+   */
+  public double getIntakeSpeed() {
+    return m_speed;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    Algae.kPositionController.setReference(m_position, ControlType.kPosition);
+    Algae.kIntakeController.setReference(m_speed, ControlType.kVelocity);
 
     log();
   }
 
   // TODO; add logging code
-  public void log() {}
+  public void log() {
+    SmartDashboard.putNumber(
+        "Algae Handler Position", Algae.kPositionSparkMax.getAbsoluteEncoder().getPosition());
+    SmartDashboard.putNumber(
+        "Algae Handler Intake Speed", Algae.kIntakeSparkMax.getEncoder().getVelocity());
+  }
 }
