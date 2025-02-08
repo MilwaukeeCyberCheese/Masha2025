@@ -4,8 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -22,8 +25,11 @@ import frc.robot.utils.FilteredButton;
 import frc.robot.utils.FilteredJoystick;
 import java.io.File;
 
-import choreo.auto.AutoChooser;
-import choreo.auto.AutoFactory;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import swervelib.SwerveInputStream;
 
 /*
@@ -55,8 +61,7 @@ public class RobotContainer {
   // Button Board
   private final FilteredButton m_buttonBoard = new FilteredButton(OIConstants.kButtonBoardPort);
 
-  private final AutoFactory autoFactory;
-  private final AutoChooser autoChooser;
+  private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
 
   // Configure drive input stream
   SwerveInputStream driveInput =
@@ -76,22 +81,7 @@ public class RobotContainer {
     // Set default drive command
     m_drive.setDefaultCommand(m_drive.driveFieldOriented(driveInput));
 
-        // Set up Auto Factory for Choreo
-    autoFactory = new AutoFactory(
-            m_drive::getPose, // A function that returns the current robot pose
-            m_drive::resetOdometry, // A function that resets the current robot pose to the provided Pose2d
-            m_drive::drive(), // The drive subsystem trajectory follower 
-            true, // If alliance flipping should be enabled 
-            m_drive // The drive subsystem
-        );
-    autoChooser = new AutoChooser();
-
-    //autoChooser.addRoutine("Routine 1", this::routine1);
-    //autoChooser.addCmd("Command 1", this::command1);
-
-    SmartDashboard.putData(autoChooser);
-
-    RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
+    SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   /**
@@ -129,7 +119,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return autoChooser.getSelected();
-    return null;
+    return autoChooser.getSelected();
+    //return null;
   }
 }

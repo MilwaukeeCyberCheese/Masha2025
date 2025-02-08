@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -12,7 +13,17 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+
 import org.ironmaple.simulation.SimulatedArena;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+
+import choreo.auto.AutoChooser;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to

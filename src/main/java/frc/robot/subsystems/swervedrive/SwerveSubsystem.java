@@ -139,6 +139,11 @@ public class SwerveSubsystem extends SubsystemBase {
     setupChassisSim();
   }
 
+  /** Setup the trajectory following functionality for Choreo to convert a SwerveSample to a pose */
+  /*public void followTrajectory(SwerveSample sample) {
+    Pose2d swervePose = ();
+  }*/
+
   /** Setup the chassis simulation with the correct physical dimensions to match CAD. */
   public void setupChassisSim() {
     if (simDrive.isPresent()) {
