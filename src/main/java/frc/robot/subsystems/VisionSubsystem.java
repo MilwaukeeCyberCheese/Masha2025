@@ -47,9 +47,9 @@ public class VisionSubsystem extends SubsystemBase {
         robotToCamera = new Transform3d(robotToCameraTrl, robotToCameraRot);
 
         photonEstimator = new PhotonPoseEstimator(
-            tagLayout, 
-            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
-            robotToCamera);
+                tagLayout,
+                PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+                robotToCamera);
         photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
         if (Robot.isSimulation()) {
@@ -71,12 +71,19 @@ public class VisionSubsystem extends SubsystemBase {
 
     @Override
     public void simulationPeriodic() {
-        visionSim.update(Robot.getInstance().m_robotContainer.m_drive.getPose()); // TODO: get pose from simdrive (maple-sim)
+        visionSim.update(Robot.getInstance().m_robotContainer.m_drive.getSimDrive().getSimulatedDriveTrainPose());
     }
 
     public Pose2d getPose() {
-        Optional<EstimatedRobotPose> result = photonEstimator.update(camera.getLatestResult());
-        return result.map(est -> est.estimatedPose.toPose2d()).orElse(drive.getPose());
+        var result = camera.getLatestResult();
+        if (result.getTargets().size() <= 1) {
+            return null;
+        }
+        Optional<EstimatedRobotPose> estimatedPose = photonEstimator.update(result);
+        if (!estimatedPose.isPresent()) {
+            return null;
+        }
+        return estimatedPose.map(est -> est.estimatedPose.toPose2d()).orElse(drive.getPose());
     }
 
     @Override
