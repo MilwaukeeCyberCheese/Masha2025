@@ -4,19 +4,16 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.util.Units;
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.autos.GenericAutoCommand;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
@@ -25,14 +22,6 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.FilteredButton;
 import frc.robot.utils.FilteredJoystick;
 import java.io.File;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-
-import choreo.auto.AutoChooser;
-import choreo.auto.AutoFactory;
 import swervelib.SwerveInputStream;
 
 /*
@@ -65,13 +54,9 @@ public class RobotContainer {
   private final FilteredButton m_buttonBoard = new FilteredButton(OIConstants.kButtonBoardPort);
 
   public final AutoChooser m_autoChooser = new AutoChooser();
-  private final AutoFactory m_autoFactory = new AutoFactory(
-    m_drive::getPose,
-    m_drive::resetOdometry,
-    m_drive::followTrajectory,
-    true,
-    m_drive
-  );
+  private final AutoFactory m_autoFactory =
+      new AutoFactory(
+          m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive);
   private final Routines m_routines = new Routines(m_autoFactory);
 
   // Configure drive input stream
@@ -97,7 +82,7 @@ public class RobotContainer {
     SmartDashboard.putData("Xbox Controller Debug", m_operatorController.getHID());
 
     if (Robot.getInstance().isSimulation()) {
-        DriverStation.silenceJoystickConnectionWarning(true);
+      DriverStation.silenceJoystickConnectionWarning(true);
     }
   }
 

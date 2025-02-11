@@ -6,6 +6,7 @@ package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -14,27 +15,21 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-import org.json.simple.parser.ParseException;
 import org.photonvision.targeting.PhotonPipelineResult;
-
-import choreo.trajectory.SwerveSample;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -61,8 +56,8 @@ public class SwerveSubsystem extends SubsystemBase {
   /** PhotonVision class to keep an accurate odometry. */
   private Vision vision;
 
-  private final PIDController xController = new PIDController(10.0, .0, .0);
-  private final PIDController yController = new PIDController(10.0, .0, .0);
+  private final PIDController xController = new PIDController(0.05, .01, .0);
+  private final PIDController yController = new PIDController(0.05, .01, .0);
   private final PIDController thetaController = new PIDController(10.0, .0, .0);
 
   /**
@@ -120,11 +115,19 @@ public class SwerveSubsystem extends SubsystemBase {
   public void followTrajectory(SwerveSample sample) {
     Pose2d pose = getPose();
 
-    ChassisSpeeds speeds = new ChassisSpeeds(
-      sample.vx + xController.calculate(pose.getX(), sample.x),
-      sample.vy + yController.calculate(pose.getY(), sample.y),
-      sample.omega + thetaController.calculate(pose.getRotation().getRadians(), sample.heading)
-    );
+    SmartDashboard.putNumber("Tuning/X Target", sample.x);
+    SmartDashboard.putNumber("Tuning/Y Target", sample.y);
+    SmartDashboard.putNumber("Tuning/Theta Target", sample.heading);
+    SmartDashboard.putNumber("Tuning/X Actual", pose.getX());
+    SmartDashboard.putNumber("Tuning/Y Actual", pose.getY());
+    SmartDashboard.putNumber("Tuning/Theta Actual", pose.getRotation().getRadians());
+
+    ChassisSpeeds speeds =
+        new ChassisSpeeds(
+            sample.vx + xController.calculate(pose.getX(), sample.x),
+            sample.vy + yController.calculate(pose.getY(), sample.y),
+            sample.omega
+                + thetaController.calculate(pose.getRotation().getRadians(), sample.heading));
 
     driveFieldOriented(speeds);
   }
