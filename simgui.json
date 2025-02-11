@@ -9,7 +9,8 @@
       "/SmartDashboard/JSON": "Alerts",
       "/SmartDashboard/Motors": "Alerts",
       "/SmartDashboard/Scheduler": "Scheduler",
-      "/SmartDashboard/Swerve Drive": "Alerts"
+      "/SmartDashboard/Swerve Drive": "Alerts",
+      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
     "windows": {
       "/SmartDashboard/Field": {
@@ -30,12 +31,35 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/VisionSystemSim-main/Sim Field": {
+        "bottom": 1476,
+        "height": 8.210550308227539,
+        "left": 150,
+        "right": 2961,
+        "top": 79,
+        "width": 16.541748046875,
+        "window": {
+          "visible": true
+        }
       }
     }
   },
   "NetworkTables": {
     "transitory": {
       "Shuffleboard": {
+        "open": true
+      },
+      "SmartDashboard": {
+        "VisionSystemSim-main": {
+          "Sim Field": {
+            "open": true
+          },
+          "open": true
+        },
+        "open": true
+      },
+      "photonvision": {
         "open": true
       }
     }
