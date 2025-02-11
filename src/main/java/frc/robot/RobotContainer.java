@@ -27,35 +27,35 @@ import swervelib.SwerveInputStream;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final SwerveSubsystem m_drive =
+  private final SwerveSubsystem drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
-  private final ElevatorSubsystem m_elevator =
+  private final ElevatorSubsystem elevator =
       Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
-  private final CoralHandlerSubsystem m_coral =
+  private final CoralHandlerSubsystem coral =
       Robot.isReal()
           ? new CoralHandlerSubsystem()
-          : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
+          : new CoralHandlerSubsystemSim(drive.getSimDrive(), elevator);
 
   // Driver joysticks
-  private final FilteredJoystick m_driverLeftJoystick =
+  private final FilteredJoystick driverLeftJoystick =
       new FilteredJoystick(OIConstants.kLeftJoystickPort);
-  private final FilteredJoystick m_driverRightJoystick =
+  private final FilteredJoystick driverRightJoystick =
       new FilteredJoystick(OIConstants.kRightJoystickPort);
 
   // Operator controller
-  private final CommandXboxController m_operatorController =
+  private final CommandXboxController operatorController =
       new CommandXboxController(OIConstants.kOperatorControllerPort);
 
   // Button Board
-  private final FilteredButton m_buttonBoard = new FilteredButton(OIConstants.kButtonBoardPort);
+  private final FilteredButton buttonBoard = new FilteredButton(OIConstants.kButtonBoardPort);
 
   // Configure drive input stream
   SwerveInputStream driveInput =
       SwerveInputStream.of(
-              m_drive.getSwerveDrive(),
-              m_operatorController::getLeftY,
-              m_operatorController::getLeftX)
-          .withControllerRotationAxis(() -> -m_operatorController.getRightX())
+              drive.getSwerveDrive(),
+              operatorController::getLeftY,
+              operatorController::getLeftX)
+          .withControllerRotationAxis(() -> -operatorController.getRightX())
           .deadband(0.1)
           .scaleTranslation(0.8)
           .allianceRelativeControl(true);
@@ -65,7 +65,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     // Set default drive command
-    m_drive.setDefaultCommand(m_drive.driveFieldOriented(driveInput));
+    drive.setDefaultCommand(drive.driveFieldOriented(driveInput));
   }
 
   /**
@@ -76,25 +76,25 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Zero gyro with A button
-    m_operatorController.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
+    operatorController.a().onTrue(Commands.runOnce(drive::zeroGyro));
 
     if (!Robot.isReal()) {
-      m_operatorController
+      operatorController
           .b()
-          .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
+          .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) coral).getSimCoral()));
     }
 
-    m_operatorController
+    operatorController
         .x()
-        .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
-    m_operatorController
+        .onTrue(Commands.runOnce(() -> elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
+    operatorController
         .y()
-        .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
+        .onTrue(Commands.runOnce(() -> elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-    m_operatorController.rightBumper().onTrue(Commands.runOnce(m_coral::grab));
-    m_operatorController.rightBumper().onFalse(Commands.runOnce(m_coral::idle));
-    m_operatorController.leftBumper().onTrue(Commands.runOnce(m_coral::release));
-    m_operatorController.leftBumper().onFalse(Commands.runOnce(m_coral::idle));
+    operatorController.rightBumper().onTrue(Commands.runOnce(coral::grab));
+    operatorController.rightBumper().onFalse(Commands.runOnce(coral::idle));
+    operatorController.leftBumper().onTrue(Commands.runOnce(coral::release));
+    operatorController.leftBumper().onFalse(Commands.runOnce(coral::idle));
   }
 
   /**

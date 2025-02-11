@@ -18,20 +18,20 @@ public class ClimberSubsystem extends SubsystemBase {
     CUSTOM
   }
 
-  private ClimberState m_state = ClimberState.STOWED;
-  private double m_position = 0;
-  private Optional<Double> m_customPosition = Optional.empty();
+  private ClimberState state = ClimberState.STOWED;
+  private double position = 0;
+  private Optional<Double> customPosition = Optional.empty();
 
   public ClimberSubsystem() {
     Climber.kClimberSparkMax.configure(
         Climber.kClimberConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    setState(m_state);
+    setState(state);
   }
 
   @Override
   public void periodic() {
-    Climber.kClimberController.setReference(m_position, ControlType.kPosition);
+    Climber.kClimberController.setReference(position, ControlType.kPosition);
 
     log();
   }
@@ -48,14 +48,14 @@ public class ClimberSubsystem extends SubsystemBase {
    * @param state options from {@link ClimberState}
    */
   public void setState(ClimberState state) {
-    if (state == ClimberState.CUSTOM && m_customPosition.isEmpty()) {
+    if (state == ClimberState.CUSTOM && customPosition.isEmpty()) {
       return;
     }
 
-    m_state = state;
+    this.state = state;
 
-    m_position =
-        m_state == ClimberState.CUSTOM ? m_customPosition.get() : Climber.kPositions.get(m_state);
+    position =
+        this.state == ClimberState.CUSTOM ? customPosition.get() : Climber.kPositions.get(this.state);
   }
 
   /**
@@ -64,7 +64,7 @@ public class ClimberSubsystem extends SubsystemBase {
    * @return {@link ClimberState}
    */
   public ClimberState getState() {
-    return m_state;
+    return state;
   }
 
   /**
@@ -73,7 +73,7 @@ public class ClimberSubsystem extends SubsystemBase {
    * @param position
    */
   public void setCustomPosition(double position) {
-    m_customPosition = Optional.of(position);
+    customPosition = Optional.of(position);
   }
 
   /**
@@ -92,7 +92,7 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public boolean atPosition() {
     return Math.abs(
-            Climber.kPositions.get(m_state)
+            Climber.kPositions.get(state)
                 - Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition())
         < Climber.kClimberTolerance;
   }

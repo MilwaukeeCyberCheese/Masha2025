@@ -23,9 +23,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     CUSTOM
   }
 
-  private ElevatorState m_state = ElevatorState.DOWN;
-  private Optional<Double> m_customHeight = null;
-  protected double m_height;
+  private ElevatorState state = ElevatorState.DOWN;
+  private Optional<Double> customHeight = null;
+  protected double height;
 
   public ElevatorSubsystem() {
     Elevator.kLeftElevatorSparkMax.configure(
@@ -37,7 +37,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
-    setState(m_state);
+    setState(state);
   }
 
   // Methods to set motor speeds, etc. go here
@@ -46,13 +46,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     log();
 
-    Elevator.kElevatorController.setReference(m_height, ControlType.kMAXMotionPositionControl);
+    Elevator.kElevatorController.setReference(height, ControlType.kMAXMotionPositionControl);
   }
 
   public void log() {
     // Log sensor data, etc. here
-    SmartDashboard.putNumber("Elevator Height", m_height);
-    SmartDashboard.putString("Elevator State", m_state.toString());
+    SmartDashboard.putNumber("Elevator Height", height);
+    SmartDashboard.putString("Elevator State", state.toString());
   }
 
   // TODO: add limits logic
@@ -63,20 +63,20 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public void setState(ElevatorState state) {
 
-    if (state == ElevatorState.CUSTOM && m_customHeight.isEmpty()) {
+    if (state == ElevatorState.CUSTOM && customHeight.isEmpty()) {
       return;
     }
 
-    m_state = state;
+    this.state = state;
 
     // TODO: check that this overrides the PID
-    if (m_state == ElevatorState.DISABLED) {
+    if (this.state == ElevatorState.DISABLED) {
       Elevator.kLeftElevatorSparkMax.set(0);
       Elevator.kRightElevatorSparkMax.set(0);
       return;
     }
 
-    m_height = state == ElevatorState.CUSTOM ? m_customHeight.get() : Elevator.kHeights.get(state);
+    height = state == ElevatorState.CUSTOM ? customHeight.get() : Elevator.kHeights.get(state);
   }
 
   /**
@@ -85,7 +85,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return {@link ElevatorState}
    */
   public ElevatorState getState() {
-    return m_state;
+    return state;
   }
 
   /**
@@ -95,8 +95,8 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @param target double
    */
   public void setCustomTarget(double target) {
-    m_state = ElevatorState.CUSTOM;
-    m_customHeight = Optional.of(target);
+    state = ElevatorState.CUSTOM;
+    customHeight = Optional.of(target);
   }
 
   /**
@@ -105,7 +105,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return double
    */
   public double getHeight() {
-    return m_height;
+    return height;
   }
 
   /**
@@ -114,7 +114,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return boolean
    */
   public boolean atHeight() {
-    return Math.abs(m_height - Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition())
+    return Math.abs(height - Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition())
         < Elevator.kElevatorTolerance;
   }
 
