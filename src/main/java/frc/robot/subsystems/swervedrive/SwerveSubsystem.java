@@ -56,9 +56,9 @@ public class SwerveSubsystem extends SubsystemBase {
   /** PhotonVision class to keep an accurate odometry. */
   private Vision vision;
 
-  private final PIDController xController = new PIDController(0.05, .01, .0);
-  private final PIDController yController = new PIDController(0.05, .01, .0);
-  private final PIDController thetaController = new PIDController(10.0, .0, .0);
+  private final PIDController xController = new PIDController(.00005, .0, .0);
+  private final PIDController yController = new PIDController(.00005, .0, .0);
+  private final PIDController thetaController = new PIDController(.00005, .0, .0);
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
