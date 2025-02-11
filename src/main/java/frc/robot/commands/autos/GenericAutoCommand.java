@@ -7,9 +7,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
-public class GenericAutoCommand extends Command {
+public class GenericAutoCommand {
 
-    public Command genericAutoCommand() {
+    public static Command genericAutoCommand() {
         try{
             // Loading PathPlanner path using name in GUI
             // PathPlannerPath path = PathPlannerPath.fromPathFile("path");

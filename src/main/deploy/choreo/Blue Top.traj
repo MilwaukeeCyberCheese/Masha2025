@@ -502,8 +502,8 @@
   "splits":[0]
  },
  "events":[
-   {"name":"Output Coral", "from":{"target":2, "targetTimestamp":null, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"Output Coral", "from":{"target":6, "targetTimestamp":null, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"Intake Coral", "from":{"target":3, "targetTimestamp":null, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"Intake Coral", "from":{"target":5, "targetTimestamp":null, "offset":{"exp":"0 s", "val":0.0}}, "event":null}]
+   {"name":"Output Coral", "from":{"target":1, "targetTimestamp":1.34902, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"Output Coral", "from":{"target":5, "targetTimestamp":4.77966, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"Intake Coral", "from":{"target":2, "targetTimestamp":2.10459, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"Intake Coral", "from":{"target":4, "targetTimestamp":3.88395, "offset":{"exp":"0 s", "val":0.0}}, "event":null}]
 }

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.autos.GenericAutoCommand;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
@@ -30,6 +31,8 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
 import swervelib.SwerveInputStream;
 
 /*
@@ -39,7 +42,7 @@ import swervelib.SwerveInputStream;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final SwerveSubsystem m_drive =
+  public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
   private final ElevatorSubsystem m_elevator =
       Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
@@ -61,7 +64,15 @@ public class RobotContainer {
   // Button Board
   private final FilteredButton m_buttonBoard = new FilteredButton(OIConstants.kButtonBoardPort);
 
-  private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
+  public final AutoChooser m_autoChooser = new AutoChooser();
+  private final AutoFactory m_autoFactory = new AutoFactory(
+    m_drive::getPose,
+    m_drive::resetOdometry,
+    m_drive::followTrajectory,
+    true,
+    m_drive
+  );
+  private final Routines m_routines = new Routines(m_autoFactory);
 
   // Configure drive input stream
   SwerveInputStream driveInput =
@@ -81,7 +92,13 @@ public class RobotContainer {
     // Set default drive command
     m_drive.setDefaultCommand(m_drive.driveFieldOriented(driveInput));
 
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    m_autoChooser.addRoutine("Test Routine", m_routines::test);
+    SmartDashboard.putData("Auto Chooser", m_autoChooser);
+    SmartDashboard.putData("Xbox Controller Debug", m_operatorController.getHID());
+
+    if (Robot.getInstance().isSimulation()) {
+        DriverStation.silenceJoystickConnectionWarning(true);
+    }
   }
 
   /**
@@ -111,15 +128,5 @@ public class RobotContainer {
     m_operatorController.rightBumper().onFalse(Commands.runOnce(m_coral::idle));
     m_operatorController.leftBumper().onTrue(Commands.runOnce(m_coral::release));
     m_operatorController.leftBumper().onFalse(Commands.runOnce(m_coral::idle));
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
-    //return null;
   }
 }
