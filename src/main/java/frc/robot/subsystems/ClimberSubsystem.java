@@ -55,7 +55,9 @@ public class ClimberSubsystem extends SubsystemBase {
     this.state = state;
 
     position =
-        this.state == ClimberState.CUSTOM ? customPosition.get() : Climber.kPositions.get(this.state);
+        this.state == ClimberState.CUSTOM
+            ? customPosition.get()
+            : Climber.kPositions.get(this.state);
   }
 
   /**
