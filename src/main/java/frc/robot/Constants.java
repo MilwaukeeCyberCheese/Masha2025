@@ -294,8 +294,11 @@ public final class Constants {
     public static final SparkMaxConfig kLeftElevatorConfig = new SparkMaxConfig();
     public static final SparkMaxConfig kRightElevatorConfig = new SparkMaxConfig();
 
+    // TODO: positive should be up
     public static final boolean kLeftInverted = false;
     public static final boolean kRightInverted = true;
+
+    public static final boolean kLeftEncoderInverted = false;
 
     // only one cause we slave the other motor to this one
     public static final SparkClosedLoopController kElevatorController =
@@ -325,6 +328,9 @@ public final class Constants {
     // TODO: figure out the tolerance
     public static final double kElevatorTolerance = 0.01;
 
+    // distance that the elevator steps when zeroing
+    public static final double kZeroingStep = 0.01;
+
     /*
      * TODO: TEST IN SIMULATION THE DIRECTION THE LIFT MOTORS SPIN
      * ISTFG WE HAVE TO DO THIS CAUSE THEY'RE MECHANICALLY LINKED
@@ -346,7 +352,10 @@ public final class Constants {
           .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
           .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
 
-      kLeftElevatorConfig.primaryEncoder.positionConversionFactor(kConversionFactor);
+      kLeftElevatorConfig
+          .encoder
+          .positionConversionFactor(kConversionFactor)
+          .inverted(kLeftEncoderInverted);
     }
   }
 
