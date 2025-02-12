@@ -6,6 +6,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Elevator;
+import frc.robot.Constants.Sensors;
 import java.util.Optional;
 
 // TODO: add sim support
@@ -152,15 +153,11 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @param persistMode {@link PersistMode} only call this when intending to save the new offset,
    *     note that this will cause the spark to become unresponsive for a short period of time
    */
-  public void zero(PersistMode persistMode) {
-    double previousOffset =
-        Elevator.kLeftElevatorSparkMax.configAccessor.absoluteEncoder.getZeroOffset();
+  public void zero() {
+    Elevator.kLeftElevatorSparkMax.getEncoder().setPosition(0);
+  }
 
-    Elevator.kLeftElevatorConfig.absoluteEncoder.zeroOffset(
-        previousOffset + Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition());
-    Elevator.kLeftElevatorSparkMax.configure(
-        Elevator.kLeftElevatorConfig,
-        ResetMode.kNoResetSafeParameters,
-        PersistMode.kNoPersistParameters);
+  public boolean atBottom() {
+    return Sensors.elevatorLimitSwitch.get();
   }
 }
