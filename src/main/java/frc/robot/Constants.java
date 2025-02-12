@@ -340,13 +340,13 @@ public final class Constants {
 
       kLeftElevatorConfig
           .closedLoop
-          .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+          .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
           .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD)
           .maxMotion
           .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
           .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
 
-      kLeftElevatorConfig.absoluteEncoder.positionConversionFactor(kConversionFactor);
+      kLeftElevatorConfig.primaryEncoder.positionConversionFactor(kConversionFactor);
     }
   }
 
