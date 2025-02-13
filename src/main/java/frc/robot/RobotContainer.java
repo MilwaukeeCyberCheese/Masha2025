@@ -91,10 +91,14 @@ public class RobotContainer {
         .y()
         .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-    m_operatorController.rightBumper().onTrue(Commands.runOnce(m_coral::grab));
-    m_operatorController.rightBumper().onFalse(Commands.runOnce(m_coral::idle));
-    m_operatorController.leftBumper().onTrue(Commands.runOnce(m_coral::release));
-    m_operatorController.leftBumper().onFalse(Commands.runOnce(m_coral::idle));
+    m_operatorController
+        .rightBumper()
+        .onTrue(Commands.runOnce(m_coral::grab))
+        .onFalse(Commands.runOnce(m_coral::idle));
+    m_operatorController
+        .leftBumper()
+        .onTrue(Commands.runOnce(m_coral::release))
+        .onFalse(Commands.runOnce(m_coral::idle));
   }
 
   /**
