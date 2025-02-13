@@ -6,7 +6,6 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Elevator;
-import frc.robot.Constants.Sensors;
 import java.util.Optional;
 
 // TODO: add sim support
@@ -158,6 +157,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean atBottom() {
-    return Sensors.elevatorLimitSwitch.get();
+    return Elevator.kElevatorLimitSwitch.isPressed();
   }
 }

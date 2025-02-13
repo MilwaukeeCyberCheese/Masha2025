@@ -6,9 +6,11 @@ package frc.robot;
 
 import com.revrobotics.Rev2mDistanceSensor;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.studica.frc.AHRS;
@@ -26,7 +28,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.subsystems.AlgaeHandlerSubsystem.AlgaeHandlerIntakeState;
 import frc.robot.subsystems.AlgaeHandlerSubsystem.AlgaeHandlerPositionState;
 import frc.robot.subsystems.ClimberSubsystem.ClimberState;
@@ -49,7 +50,6 @@ public final class Constants {
 
   public static class Sensors {
     public static final AHRS gyro = new AHRS(NavXComType.kUSB1);
-    public static final DigitalInput elevatorLimitSwitch = new DigitalInput(0);
     public static final Rev2mDistanceSensor handlerDistanceSensor =
         new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard);
 
@@ -102,14 +102,15 @@ public final class Constants {
     public static final SparkMax kRightElevatorSparkMax =
         new SparkMax(kRightElevatorCANid, MotorType.kBrushless);
 
+    public static final SparkLimitSwitch kElevatorLimitSwitch =
+        kLeftElevatorSparkMax.getReverseLimitSwitch();
+
     public static final SparkMaxConfig kLeftElevatorConfig = new SparkMaxConfig();
     public static final SparkMaxConfig kRightElevatorConfig = new SparkMaxConfig();
 
     // TODO: positive should be up
     public static final boolean kLeftInverted = false;
     public static final boolean kRightInverted = true;
-
-    public static final boolean kLeftEncoderInverted = false;
 
     // only one cause we slave the other motor to this one
     public static final SparkClosedLoopController kElevatorController =
@@ -163,10 +164,13 @@ public final class Constants {
           .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
           .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
 
+      kLeftElevatorConfig.encoder.positionConversionFactor(kConversionFactor);
+
+      // TODO: see if this is right
       kLeftElevatorConfig
-          .encoder
-          .positionConversionFactor(kConversionFactor)
-          .inverted(kLeftEncoderInverted);
+          .limitSwitch
+          .reverseLimitSwitchEnabled(true)
+          .reverseLimitSwitchType(Type.kNormallyOpen);
     }
   }
 
@@ -444,15 +448,15 @@ public final class Constants {
 
     // SPARK MAX CAN IDs
     // TODO: what are they?
-    public static final int kFrontLeftDrivingCanId = 11;
-    public static final int kRearLeftDrivingCanId = 13;
-    public static final int kFrontRightDrivingCanId = 15;
-    public static final int kRearRightDrivingCanId = 17;
+    public static final int kFrontLeftDrivingCanId = 2;
+    public static final int kRearLeftDrivingCanId = 4;
+    public static final int kFrontRightDrivingCanId = 6;
+    public static final int kRearRightDrivingCanId = 8;
 
-    public static final int kFrontLeftTurningCanId = 10;
-    public static final int kRearLeftTurningCanId = 12;
-    public static final int kFrontRightTurningCanId = 14;
-    public static final int kRearRightTurningCanId = 16;
+    public static final int kFrontLeftTurningCanId = 1;
+    public static final int kRearLeftTurningCanId = 3;
+    public static final int kFrontRightTurningCanId = 5;
+    public static final int kRearRightTurningCanId = 7;
 
     // TODO: is it?
     public static final boolean kGyroReversed = false;
