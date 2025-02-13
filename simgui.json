@@ -1,7 +1,14 @@
 {
   "NTProvider": {
     "types": {
-      "/SmartDashboard/Field": "Field2d"
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Alerts": "Alerts",
+      "/SmartDashboard/Encoders": "Alerts",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/IMU": "Alerts",
+      "/SmartDashboard/JSON": "Alerts",
+      "/SmartDashboard/Motors": "Alerts",
+      "/SmartDashboard/Swerve Drive": "Alerts"
     },
     "windows": {
       "/SmartDashboard/Field": {
@@ -12,11 +19,20 @@
           "selectable": false,
           "width": 0.30000001192092896
         },
+        "bottom": 1638,
         "builtin": "2025 Reefscape",
+        "height": 8.051901817321777,
+        "left": 534,
+        "right": 3466,
+        "top": 291,
+        "width": 17.54825210571289,
         "window": {
           "visible": true
         }
       }
     }
+  },
+  "NetworkTables Info": {
+    "visible": true
   }
 }
