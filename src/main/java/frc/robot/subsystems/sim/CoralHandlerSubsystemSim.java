@@ -19,50 +19,50 @@ import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnFly
 
 public class CoralHandlerSubsystemSim extends CoralHandlerSubsystem {
 
-  public final IntakeSimulation m_intakeSim;
-  private final AbstractDriveTrainSimulation m_drive;
-  private final ElevatorSubsystemSim m_elevator;
+  public final IntakeSimulation intakeSim;
+  private final AbstractDriveTrainSimulation drive;
+  private final ElevatorSubsystemSim elevator;
 
   public CoralHandlerSubsystemSim(
       AbstractDriveTrainSimulation driveSim, ElevatorSubsystem elevator) {
     super();
-    m_drive = driveSim;
+    drive = driveSim;
     Rectangle intake = new Rectangle(.762, .245);
     intake.translate(new Vector2(0, .762));
-    m_intakeSim = new IntakeSimulation("Coral", driveSim, intake, 1);
-    m_elevator = (ElevatorSubsystemSim) elevator;
+    intakeSim = new IntakeSimulation("Coral", driveSim, intake, 1);
+    this.elevator = (ElevatorSubsystemSim) elevator;
   }
 
   @Override
   public void periodic() {
     super.periodic();
     if (Robot.isReal()) {
-      m_hasCoral = Sensors.handlerDistanceSensor.getRange(Unit.kInches) < 5;
+      hasCoral = Sensors.handlerDistanceSensor.getRange(Unit.kInches) < 5;
     } else {
       if (getState() == CoralHandlerState.GRAB) {
-        m_intakeSim.startIntake();
+        intakeSim.startIntake();
       } else {
-        m_intakeSim.stopIntake();
+        intakeSim.stopIntake();
       }
-      if (getState() == CoralHandlerState.RELEASE && m_intakeSim.obtainGamePieceFromIntake()) {
+      if (getState() == CoralHandlerState.RELEASE && intakeSim.obtainGamePieceFromIntake()) {
         SimulatedArena.getInstance()
             .addGamePieceProjectile(
                 new ReefscapeCoralOnFly(
-                    m_drive.getSimulatedDriveTrainPose().getTranslation(),
+                    drive.getSimulatedDriveTrainPose().getTranslation(),
                     new Translation2d(Inches.of(16.0), Inches.of(0)),
-                    m_drive.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
-                    m_drive.getSimulatedDriveTrainPose().getRotation(),
-                    m_elevator.getSimEjectHeight(),
+                    drive.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+                    drive.getSimulatedDriveTrainPose().getRotation(),
+                    elevator.getSimEjectHeight(),
                     MetersPerSecond.of(0.8), // eject speed
                     Radians.of(-Math.PI / 9)));
       }
-      m_hasCoral = m_intakeSim.getGamePiecesAmount() != 0;
+      hasCoral = intakeSim.getGamePiecesAmount() != 0;
     }
   }
 
   /** Intake a simulated coral from thin air, like magic */
   public void getSimCoral() {
-    if (!m_intakeSim.addGamePieceToIntake()) {
+    if (!intakeSim.addGamePieceToIntake()) {
       System.err.println("You already have a coral, you greedy bastard!");
     }
   }
