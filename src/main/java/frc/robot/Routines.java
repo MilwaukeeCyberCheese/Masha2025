@@ -56,4 +56,18 @@ public class Routines {
 
     return routine;
   }
+
+  /**
+    * Routine to drive to the Coral Station.
+    */
+    public AutoRoutine blueTestFull() {
+      AutoRoutine routine = m_factory.newRoutine("Blue Test Full");
+      AutoTrajectory processorTraj = routine.trajectory("Blue To Processor");
+      AutoTrajectory coralStationTraj = routine.trajectory("Blue To Coral Station");
+      AutoTrajectory reefKTraj = routine.trajectory("Blue Coral Station To Reef K");
+
+      routine.active().onTrue(Commands.sequence(processorTraj.resetOdometry(), processorTraj.cmd(), coralStationTraj.cmd(), reefKTraj.cmd()));
+  
+      return routine;
+    }
 }
