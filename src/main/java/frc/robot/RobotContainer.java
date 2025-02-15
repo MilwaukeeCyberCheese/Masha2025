@@ -79,6 +79,8 @@ public class RobotContainer {
 
     m_autoChooser.addRoutine("Test Routine", m_routines::test);
     m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
+    m_autoChooser.addRoutine("Blue Coral Station Routine", m_routines::blueCoralStation);
+    m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
     SmartDashboard.putData("Xbox Controller Debug", m_operatorController.getHID());
 

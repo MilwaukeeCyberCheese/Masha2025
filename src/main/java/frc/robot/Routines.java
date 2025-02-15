@@ -22,11 +22,35 @@ public class Routines {
   }
 
   /**
-    * Routine to drive to the processor, drop off the algae, and drive back to the coral station.
+    * Routine to drive to the Processor, drop off the Algae, and drive back to the starting point.
     */
   public AutoRoutine blueProcessor() {
     AutoRoutine routine = m_factory.newRoutine("Blue Processor");
-    AutoTrajectory mainTraj = routine.trajectory("Blue Processor To Coral Station");
+    AutoTrajectory mainTraj = routine.trajectory("Blue To Processor");
+
+    routine.active().onTrue(Commands.sequence(mainTraj.resetOdometry(), mainTraj.cmd()));
+
+    return routine;
+  }
+
+  /**
+    * Routine to drive to the Coral Station.
+    */
+  public AutoRoutine blueCoralStation() {
+    AutoRoutine routine = m_factory.newRoutine("Blue Coral Station");
+    AutoTrajectory mainTraj = routine.trajectory("Blue To Coral Station");
+
+    routine.active().onTrue(Commands.sequence(mainTraj.resetOdometry(), mainTraj.cmd()));
+
+    return routine;
+  }
+  
+  /**
+    * Routine to drive to the Coral Station.
+    */
+  public AutoRoutine blueCoralToReefK() {
+    AutoRoutine routine = m_factory.newRoutine("Blue Coral Station To Reef K");
+    AutoTrajectory mainTraj = routine.trajectory("Blue Coral Station To Reef K");
 
     routine.active().onTrue(Commands.sequence(mainTraj.resetOdometry(), mainTraj.cmd()));
 
