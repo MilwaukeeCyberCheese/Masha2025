@@ -45,6 +45,16 @@ import java.util.function.BooleanSupplier;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static enum RobotType {
+    REAL,
+    SIM,
+    REPLAY
+  }
+
+  public static RobotType getRobotType() {
+    return RobotType.SIM;
+  }
+
   public static final double kTau = Math.PI * 2;
 
   public static class Sensors {
