@@ -23,22 +23,22 @@ public class ClimberSubsystem extends SubsystemBase {
   private Optional<Double> customPosition = Optional.empty();
 
   public ClimberSubsystem() {
-    Climber.kClimberSparkMax.configure(
-        Climber.kClimberConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    Climber.CLIMBER_SPARK_MAX.configure(
+        Climber.CLIMBER_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     setState(state);
   }
 
   @Override
   public void periodic() {
-    Climber.kClimberController.setReference(position, ControlType.kPosition);
+    Climber.CLIMBER_CONTROLLER.setReference(position, ControlType.kPosition);
 
     log();
   }
 
   public void log() {
     SmartDashboard.putNumber(
-        "Climber Position", Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition());
+        "Climber Position", Climber.CLIMBER_SPARK_MAX.getAbsoluteEncoder().getPosition());
   }
 
   // TODO: add logic for limits
@@ -57,7 +57,7 @@ public class ClimberSubsystem extends SubsystemBase {
     position =
         this.state == ClimberState.CUSTOM
             ? customPosition.get()
-            : Climber.kPositions.get(this.state);
+            : Climber.POSITIONS.get(this.state);
   }
 
   /**
@@ -84,7 +84,7 @@ public class ClimberSubsystem extends SubsystemBase {
    * @return double
    */
   public double getPosition() {
-    return Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition();
+    return Climber.CLIMBER_SPARK_MAX.getAbsoluteEncoder().getPosition();
   }
 
   /**
@@ -94,9 +94,9 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public boolean atPosition() {
     return Math.abs(
-            Climber.kPositions.get(state)
-                - Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition())
-        < Climber.kClimberTolerance;
+            Climber.POSITIONS.get(state)
+                - Climber.CLIMBER_SPARK_MAX.getAbsoluteEncoder().getPosition())
+        < Climber.CLIMBER_TOLERANCE;
   }
 
   /** Set climber state to waiting */

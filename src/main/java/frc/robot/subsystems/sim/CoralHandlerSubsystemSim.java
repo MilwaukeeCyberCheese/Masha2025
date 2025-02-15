@@ -37,7 +37,7 @@ public class CoralHandlerSubsystemSim extends CoralHandlerSubsystem {
   public void periodic() {
     super.periodic();
     if (Robot.isReal()) {
-      hasCoral = Sensors.handlerDistanceSensor.getRange(Unit.kInches) < 5;
+      hasCoral = Sensors.HANDLER_DISTANCE_SENSOR.getRange(Unit.kInches) < 5;
     } else {
       if (getState() == CoralHandlerState.GRAB) {
         intakeSim.startIntake();

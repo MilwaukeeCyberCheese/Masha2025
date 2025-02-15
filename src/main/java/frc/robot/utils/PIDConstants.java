@@ -3,107 +3,107 @@ package frc.robot.utils;
 /** PID constants used to create PID controllers */
 public class PIDConstants {
   /** P */
-  public final double kP;
+  public final double p;
 
   /** I */
-  public final double kI;
+  public final double i;
 
   /** D */
-  public final double kD;
+  public final double d;
 
   /** FF */
-  public final double kFF;
+  public final double ff;
 
   /** IZone */
-  public final double kIZone;
+  public final double iZone;
 
   /** Max Velocity (for use with MAXMOTION) */
-  public final double kMaxVelocity;
+  public final double maxVelocity;
 
   /** Max Acceleration (for use with MAXMOTION) */
-  public final double kMaxAcceleration;
+  public final double maxAcceleration;
 
   /**
    * Create a new PIDConstants object
    *
-   * @param kP P
-   * @param kI I
-   * @param kD D
-   * @param kFF Feedforward
-   * @param kIZone IZone
-   * @param kMaxVelocity Max Velocity (for use with MAXMOTION)
-   * @param kMaxAcceleration Max Acceleration (for use with MAXMOTION)
+   * @param p P
+   * @param i I
+   * @param d D
+   * @param ff Feedforward
+   * @param iZone IZone
+   * @param maxVelocity Max Velocity (for use with MAXMOTION)
+   * @param maxAcceleration Max Acceleration (for use with MAXMOTION)
    */
   public PIDConstants(
-      double kP,
-      double kI,
-      double kD,
-      double kFF,
-      double kIZone,
-      double kMaxVelocity,
-      double kMaxAcceleration) {
-    this.kP = kP;
-    this.kI = kI;
-    this.kD = kD;
-    this.kFF = kFF;
-    this.kIZone = kIZone;
-    this.kMaxVelocity = kMaxVelocity;
-    this.kMaxAcceleration = kMaxAcceleration;
+      double p,
+      double i,
+      double d,
+      double ff,
+      double iZone,
+      double maxVelocity,
+      double maxAcceleration) {
+    this.p = p;
+    this.i = i;
+    this.d = d;
+    this.ff = ff;
+    this.iZone = iZone;
+    this.maxVelocity = maxVelocity;
+    this.maxAcceleration = maxAcceleration;
   }
 
   /**
    * Create a new PIDConstants object
    *
-   * @param kP P
-   * @param kI I
-   * @param kD D
+   * @param p P
+   * @param i I
+   * @param d D
    */
-  public PIDConstants(double kP, double kI, double kD) {
-    this(kP, kI, kD, 0.0, 0.0, -1.0, -1.0);
+  public PIDConstants(double p, double i, double d) {
+    this(p, i, d, 0.0, 0.0, -1.0, -1.0);
   }
 
   /**
    * Create a new PIDConstants object
    *
-   * @param kP P
-   * @param kI I
-   * @param kD D
-   * @param kFF Feedforward
+   * @param p P
+   * @param i I
+   * @param d D
+   * @param ff Feedforward
    */
-  public PIDConstants(double kP, double kI, double kD, double kFF) {
-    this(kP, kI, kD, kFF, 0.0, -1.0, -1.0);
+  public PIDConstants(double p, double i, double d, double ff) {
+    this(p, i, d, ff, 0.0, -1.0, -1.0);
   }
 
   /**
    * Create a new PIDConstants object
    *
-   * @param kP P
-   * @param kI I
-   * @param kD D
-   * @param kMaxVelocity Max Velocity (for use with MAXMOTION)
-   * @param kMaxAcceleration Max Acceleration (for use with MAXMOTION)
+   * @param p P
+   * @param i I
+   * @param d D
+   * @param maxVelocity Max Velocity (for use with MAXMOTION)
+   * @param maxAcceleration Max Acceleration (for use with MAXMOTION)
    */
   public PIDConstants(
-      double kP, double kI, double kD, double kMaxVelocity, double kMaxAcceleration) {
-    this(kP, kI, kD, 0.0, 0.0, kMaxVelocity, kMaxAcceleration);
+          double p, double i, double d, double maxVelocity, double maxAcceleration) {
+    this(p, i, d, 0.0, 0.0, maxVelocity, maxAcceleration);
   }
 
   /** Return a string of all the values */
   public String toString() {
     return "P: "
-        + kP
+        + p
         + " I: "
-        + kI
+        + i
         + " D: "
-        + kD
+        + d
         + " FF: "
-        + kFF
+        + ff
         + " IZone: "
-        + kIZone
+        + iZone
         + " MaxVelocity: "
-        + kMaxVelocity
+        + maxVelocity
         + " MaxAcceleration: "
-        + kMaxAcceleration;
+        + maxAcceleration;
   }
 
   /** Create a new PIDConstants object from string */

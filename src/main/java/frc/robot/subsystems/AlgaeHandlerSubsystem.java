@@ -35,11 +35,11 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
   private Optional<Double> customSpeed = Optional.empty();
 
   public AlgaeHandlerSubsystem() {
-    Algae.kPositionSparkMax.configure(
-        Algae.kPositionConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    Algae.POSITION_SPARK_MAX.configure(
+        Algae.POSITION_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    Algae.kIntakeSparkMax.configure(
-        Algae.kIntakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    Algae.INTAKE_SPARK_MAX.configure(
+        Algae.INTAKE_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     setPositionState(AlgaeHandlerPositionState.STOWED);
     setSpeedState(AlgaeHandlerIntakeState.STOPPED);
@@ -49,8 +49,8 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    Algae.kPositionController.setReference(position, ControlType.kPosition);
-    Algae.kIntakeController.setReference(speed, ControlType.kVelocity);
+    Algae.POSITION_CONTROLLER.setReference(position, ControlType.kPosition);
+    Algae.INTAKE_CONTROLLER.setReference(speed, ControlType.kVelocity);
 
     log();
   }
@@ -58,9 +58,9 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
   // TODO; add logging code
   public void log() {
     SmartDashboard.putNumber(
-        "Algae Handler Position", Algae.kPositionSparkMax.getAbsoluteEncoder().getPosition());
+        "Algae Handler Position", Algae.POSITION_SPARK_MAX.getAbsoluteEncoder().getPosition());
     SmartDashboard.putNumber(
-        "Algae Handler Intake Speed", Algae.kIntakeSparkMax.getEncoder().getVelocity());
+        "Algae Handler Intake Speed", Algae.INTAKE_SPARK_MAX.getEncoder().getVelocity());
   }
 
   // TODO: add logic for limits
@@ -79,7 +79,7 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
     position =
         positionState == AlgaeHandlerPositionState.CUSTOM
             ? customPosition.get()
-            : Algae.kPositions.get(state);
+            : Algae.POSITIONS.get(state);
   }
 
   /**
@@ -116,9 +116,9 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
    */
   public boolean atPosition() {
     return Math.abs(
-            Algae.kPositions.get(positionState)
-                - Algae.kPositionSparkMax.getAbsoluteEncoder().getPosition())
-        < Algae.kPositionTolerance;
+            Algae.POSITIONS.get(positionState)
+                - Algae.POSITION_SPARK_MAX.getAbsoluteEncoder().getPosition())
+        < Algae.POSITION_TOLERANCE;
   }
 
   /**
@@ -136,7 +136,7 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
     speed =
         intakeState == AlgaeHandlerIntakeState.CUSTOM
             ? customSpeed.get()
-            : Algae.kSpeeds.get(state);
+            : Algae.SPEEDS.get(state);
   }
 
   /**
@@ -173,7 +173,7 @@ public class AlgaeHandlerSubsystem extends SubsystemBase {
    */
   public boolean atSpeed() {
     return Math.abs(
-            Algae.kSpeeds.get(intakeState) - Algae.kIntakeSparkMax.getEncoder().getVelocity())
-        < Algae.kIntakeTolerance;
+            Algae.SPEEDS.get(intakeState) - Algae.INTAKE_SPARK_MAX.getEncoder().getVelocity())
+        < Algae.INTAKE_TOLERANCE;
   }
 }

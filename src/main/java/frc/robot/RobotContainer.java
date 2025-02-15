@@ -38,16 +38,16 @@ public class RobotContainer {
 
   // Driver joysticks
   private final FilteredJoystick driverLeftJoystick =
-      new FilteredJoystick(OIConstants.kLeftJoystickPort);
+      new FilteredJoystick(OIConstants.LEFT_JOYSTICK_PORT);
   private final FilteredJoystick driverRightJoystick =
-      new FilteredJoystick(OIConstants.kRightJoystickPort);
+      new FilteredJoystick(OIConstants.RIGHT_JOYSTICK_PORT);
 
   // Operator controller
   private final CommandXboxController operatorController =
-      new CommandXboxController(OIConstants.kOperatorControllerPort);
+      new CommandXboxController(OIConstants.OPERATOR_CONTROLLER_PORT);
 
   // Button Board
-  private final FilteredButton buttonBoard = new FilteredButton(OIConstants.kButtonBoardPort);
+  private final FilteredButton buttonBoard = new FilteredButton(OIConstants.BUTTON_BOARD_PORT);
 
   // Configure drive input stream
   SwerveInputStream driveInput =

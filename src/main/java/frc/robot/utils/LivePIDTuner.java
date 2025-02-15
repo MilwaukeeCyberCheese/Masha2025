@@ -45,16 +45,16 @@ public class LivePIDTuner {
    */
   public static void setSparkPID(SparkMax controller, PIDConstants constants) {
     SparkMaxConfig config = new SparkMaxConfig();
-    if (constants.kMaxAcceleration != -1.0) {
-      config.closedLoop.maxMotion.maxVelocity(constants.kMaxAcceleration);
+    if (constants.maxAcceleration != -1.0) {
+      config.closedLoop.maxMotion.maxVelocity(constants.maxAcceleration);
     }
-    if (constants.kMaxVelocity != -1.0) {
-      config.closedLoop.maxMotion.maxAcceleration(constants.kMaxVelocity);
+    if (constants.maxVelocity != -1.0) {
+      config.closedLoop.maxMotion.maxAcceleration(constants.maxVelocity);
     }
 
-    config.closedLoop.pid(constants.kP, constants.kI, constants.kD);
-    config.closedLoop.iZone(constants.kIZone);
-    config.closedLoop.velocityFF(constants.kFF);
+    config.closedLoop.pid(constants.p, constants.i, constants.d);
+    config.closedLoop.iZone(constants.iZone);
+    config.closedLoop.velocityFF(constants.ff);
 
     controller.configure(
         config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);

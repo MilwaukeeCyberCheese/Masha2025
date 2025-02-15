@@ -30,21 +30,21 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   protected double speed;
 
   public CoralHandlerSubsystem() {
-    Coral.kLeftSparkMax.configure(
-        Coral.kLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    Coral.kRightSparkMax.configure(
-        Coral.kRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    Coral.LEFT_SPARK_MAX.configure(
+        Coral.LEFT_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    Coral.RIGHT_SPARK_MAX.configure(
+        Coral.RIGHT_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     setState(state);
   }
 
   @Override
   public void periodic() {
-    Coral.kLeftController.setReference(speed, ControlType.kMAXMotionVelocityControl);
-    Coral.kRightController.setReference(speed, ControlType.kMAXMotionVelocityControl);
+    Coral.LEFT_CONTROLLER.setReference(speed, ControlType.kMAXMotionVelocityControl);
+    Coral.RIGHT_CONTROLLER.setReference(speed, ControlType.kMAXMotionVelocityControl);
 
     if (Robot.isReal()) {
-      hasCoral = Sensors.handlerDistanceSensor.getRange() < Coral.kHasCoralDistance;
+      hasCoral = Sensors.HANDLER_DISTANCE_SENSOR.getRange() < Coral.HAS_CORAL_DISTANCE;
     }
     log();
   }
@@ -66,7 +66,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     }
 
     this.state = state;
-    speed = this.state == CoralHandlerState.CUSTOM ? customSpeed.get() : Coral.kSpeeds.get(state);
+    speed = this.state == CoralHandlerState.CUSTOM ? customSpeed.get() : Coral.SPEEDS.get(state);
   }
 
   /**
@@ -104,10 +104,10 @@ public class CoralHandlerSubsystem extends SubsystemBase {
    * @return boolean
    */
   public boolean atSpeed() {
-    return Math.abs(Coral.kSpeeds.get(state) - Coral.kLeftSparkMax.getEncoder().getVelocity())
-            < Coral.kTolerance
-        && Math.abs(Coral.kSpeeds.get(state) - Coral.kRightSparkMax.getEncoder().getVelocity())
-            < Coral.kTolerance;
+    return Math.abs(Coral.SPEEDS.get(state) - Coral.LEFT_SPARK_MAX.getEncoder().getVelocity())
+            < Coral.TOLERANCE
+        && Math.abs(Coral.SPEEDS.get(state) - Coral.RIGHT_SPARK_MAX.getEncoder().getVelocity())
+            < Coral.TOLERANCE;
   }
 
   /** Set state to index */

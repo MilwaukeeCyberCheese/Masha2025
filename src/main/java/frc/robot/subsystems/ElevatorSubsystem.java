@@ -28,12 +28,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   protected double height;
 
   public ElevatorSubsystem() {
-    Elevator.kLeftElevatorSparkMax.configure(
-        Elevator.kLeftElevatorConfig,
+    Elevator.K_LEFT_ELEVATOR_SPARK_MAX.configure(
+        Elevator.LEFT_ELEVATOR_CONFIG,
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
-    Elevator.kRightElevatorSparkMax.configure(
-        Elevator.kRightElevatorConfig,
+    Elevator.RIGHT_ELEVATOR_SPARK_MAX.configure(
+        Elevator.RIGHT_ELEVATOR_CONFIG,
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
@@ -46,7 +46,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     log();
 
-    Elevator.kElevatorController.setReference(height, ControlType.kMAXMotionPositionControl);
+    Elevator.ELEVATOR_CONTROLLER.setReference(height, ControlType.kMAXMotionPositionControl);
   }
 
   public void log() {
@@ -71,12 +71,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // TODO: check that this overrides the PID
     if (this.state == ElevatorState.DISABLED) {
-      Elevator.kLeftElevatorSparkMax.set(0);
-      Elevator.kRightElevatorSparkMax.set(0);
+      Elevator.K_LEFT_ELEVATOR_SPARK_MAX.set(0);
+      Elevator.RIGHT_ELEVATOR_SPARK_MAX.set(0);
       return;
     }
 
-    height = state == ElevatorState.CUSTOM ? customHeight.get() : Elevator.kHeights.get(state);
+    height = state == ElevatorState.CUSTOM ? customHeight.get() : Elevator.HEIGHTS.get(state);
   }
 
   /**
@@ -114,8 +114,8 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return boolean
    */
   public boolean atHeight() {
-    return Math.abs(height - Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition())
-        < Elevator.kElevatorTolerance;
+    return Math.abs(height - Elevator.K_LEFT_ELEVATOR_SPARK_MAX.getAbsoluteEncoder().getPosition())
+        < Elevator.ELEVATOR_TOLERANCE;
   }
 
   /** Set elevator state to down */
@@ -153,10 +153,10 @@ public class ElevatorSubsystem extends SubsystemBase {
    *     note that this will cause the spark to become unresponsive for a short period of time
    */
   public void zero() {
-    Elevator.kLeftElevatorSparkMax.getEncoder().setPosition(0);
+    Elevator.K_LEFT_ELEVATOR_SPARK_MAX.getEncoder().setPosition(0);
   }
 
   public boolean atBottom() {
-    return Elevator.kElevatorLimitSwitch.isPressed();
+    return Elevator.ELEVATOR_LIMIT_SWITCH.isPressed();
   }
 }

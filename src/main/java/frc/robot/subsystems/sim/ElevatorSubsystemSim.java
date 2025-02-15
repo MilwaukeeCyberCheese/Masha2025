@@ -32,7 +32,7 @@ public class ElevatorSubsystemSim extends ElevatorSubsystem {
   public void periodic() {
     super.periodic();
     double error = simTargetHeight - simHeight;
-    double maxDelta = Elevator.kSimLerpSpeed * 0.02; // dt assumed to be 20ms
+    double maxDelta = Elevator.SIM_LERP_SPEED * 0.02; // dt assumed to be 20ms
     simHeight += Math.copySign(Math.min(Math.abs(error), maxDelta), error);
 
     simPoseArray.accept(
