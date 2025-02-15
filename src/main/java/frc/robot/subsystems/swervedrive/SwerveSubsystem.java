@@ -715,10 +715,8 @@ public class SwerveSubsystem extends SubsystemBase {
     return swerveDrive.getPitch();
   }
 
-  /** Add a fake vision reading for testing purposes. */
-  public void addFakeVisionReading() {
-    swerveDrive.addVisionMeasurement(
-        new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
+  public void addVisionMeasurement(Pose2d visionPose, double timestamp) {
+    swerveDrive.addVisionMeasurement(visionPose, timestamp);
   }
 
   /**
