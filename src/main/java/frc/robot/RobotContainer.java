@@ -78,6 +78,7 @@ public class RobotContainer {
     m_drive.setDefaultCommand(m_drive.driveFieldOriented(driveInput));
 
     m_autoChooser.addRoutine("Test Routine", m_routines::test);
+    m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
     SmartDashboard.putData("Xbox Controller Debug", m_operatorController.getHID());
 
