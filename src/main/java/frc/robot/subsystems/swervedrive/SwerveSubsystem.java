@@ -82,7 +82,7 @@ public class SwerveSubsystem extends SubsystemBase {
       swerveDrive =
           new SwerveParser(directory)
               .createSwerveDrive(
-                  Constants.DriveConstants.kMaxSpeedMetersPerSecond,
+                  Constants.DriveConstants.MAX_SPEED_METERS_PER_SECOND,
                   new Pose2d(
                       new Translation2d(Meter.of(1), Meter.of(4)), Rotation2d.fromDegrees(0)));
       // Alternative method if you don't want to supply the conversion factor via JSON
@@ -133,7 +133,7 @@ public class SwerveSubsystem extends SubsystemBase {
         new SwerveDrive(
             driveCfg,
             controllerCfg,
-            Constants.DriveConstants.kMaxSpeedMetersPerSecond,
+            Constants.DriveConstants.MAX_SPEED_METERS_PER_SECOND,
             new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)), Rotation2d.fromDegrees(0)));
     simDrive = swerveDrive.getMapleSimDrive();
     setupChassisSim();
@@ -402,12 +402,12 @@ public class SwerveSubsystem extends SubsystemBase {
   /**
    * Replaces the swerve module feedforward with a new SimpleMotorFeedforward object.
    *
-   * @param kS the static gain of the feedforward
-   * @param kV the velocity gain of the feedforward
-   * @param kA the acceleration gain of the feedforward
+   * @param s the static gain of the feedforward
+   * @param v the velocity gain of the feedforward
+   * @param a the acceleration gain of the feedforward
    */
-  public void replaceSwerveModuleFeedforward(double kS, double kV, double kA) {
-    swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(kS, kV, kA));
+  public void replaceSwerveModuleFeedforward(double s, double v, double a) {
+    swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(s, v, a));
   }
 
   /**
@@ -642,7 +642,7 @@ public class SwerveSubsystem extends SubsystemBase {
         headingX,
         headingY,
         getHeading().getRadians(),
-        Constants.DriveConstants.kMaxSpeedMetersPerSecond);
+        Constants.DriveConstants.MAX_SPEED_METERS_PER_SECOND);
   }
 
   /**
@@ -662,7 +662,7 @@ public class SwerveSubsystem extends SubsystemBase {
         scaledInputs.getY(),
         angle.getRadians(),
         getHeading().getRadians(),
-        Constants.DriveConstants.kMaxSpeedMetersPerSecond);
+        Constants.DriveConstants.MAX_SPEED_METERS_PER_SECOND);
   }
 
   /**
