@@ -6,9 +6,13 @@ package frc.robot;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
+import choreo.trajectory.SwerveSample;
+import choreo.trajectory.Trajectory;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -22,6 +26,11 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.FilteredButton;
 import frc.robot.utils.FilteredJoystick;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import swervelib.SwerveInputStream;
 
 /*
@@ -56,8 +65,14 @@ public class RobotContainer {
   public final AutoChooser m_autoChooser = new AutoChooser();
   private final AutoFactory m_autoFactory =
       new AutoFactory(
-          m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive);
+          m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive, this::logTrajectory);
   private final Routines m_routines = new Routines(m_autoFactory);
+
+  private final FieldObject2d allPositions = this.m_drive.getSwerveDrive().field.getObject("Positions");
+
+  private String lastTrajectory;
+  private final FieldObject2d autoTrajectoryObj = this.m_drive.getSwerveDrive().field.getObject("Auto Trajectory");
+  private final FieldObject2d allTrajectoriesObj = this.m_drive.getSwerveDrive().field.getObject("All Trajectories");
 
   // Configure drive input stream
   SwerveInputStream driveInput =
@@ -121,5 +136,44 @@ public class RobotContainer {
         .leftBumper()
         .onTrue(Commands.runOnce(m_coral::release))
         .onFalse(Commands.runOnce(m_coral::idle));
+  }
+
+  public void clearPositionDebug() {
+    this.allPositions.setPoses();
+  }
+
+  public void updatePositionDebug() {
+    final var newPoses = this.allPositions.getPoses();
+    final var currentPose = this.m_drive.getPose();
+
+    if (!newPoses.isEmpty() && newPoses.getLast().getTranslation().getDistance(currentPose.getTranslation()) >= 4) newPoses.clear();
+
+    newPoses.add(currentPose);
+    this.allPositions.setPoses(newPoses);
+  }
+
+  public void clearAutoTrajectories() {
+    this.lastTrajectory = null;
+    this.autoTrajectoryObj.setPoses();
+    this.allTrajectoriesObj.setPoses();
+  }
+
+  private void logTrajectory(Trajectory<SwerveSample> trajectory, boolean isStart) {
+    if (isStart) {
+      if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) trajectory = trajectory.flipped();
+
+      final var poses = new ArrayList<Pose2d>(trajectory.samples().size());
+      for (final var swerveSample : trajectory.samples()) {
+        poses.add(swerveSample.getPose());
+      }
+      this.lastTrajectory = trajectory.name();
+      this.autoTrajectoryObj.setPoses(poses);
+      final var oldAllPoses = this.allTrajectoriesObj.getPoses();
+      oldAllPoses.addAll(poses);
+      this.allTrajectoriesObj.setPoses(oldAllPoses);
+    } else if (Objects.equals(this.lastTrajectory, trajectory.name())) {
+      this.autoTrajectoryObj.setPoses();
+      this.lastTrajectory = null;
+    }
   }
 }

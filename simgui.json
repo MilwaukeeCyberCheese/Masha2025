@@ -4,6 +4,9 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Alerts": "Alerts",
       "/SmartDashboard/Auto Chooser": "String Chooser",
+      "/SmartDashboard/Auto Controllers/Theta": "PIDController",
+      "/SmartDashboard/Auto Controllers/X": "PIDController",
+      "/SmartDashboard/Auto Controllers/Y": "PIDController",
       "/SmartDashboard/Choreo Alerts": "Alerts",
       "/SmartDashboard/Encoders": "Alerts",
       "/SmartDashboard/Field": "Field2d",
@@ -15,6 +18,30 @@
     },
     "windows": {
       "/SmartDashboard/Field": {
+        "All Trajectories": {
+          "arrows": false,
+          "color": [
+            255.0,
+            205.9615478515625,
+            0.0,
+            255.0
+          ],
+          "style": "Line"
+        },
+        "Auto Trajectory": {
+          "arrows": false,
+          "style": "Line"
+        },
+        "Positions": {
+          "arrows": false,
+          "color": [
+            0.7821334600448608,
+            0.9839743375778198,
+            0.9529218673706055,
+            255.0
+          ],
+          "style": "Line"
+        },
         "XModules": {
           "arrows": false,
           "image": "assets/swerve_module.png",
@@ -37,25 +64,36 @@
   },
   "NetworkTables": {
     "transitory": {
-      "FMSInfo": {
-        "open": true
-      },
       "SmartDashboard": {
         "Auto Chooser": {
+          "string[]##v_/SmartDashboard/Auto Chooser/options": {
+            "open": true
+          }
+        },
+        "Auto Controllers": {
+          "X": {
+            "open": true
+          },
+          "open": true
+        },
+        "Scheduler": {
           "open": true
         },
         "Tuning": {
           "open": true
         },
-        "open": true
+        "open": true,
+        "swerve": {
+          "modules": {
+            "open": true
+          },
+          "open": true
+        }
       }
     }
   },
   "NetworkTables Info": {
     "visible": true
-  },
-  "NetworkTables View": {
-    "visible": false
   },
   "Plot": {
     "Plot <0>": {

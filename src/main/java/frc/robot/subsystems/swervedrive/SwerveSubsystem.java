@@ -56,9 +56,9 @@ public class SwerveSubsystem extends SubsystemBase {
   /** PhotonVision class to keep an accurate odometry. */
   private Vision vision;
 
-  private final PIDController xController = new PIDController(.00005, .0, .0);
-  private final PIDController yController = new PIDController(.00005, .0, .0);
-  private final PIDController thetaController = new PIDController(.00005, .0, .0);
+  private final PIDController xController = new PIDController(50, 0.0, 0);
+  private final PIDController yController = new PIDController(50, 0.0, 0);
+  private final PIDController thetaController = new PIDController(0.75, 0.0, 0.0);
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -110,6 +110,10 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     setupChassisSim();
+
+    SmartDashboard.putData("Auto Controllers/X", xController);
+    SmartDashboard.putData("Auto Controllers/Y", yController);
+    SmartDashboard.putData("Auto Controllers/Theta", thetaController);
   }
 
   public void followTrajectory(SwerveSample sample) {
