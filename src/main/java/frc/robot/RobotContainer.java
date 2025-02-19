@@ -15,8 +15,6 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
 import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.utils.FilteredButton;
-import frc.robot.utils.FilteredJoystick;
 import java.io.File;
 import swervelib.SwerveInputStream;
 
@@ -36,18 +34,9 @@ public class RobotContainer {
           ? new CoralHandlerSubsystem()
           : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
 
-  // Driver joysticks
-  private final FilteredJoystick m_driverLeftJoystick =
-      new FilteredJoystick(OIConstants.kLeftJoystickPort);
-  private final FilteredJoystick m_driverRightJoystick =
-      new FilteredJoystick(OIConstants.kRightJoystickPort);
-
   // Operator controller
   private final CommandXboxController m_operatorController =
       new CommandXboxController(OIConstants.kOperatorControllerPort);
-
-  // Button Board
-  private final FilteredButton m_buttonBoard = new FilteredButton(OIConstants.kButtonBoardPort);
 
   // Configure drive input stream
   SwerveInputStream driveInput =
