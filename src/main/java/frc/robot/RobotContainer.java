@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
 import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -27,8 +28,10 @@ import swervelib.SwerveInputStream;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final SwerveSubsystem m_drive =
+  public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
+  private final VisionSubsystem m_vision = new VisionSubsystem(m_drive);
+
   private final ElevatorSubsystem m_elevator =
       Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
   private final CoralHandlerSubsystem m_coral =
