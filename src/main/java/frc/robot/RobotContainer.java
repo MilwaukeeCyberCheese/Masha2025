@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -53,9 +54,19 @@ public class RobotContainer {
   SwerveInputStream driveInput =
       SwerveInputStream.of(
               m_drive.getSwerveDrive(),
-              m_operatorController::getLeftY,
-              m_operatorController::getLeftX)
-          .withControllerRotationAxis(() -> -m_operatorController.getRightX())
+              () ->
+                  m_driverLeftJoystick.getY()
+                      * DriveConstants.kDrivingSpeed
+                      * m_driverRightJoystick.getThrottle(),
+              () ->
+                  m_driverLeftJoystick.getX()
+                      * DriveConstants.kDrivingSpeed
+                      * m_driverRightJoystick.getThrottle())
+          .withControllerRotationAxis(
+              () ->
+                  -m_driverRightJoystick.getX()
+                      * DriveConstants.kRotationSpeed
+                      * m_driverRightJoystick.getThrottle())
           .deadband(0.1)
           .scaleTranslation(0.8)
           .allianceRelativeControl(true);
