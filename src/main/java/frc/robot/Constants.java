@@ -54,7 +54,7 @@ public final class Constants {
     }
   }
 
-  public static class OIConstants {
+  public static final class OIConstants {
     public static final int kOperatorControllerPort = 0;
     public static final int kLeftJoystickPort = 1;
     public static final int kRightJoystickPort = 2;
@@ -62,7 +62,7 @@ public final class Constants {
     public static final double kDriveDeadband = 0.05;
   }
 
-  public static class Vision {
+  public static final class Vision {
     public static final String kCameraName = "Brio_100";
     // Cam mounted facing forward, half a meter forward of center, half a meter up
     // from center.
@@ -86,7 +86,7 @@ public final class Constants {
   // or is it a single PID running on the roborio?
   // or is it a single PID running locally, and one slaved to it? (probably this
   // one)
-  public static class Elevator {
+  public static final class Elevator {
     // TODO: figure these out
     public static final int kLeftElevatorCANid = 9;
     public static final int kRightElevatorCANid = 10;
@@ -171,8 +171,8 @@ public final class Constants {
   }
 
   // TODO: find like all of these
-  public static class Handler {
-    public static class Coral {
+  public static final class Handler {
+    public static final class Coral {
       // TODO: figure these out
       public static final int kLeftMotorCANid = 11;
       public static final int kRightMotorCANid = 12;
@@ -229,7 +229,7 @@ public final class Constants {
       }
     }
 
-    public static class Algae {
+    public static final class Algae {
       public static final int kPositionMotorCanId = 13;
       public static final int kIntakeMotorCanId = 14;
 
@@ -307,7 +307,7 @@ public final class Constants {
     }
   }
 
-  public static class Climber {
+  public static final class Climber {
     // TODO: figure this out
     public static final int kClimberMotorCanId = 15;
 
