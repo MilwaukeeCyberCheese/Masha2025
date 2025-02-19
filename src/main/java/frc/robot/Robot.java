@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -77,31 +78,37 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
+    this.m_robotContainer.updatePositionDebug();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    this.m_robotContainer.clearPositionDebug();
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+      m_robotContainer.m_drive.drive(new ChassisSpeeds(0, 0, 0));
+      m_autonomousCommand = null;
+    }
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.m_autoChooser.selectedCommand();
 
-    /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector",
-     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-     * = new MyAutoCommand(); break; case "Default Auto": default:
-     * autonomousCommand = new ExampleCommand(); break; }
-     */
-
-    // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+  }
+
+  @Override
+  public void autonomousExit() {
+    this.m_robotContainer.clearAutoTrajectories();
   }
 
   /** This function is called periodically during autonomous. */
