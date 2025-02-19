@@ -359,6 +359,13 @@ public final class Constants {
     }
   }
 
+  public static final class ChuteConstants {
+    // TOOD: put da servos here
+
+    public static final double kUpPosition = 0.0;
+    public static final double kDownPosition = 0.0;
+  }
+
   public static final class DriveConstants {
 
     public static final BooleanSupplier kRateLimitsEnabled = () -> true;
