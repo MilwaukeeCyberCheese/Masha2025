@@ -54,15 +54,15 @@ public class RobotContainer {
   private final FilteredButton m_buttonBoard = new FilteredButton(OIConstants.kButtonBoardPort);
 
   public final AutoChooser m_autoChooser = new AutoChooser();
-  private final AutoFactory m_autoFactory =
-      new AutoFactory(
-          m_drive::getPose,
-          m_drive::resetOdometry,
-          m_drive::followTrajectory,
-          true,
-          m_drive,
-          this::logTrajectory);
-  private final Routines m_routines = new Routines(m_autoFactory);
+//   private final AutoFactory m_autoFactory =
+//       new AutoFactory(
+//           m_drive::getPose,
+//           m_drive::resetOdometry,
+//           m_drive::followTrajectory,
+//           true,
+//           m_drive,
+//           this::logTrajectory);
+//   private final Routines m_routines = new Routines(m_autoFactory);
 
   private final FieldObject2d allPositions =
       this.m_drive.getSwerveDrive().field.getObject("Positions");
@@ -101,11 +101,11 @@ public class RobotContainer {
     // Set default drive command
     m_drive.setDefaultCommand(m_drive.driveFieldOriented(driveInput));
 
-    m_autoChooser.addRoutine("Test Routine", m_routines::test);
-    m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
-    m_autoChooser.addRoutine("Blue Coral Station Routine", m_routines::blueCoralStation);
-    m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
-    m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
+    // m_autoChooser.addRoutine("Test Routine", m_routines::test);
+    // m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
+    // m_autoChooser.addRoutine("Blue Coral Station Routine", m_routines::blueCoralStation);
+    // m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
+    // m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
 
     if (Robot.getInstance().isSimulation()) {
@@ -153,45 +153,45 @@ public class RobotContainer {
     this.allPositions.setPoses();
   }
 
-  public void updatePositionDebug() {
-    final var newPoses = this.allPositions.getPoses();
-    final var currentPose = this.m_drive.getPose();
+//   public void updatePositionDebug() {
+//     final var newPoses = this.allPositions.getPoses();
+//     final var currentPose = this.m_drive.getPose();
 
-    if (!newPoses.isEmpty()
-        && newPoses
-                .get(newPoses.size() - 1)
-                .getTranslation()
-                .getDistance(currentPose.getTranslation())
-            >= 4) newPoses.clear();
+//     if (!newPoses.isEmpty()
+//         && newPoses
+//                 .get(newPoses.size() - 1)
+//                 .getTranslation()
+//                 .getDistance(currentPose.getTranslation())
+//             >= 4) newPoses.clear();
 
-    newPoses.add(currentPose);
-    this.allPositions.setPoses(newPoses);
-  }
+//     newPoses.add(currentPose);
+//     this.allPositions.setPoses(newPoses);
+//   }
 
-  public void clearAutoTrajectories() {
-    this.lastTrajectory = null;
-    this.autoTrajectoryObj.setPoses();
-    this.allTrajectoriesObj.setPoses();
-  }
+//   public void clearAutoTrajectories() {
+//     this.lastTrajectory = null;
+//     this.autoTrajectoryObj.setPoses();
+//     this.allTrajectoriesObj.setPoses();
+//   }
 
-  private void logTrajectory(Trajectory<SwerveSample> trajectory, boolean isStart) {
-    if (isStart) {
-      if (DriverStation.getAlliance().isPresent()
-          && DriverStation.getAlliance().get() == DriverStation.Alliance.Red)
-        trajectory = trajectory.flipped();
+//   private void logTrajectory(Trajectory<SwerveSample> trajectory, boolean isStart) {
+//     if (isStart) {
+//       if (DriverStation.getAlliance().isPresent()
+//           && DriverStation.getAlliance().get() == DriverStation.Alliance.Red)
+//         trajectory = trajectory.flipped();
 
-      final var poses = new ArrayList<Pose2d>(trajectory.samples().size());
-      for (final var swerveSample : trajectory.samples()) {
-        poses.add(swerveSample.getPose());
-      }
-      this.lastTrajectory = trajectory.name();
-      this.autoTrajectoryObj.setPoses(poses);
-      final var oldAllPoses = this.allTrajectoriesObj.getPoses();
-      oldAllPoses.addAll(poses);
-      this.allTrajectoriesObj.setPoses(oldAllPoses);
-    } else if (Objects.equals(this.lastTrajectory, trajectory.name())) {
-      this.autoTrajectoryObj.setPoses();
-      this.lastTrajectory = null;
-    }
-  }
+//       final var poses = new ArrayList<Pose2d>(trajectory.samples().size());
+//       for (final var swerveSample : trajectory.samples()) {
+//         poses.add(swerveSample.getPose());
+//       }
+//       this.lastTrajectory = trajectory.name();
+//       this.autoTrajectoryObj.setPoses(poses);
+//       final var oldAllPoses = this.allTrajectoriesObj.getPoses();
+//       oldAllPoses.addAll(poses);
+//       this.allTrajectoriesObj.setPoses(oldAllPoses);
+//     } else if (Objects.equals(this.lastTrajectory, trajectory.name())) {
+//       this.autoTrajectoryObj.setPoses();
+//       this.lastTrajectory = null;
+//     }
+//   }
 }
