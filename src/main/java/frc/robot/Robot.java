@@ -78,13 +78,17 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
-    this.m_robotContainer.updatePositionDebug();
+    if (this.isSimulation()) {
+      this.m_robotContainer.updatePositionDebug();
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    this.m_robotContainer.clearPositionDebug();
+    if (this.isSimulation()) {
+      this.m_robotContainer.clearPositionDebug();
+    }
   }
 
   @Override
@@ -108,7 +112,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousExit() {
-    this.m_robotContainer.clearAutoTrajectories();
+    // this.m_robotContainer.clearAutoTrajectories();
   }
 
   /** This function is called periodically during autonomous. */

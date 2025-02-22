@@ -366,7 +366,7 @@ public final class Constants {
 
     // Drive speed modifiers
     // first value is for normal, second slow
-    public static final double[] kRotationSpeed = new double[] {0.5, 0.3};
-    public static final double[] kDrivingSpeed = new double[] {0.8, 0.5};
+    public static final double[] kRotationSpeed = new double[] {0.7, 0.5, 0.4};
+    public static final double[] kDrivingSpeed = new double[] {0.8, 0.6, 0.4};
   }
 }
