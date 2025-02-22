@@ -36,9 +36,7 @@ public class CoralHandlerSubsystemSim extends CoralHandlerSubsystem {
   @Override
   public void periodic() {
     super.periodic();
-    if (Robot.isReal()) {
-      m_hasCoral = Sensors.handlerDistanceSensor.getRange(Unit.kInches) < 5;
-    } else {
+    
       if (getState() == CoralHandlerState.GRAB) {
         m_intakeSim.startIntake();
       } else {
@@ -58,7 +56,7 @@ public class CoralHandlerSubsystemSim extends CoralHandlerSubsystem {
       }
       m_hasCoral = m_intakeSim.getGamePiecesAmount() != 0;
     }
-  }
+  
 
   /** Intake a simulated coral from thin air, like magic */
   public void getSimCoral() {

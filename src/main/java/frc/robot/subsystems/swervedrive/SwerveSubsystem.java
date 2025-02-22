@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.Constants.Sensors;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
 import java.io.IOException;
@@ -466,7 +467,7 @@ public class SwerveSubsystem extends SubsystemBase {
                   scaledInputs.getY(),
                   headingX.getAsDouble(),
                   headingY.getAsDouble(),
-                  swerveDrive.getOdometryHeading().getRadians(),
+                  swerveDrive.getGyro().getRotation3d().getX() * Math.PI / 180.0,
                   swerveDrive.getMaximumChassisVelocity()));
         });
   }

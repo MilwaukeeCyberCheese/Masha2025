@@ -45,13 +45,12 @@ public final class Constants {
   public static final double kTau = Math.PI * 2;
 
   public static class Sensors {
-    public static final AHRS gyro = new AHRS(NavXComType.kUSB1);
-    public static final Rev2mDistanceSensor handlerDistanceSensor =
-        new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard);
+    // public static final Rev2mDistanceSensor handlerDistanceSensor =
+    //     new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard);
 
-    static {
-      handlerDistanceSensor.setDistanceUnits(Rev2mDistanceSensor.Unit.kInches);
-    }
+    // static {
+    //   handlerDistanceSensor.setDistanceUnits(Rev2mDistanceSensor.Unit.kInches);
+    // }
   }
 
   public static final class OIConstants {
