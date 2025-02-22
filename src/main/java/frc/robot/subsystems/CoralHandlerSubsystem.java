@@ -6,8 +6,6 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Handler.Coral;
-import frc.robot.Constants.Sensors;
-import frc.robot.Robot;
 import java.util.Optional;
 
 public class CoralHandlerSubsystem extends SubsystemBase {
