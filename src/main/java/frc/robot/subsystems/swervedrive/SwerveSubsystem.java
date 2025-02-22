@@ -466,7 +466,10 @@ public class SwerveSubsystem extends SubsystemBase {
                   scaledInputs.getY(),
                   headingX.getAsDouble(),
                   headingY.getAsDouble(),
-                  swerveDrive.getGyro().getRotation3d().getY(), //TODO: this is either Y or X, figure it out tmrw
+                  swerveDrive
+                      .getGyro()
+                      .getRotation3d()
+                      .getY(), // TODO: this is either Y or X, figure it out tmrw
                   swerveDrive.getMaximumChassisVelocity()));
         });
   }

@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.revrobotics.Rev2mDistanceSensor;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -13,8 +12,6 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import com.studica.frc.AHRS;
-import com.studica.frc.AHRS.NavXComType;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -366,5 +363,10 @@ public final class Constants {
     // the robot, rather the allowed maximum speeds
     public static final double kMaxSpeedMetersPerSecond = 4.8;
     public static final double kMaxAngularSpeed = kTau; // radians per second
+
+    // Drive speed modifiers
+    // first value is for normal, second slow
+    public static final double[] kRotationSpeed = new double[] {0.5, 0.3};
+    public static final double[] kDrivingSpeed = new double[] {0.8, 0.5};
   }
 }
