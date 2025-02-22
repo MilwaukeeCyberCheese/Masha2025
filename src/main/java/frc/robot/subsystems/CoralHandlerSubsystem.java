@@ -40,9 +40,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Coral.kLeftController.setReference(m_speed, ControlType.kMAXMotionVelocityControl);
-    Coral.kRightController.setReference(m_speed, ControlType.kMAXMotionVelocityControl);
-
+    
     // if (Robot.isReal()) {
     //   m_hasCoral = Sensors.handlerDistanceSensor.getRange() < Coral.kHasCoralDistance;
     // }
@@ -52,6 +50,12 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   public void log() {
     SmartDashboard.putBoolean("Coral Handler Has Coral", m_hasCoral);
     SmartDashboard.putNumber("Coral Handler Speed", m_speed);
+  }
+
+  public void setSpeed(double speed) {
+    
+    Coral.kLeftSparkMax.set(speed);
+    Coral.kRightSparkMax.set(speed);
   }
 
   /**
