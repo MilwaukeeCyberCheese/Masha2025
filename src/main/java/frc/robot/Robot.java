@@ -112,7 +112,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousExit() {
-    this.m_robotContainer.clearAutoTrajectories();
+    // this.m_robotContainer.clearAutoTrajectories();
   }
 
   /** This function is called periodically during autonomous. */
