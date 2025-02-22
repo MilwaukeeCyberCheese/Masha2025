@@ -8,6 +8,7 @@
       "/SmartDashboard/IMU": "Alerts",
       "/SmartDashboard/JSON": "Alerts",
       "/SmartDashboard/Motors": "Alerts",
+      "/SmartDashboard/Scheduler": "Scheduler",
       "/SmartDashboard/Swerve Drive": "Alerts"
     },
     "windows": {
