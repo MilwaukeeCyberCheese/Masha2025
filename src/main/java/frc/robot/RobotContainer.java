@@ -5,10 +5,8 @@
 package frc.robot;
 
 import choreo.auto.AutoChooser;
-import choreo.auto.AutoFactory;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
@@ -26,8 +24,6 @@ import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.FilteredButton;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Objects;
 import swervelib.SwerveInputStream;
 
 /*
@@ -54,15 +50,15 @@ public class RobotContainer {
   private final FilteredButton m_buttonBoard = new FilteredButton(OIConstants.kButtonBoardPort);
 
   public final AutoChooser m_autoChooser = new AutoChooser();
-//   private final AutoFactory m_autoFactory =
-//       new AutoFactory(
-//           m_drive::getPose,
-//           m_drive::resetOdometry,
-//           m_drive::followTrajectory,
-//           true,
-//           m_drive,
-//           this::logTrajectory);
-//   private final Routines m_routines = new Routines(m_autoFactory);
+  //   private final AutoFactory m_autoFactory =
+  //       new AutoFactory(
+  //           m_drive::getPose,
+  //           m_drive::resetOdometry,
+  //           m_drive::followTrajectory,
+  //           true,
+  //           m_drive,
+  //           this::logTrajectory);
+  //   private final Routines m_routines = new Routines(m_autoFactory);
 
   private final FieldObject2d allPositions =
       this.m_drive.getSwerveDrive().field.getObject("Positions");
@@ -80,16 +76,22 @@ public class RobotContainer {
               () ->
                   m_driverController.getLeftY()
                       * DriveConstants.kDrivingSpeed[
-                          m_driverController.rightBumper().getAsBoolean() ? 2 : m_driverController.leftBumper().getAsBoolean() ? 0 : 1],
+                          m_driverController.rightBumper().getAsBoolean()
+                              ? 2
+                              : m_driverController.leftBumper().getAsBoolean() ? 0 : 1],
               () ->
                   m_driverController.getLeftX()
                       * DriveConstants.kDrivingSpeed[
-                        m_driverController.rightBumper().getAsBoolean() ? 2 : m_driverController.leftBumper().getAsBoolean() ? 0 : 1])
+                          m_driverController.rightBumper().getAsBoolean()
+                              ? 2
+                              : m_driverController.leftBumper().getAsBoolean() ? 0 : 1])
           .withControllerRotationAxis(
               () ->
                   -m_driverController.getRightX()
                       * DriveConstants.kRotationSpeed[
-                        m_driverController.rightBumper().getAsBoolean() ? 2 : m_driverController.leftBumper().getAsBoolean() ? 0 : 1])
+                          m_driverController.rightBumper().getAsBoolean()
+                              ? 2
+                              : m_driverController.leftBumper().getAsBoolean() ? 0 : 1])
           .deadband(0.1)
           .scaleTranslation(0.8)
           .allianceRelativeControl(true);
@@ -139,14 +141,15 @@ public class RobotContainer {
     //     .onTrue(Commands.runOnce(() ->
     // m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-   
     m_driverController
         .leftTrigger()
         .onTrue(Commands.runOnce(() -> m_coral.setSpeed(.5)))
         .onFalse(Commands.runOnce(() -> m_coral.setSpeed(0)));
 
-    m_driverController.rightTrigger().onTrue(Commands.runOnce(() -> m_coral.setSpeed(-.5)))
-    .onFalse(Commands.runOnce(() -> m_coral.setSpeed(0)));
+    m_driverController
+        .rightTrigger()
+        .onTrue(Commands.runOnce(() -> m_coral.setSpeed(-.5)))
+        .onFalse(Commands.runOnce(() -> m_coral.setSpeed(0)));
   }
 
   public void clearPositionDebug() {
@@ -155,25 +158,26 @@ public class RobotContainer {
 
   public void updatePositionDebug() {
     if (Robot.isReal()) {
-        return;
+      return;
     }
     final var newPoses = this.allPositions.getPoses();
-    final var currentPose = this.m_drive.getPose();}
+    final var currentPose = this.m_drive.getPose();
+  }
 
-//     if (!newPoses.isEmpty()
-//         && newPoses
-//                 .get(newPoses.size() - 1)
-//                 .getTranslation()
-//                 .getDistance(currentPose.getTranslation())
-//             >= 4) newPoses.clear();
+  //     if (!newPoses.isEmpty()
+  //         && newPoses
+  //                 .get(newPoses.size() - 1)
+  //                 .getTranslation()
+  //                 .getDistance(currentPose.getTranslation())
+  //             >= 4) newPoses.clear();
 
-//     newPoses.add(currentPose);
-//     this.allPositions.setPoses(newPoses);
-//   }
+  //     newPoses.add(currentPose);
+  //     this.allPositions.setPoses(newPoses);
+  //   }
 
   public void clearAutoTrajectories() {
     if (Robot.isReal()) {
-        return;
+      return;
     }
     this.lastTrajectory = null;
     this.autoTrajectoryObj.setPoses();
@@ -182,25 +186,27 @@ public class RobotContainer {
 
   private void logTrajectory(Trajectory<SwerveSample> trajectory, boolean isStart) {
     if (Robot.isReal()) {
-        return;
+      return;
     }
     if (isStart) {
       if (DriverStation.getAlliance().isPresent()
           && DriverStation.getAlliance().get() == DriverStation.Alliance.Red)
-        trajectory = trajectory.flipped();}}
+        trajectory = trajectory.flipped();
+    }
+  }
 
-//       final var poses = new ArrayList<Pose2d>(trajectory.samples().size());
-//       for (final var swerveSample : trajectory.samples()) {
-//         poses.add(swerveSample.getPose());
-//       }
-//       this.lastTrajectory = trajectory.name();
-//       this.autoTrajectoryObj.setPoses(poses);
-//       final var oldAllPoses = this.allTrajectoriesObj.getPoses();
-//       oldAllPoses.addAll(poses);
-//       this.allTrajectoriesObj.setPoses(oldAllPoses);
-//     } else if (Objects.equals(this.lastTrajectory, trajectory.name())) {
-//       this.autoTrajectoryObj.setPoses();
-//       this.lastTrajectory = null;
-//     }
-//   }
+  //       final var poses = new ArrayList<Pose2d>(trajectory.samples().size());
+  //       for (final var swerveSample : trajectory.samples()) {
+  //         poses.add(swerveSample.getPose());
+  //       }
+  //       this.lastTrajectory = trajectory.name();
+  //       this.autoTrajectoryObj.setPoses(poses);
+  //       final var oldAllPoses = this.allTrajectoriesObj.getPoses();
+  //       oldAllPoses.addAll(poses);
+  //       this.allTrajectoriesObj.setPoses(oldAllPoses);
+  //     } else if (Objects.equals(this.lastTrajectory, trajectory.name())) {
+  //       this.autoTrajectoryObj.setPoses();
+  //       this.lastTrajectory = null;
+  //     }
+  //   }
 }
