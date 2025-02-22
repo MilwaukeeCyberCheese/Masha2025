@@ -4,9 +4,16 @@
 
 package frc.robot;
 
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
+import choreo.trajectory.SwerveSample;
+import choreo.trajectory.Trajectory;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -17,7 +24,14 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
 import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.utils.FilteredButton;
+
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import swervelib.SwerveInputStream;
 
 /*
@@ -27,7 +41,7 @@ import swervelib.SwerveInputStream;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final SwerveSubsystem m_drive =
+  public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
   private final ElevatorSubsystem m_elevator =
       Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
@@ -39,6 +53,21 @@ public class RobotContainer {
   // Operator controller
   private final CommandXboxController m_driverController =
       new CommandXboxController(OIConstants.kOperatorControllerPort);
+
+  // Button Board
+  private final FilteredButton m_buttonBoard = new FilteredButton(OIConstants.kButtonBoardPort);
+
+  public final AutoChooser m_autoChooser = new AutoChooser();
+  private final AutoFactory m_autoFactory =
+      new AutoFactory(
+          m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive, this::logTrajectory);
+  private final Routines m_routines = new Routines(m_autoFactory);
+
+  private final FieldObject2d allPositions = this.m_drive.getSwerveDrive().field.getObject("Positions");
+
+  private String lastTrajectory;
+  private final FieldObject2d autoTrajectoryObj = this.m_drive.getSwerveDrive().field.getObject("Auto Trajectory");
+  private final FieldObject2d allTrajectoriesObj = this.m_drive.getSwerveDrive().field.getObject("All Trajectories");
 
   // Configure drive input stream
   SwerveInputStream driveInput =
@@ -67,6 +96,17 @@ public class RobotContainer {
 
     // Set default drive command
     m_drive.setDefaultCommand(m_drive.driveFieldOriented(driveInput));
+
+    m_autoChooser.addRoutine("Test Routine", m_routines::test);
+    m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
+    m_autoChooser.addRoutine("Blue Coral Station Routine", m_routines::blueCoralStation);
+    m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
+    m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
+    SmartDashboard.putData("Auto Chooser", m_autoChooser);
+
+    if (Robot.getInstance().isSimulation()) {
+      DriverStation.silenceJoystickConnectionWarning(true);
+    }
   }
 
   /**
@@ -95,24 +135,53 @@ public class RobotContainer {
     //     .onTrue(Commands.runOnce(() ->
     // m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-    m_operatorController
+    m_driverController
         .rightBumper()
         .onTrue(Commands.runOnce(m_coral::grab))
         .onFalse(Commands.runOnce(m_coral::idle));
-    m_operatorController
+    m_driverController
         .leftBumper()
         .onTrue(Commands.runOnce(() -> m_coral.setSpeed(.7)))
         .onFalse(Commands.runOnce(() -> m_coral.setSpeed(0)));
     
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // return autoChooser.getSelected();
-    return null;
+  public void clearPositionDebug() {
+    this.allPositions.setPoses();
+  }
+
+  public void updatePositionDebug() {
+    final var newPoses = this.allPositions.getPoses();
+    final var currentPose = this.m_drive.getPose();
+
+    if (!newPoses.isEmpty() && newPoses.get(newPoses.size() - 1).getTranslation().getDistance(currentPose.getTranslation()) >= 4) newPoses.clear();
+
+    newPoses.add(currentPose);
+    this.allPositions.setPoses(newPoses);
+  }
+
+  public void clearAutoTrajectories() {
+    this.lastTrajectory = null;
+    this.autoTrajectoryObj.setPoses();
+    this.allTrajectoriesObj.setPoses();
+  }
+
+  private void logTrajectory(Trajectory<SwerveSample> trajectory, boolean isStart) {
+    if (isStart) {
+      if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) trajectory = trajectory.flipped();
+
+      final var poses = new ArrayList<Pose2d>(trajectory.samples().size());
+      for (final var swerveSample : trajectory.samples()) {
+        poses.add(swerveSample.getPose());
+      }
+      this.lastTrajectory = trajectory.name();
+      this.autoTrajectoryObj.setPoses(poses);
+      final var oldAllPoses = this.allTrajectoriesObj.getPoses();
+      oldAllPoses.addAll(poses);
+      this.allTrajectoriesObj.setPoses(oldAllPoses);
+    } else if (Objects.equals(this.lastTrajectory, trajectory.name())) {
+      this.autoTrajectoryObj.setPoses();
+      this.lastTrajectory = null;
+    }
   }
 }
