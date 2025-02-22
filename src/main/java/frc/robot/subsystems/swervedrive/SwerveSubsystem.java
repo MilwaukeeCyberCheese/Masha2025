@@ -469,7 +469,8 @@ public class SwerveSubsystem extends SubsystemBase {
                   swerveDrive
                       .getGyro()
                       .getRotation3d()
-                      .getY(), // TODO: this is either Y or X, figure it out tmrw
+                      .getY(), // TODO: this is either Y or X, figure it out tmrw. Not Z cause the
+                  // Z-axis is for a normal mounting
                   swerveDrive.getMaximumChassisVelocity()));
         });
   }
