@@ -80,16 +80,16 @@ public class RobotContainer {
               () ->
                   m_driverController.getLeftY()
                       * DriveConstants.kDrivingSpeed[
-                          m_driverController.rightBumper().getAsBoolean() ? 1 : 0],
+                          m_driverController.rightBumper().getAsBoolean() ? 2 : m_driverController.leftBumper().getAsBoolean() ? 0 : 1],
               () ->
                   m_driverController.getLeftX()
                       * DriveConstants.kDrivingSpeed[
-                          m_driverController.rightBumper().getAsBoolean() ? 1 : 0])
+                        m_driverController.rightBumper().getAsBoolean() ? 2 : m_driverController.leftBumper().getAsBoolean() ? 0 : 1])
           .withControllerRotationAxis(
               () ->
                   -m_driverController.getRightX()
                       * DriveConstants.kRotationSpeed[
-                          m_driverController.rightBumper().getAsBoolean() ? 1 : 0])
+                        m_driverController.rightBumper().getAsBoolean() ? 2 : m_driverController.leftBumper().getAsBoolean() ? 0 : 1])
           .deadband(0.1)
           .scaleTranslation(0.8)
           .allianceRelativeControl(true);
@@ -139,14 +139,14 @@ public class RobotContainer {
     //     .onTrue(Commands.runOnce(() ->
     // m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
+   
     m_driverController
-        .rightBumper()
-        .onTrue(Commands.runOnce(m_coral::grab))
-        .onFalse(Commands.runOnce(m_coral::idle));
-    m_driverController
-        .leftBumper()
+        .leftTrigger()
         .onTrue(Commands.runOnce(() -> m_coral.setSpeed(.5)))
         .onFalse(Commands.runOnce(() -> m_coral.setSpeed(0)));
+
+    m_driverController.rightTrigger().onTrue(Commands.runOnce(() -> m_coral.setSpeed(-.5)))
+    .onFalse(Commands.runOnce(() -> m_coral.setSpeed(0)));
   }
 
   public void clearPositionDebug() {
@@ -154,6 +154,9 @@ public class RobotContainer {
   }
 
   public void updatePositionDebug() {
+    if (Robot.isReal()) {
+        return;
+    }
     final var newPoses = this.allPositions.getPoses();
     final var currentPose = this.m_drive.getPose();
 
@@ -169,12 +172,18 @@ public class RobotContainer {
   }
 
   public void clearAutoTrajectories() {
+    if (Robot.isReal()) {
+        return;
+    }
     this.lastTrajectory = null;
     this.autoTrajectoryObj.setPoses();
     this.allTrajectoriesObj.setPoses();
   }
 
   private void logTrajectory(Trajectory<SwerveSample> trajectory, boolean isStart) {
+    if (Robot.isReal()) {
+        return;
+    }
     if (isStart) {
       if (DriverStation.getAlliance().isPresent()
           && DriverStation.getAlliance().get() == DriverStation.Alliance.Red)
