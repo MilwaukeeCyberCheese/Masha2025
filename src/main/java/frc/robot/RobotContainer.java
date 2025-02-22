@@ -47,16 +47,16 @@ public class RobotContainer {
               () ->
                   m_driverController.getLeftY()
                       * DriveConstants.kDrivingSpeed[
-                          m_driverController.leftBumper().getAsBoolean() ? 1 : 0],
+                          m_driverController.rightBumper().getAsBoolean() ? 1 : 0],
               () ->
                   m_driverController.getLeftX()
                       * DriveConstants.kDrivingSpeed[
-                          m_driverController.leftBumper().getAsBoolean() ? 1 : 0])
+                          m_driverController.rightBumper().getAsBoolean() ? 1 : 0])
           .withControllerRotationAxis(
               () ->
                   -m_driverController.getRightX()
                       * DriveConstants.kRotationSpeed[
-                          m_driverController.leftBumper().getAsBoolean() ? 1 : 0])
+                          m_driverController.rightBumper().getAsBoolean() ? 1 : 0])
           .deadband(0.1)
           .scaleTranslation(0.8)
           .allianceRelativeControl(true);
@@ -95,15 +95,10 @@ public class RobotContainer {
     //     .onTrue(Commands.runOnce(() ->
     // m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-    m_operatorController
-        .rightBumper()
-        .onTrue(Commands.runOnce(m_coral::grab))
-        .onFalse(Commands.runOnce(m_coral::idle));
-    m_operatorController
+    m_driverController
         .leftBumper()
         .onTrue(Commands.runOnce(() -> m_coral.setSpeed(.7)))
         .onFalse(Commands.runOnce(() -> m_coral.setSpeed(0)));
-    
   }
 
   /**

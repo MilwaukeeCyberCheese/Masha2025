@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,7 +37,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
+
     // if (Robot.isReal()) {
     //   m_hasCoral = Sensors.handlerDistanceSensor.getRange() < Coral.kHasCoralDistance;
     // }
@@ -51,9 +50,9 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   }
 
   public void setSpeed(double speed) {
-    
-    Coral.kLeftSparkMax.set(speed);
-    Coral.kRightSparkMax.set(speed);
+
+    Coral.kLeftSparkMax.set(-speed);
+    Coral.kRightSparkMax.set(-speed);
   }
 
   /**
