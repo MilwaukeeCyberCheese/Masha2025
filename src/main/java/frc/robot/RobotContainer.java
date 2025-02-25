@@ -73,25 +73,10 @@ public class RobotContainer {
   SwerveInputStream driveInput =
       SwerveInputStream.of(
               m_drive.getSwerveDrive(),
-              () ->
-                  m_driverController.getLeftY()
-                      * DriveConstants.kDrivingSpeed[
-                          m_driverController.rightBumper().getAsBoolean()
-                              ? 2
-                              : m_driverController.leftBumper().getAsBoolean() ? 0 : 1],
-              () ->
-                  m_driverController.getLeftX()
-                      * DriveConstants.kDrivingSpeed[
-                          m_driverController.rightBumper().getAsBoolean()
-                              ? 2
-                              : m_driverController.leftBumper().getAsBoolean() ? 0 : 1])
+              () -> m_driverController.getLeftY() * DriveConstants.kDrivingSpeed[2],
+              () -> m_driverController.getLeftX() * DriveConstants.kDrivingSpeed[2])
           .withControllerRotationAxis(
-              () ->
-                  -m_driverController.getRightX()
-                      * DriveConstants.kRotationSpeed[
-                          m_driverController.rightBumper().getAsBoolean()
-                              ? 2
-                              : m_driverController.leftBumper().getAsBoolean() ? 0 : 1])
+              () -> -m_driverController.getRightX() * DriveConstants.kRotationSpeed[2])
           .deadband(0.1)
           .scaleTranslation(0.8)
           .allianceRelativeControl(true);
