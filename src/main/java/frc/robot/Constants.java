@@ -367,5 +367,9 @@ public final class Constants {
     // the robot, rather the allowed maximum speeds
     public static final double kMaxSpeedMetersPerSecond = 4.8;
     public static final double kMaxAngularSpeed = kTau; // radians per second
+
+    // First one is normal, second is slow
+    public static final double[] kRotationSpeeds = {0.7, 0.3};
+    public static final double[] kDrivingSpeeds = {0.5, 0.3};
   }
 }

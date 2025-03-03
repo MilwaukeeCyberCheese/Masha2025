@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.drive.Drive;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
@@ -18,7 +19,7 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.FilteredButton;
 import frc.robot.utils.FilteredJoystick;
 import java.io.File;
-import swervelib.SwerveInputStream;
+import java.util.Optional;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -49,23 +50,20 @@ public class RobotContainer {
   // Button Board
   private final FilteredButton m_buttonBoard = new FilteredButton(OIConstants.kButtonBoardPort);
 
-  // Configure drive input stream
-  SwerveInputStream driveInput =
-      SwerveInputStream.of(
-              m_drive.getSwerveDrive(),
-              m_operatorController::getLeftY,
-              m_operatorController::getLeftX)
-          .withControllerRotationAxis(() -> -m_operatorController.getRightX())
-          .deadband(0.1)
-          .scaleTranslation(0.8)
-          .allianceRelativeControl(true);
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureButtonBindings();
 
     // Set default drive command
-    m_drive.setDefaultCommand(m_drive.driveFieldOriented(driveInput));
+
+    m_drive.setDefaultCommand(
+        new Drive(
+            m_drive,
+            m_operatorController::getRightX,
+            m_operatorController::getLeftY,
+            () -> -m_operatorController.getRightX(),
+            () -> m_operatorController.rightBumper().getAsBoolean(),
+            Optional.empty()));
   }
 
   /**
