@@ -76,20 +76,22 @@ public class RobotContainer {
       driveInput =
           SwerveInputStream.of(
                   m_drive.getSwerveDrive(),
-                  m_operatorController.getLeftY()
-                      * (m_operatorController.getRightBumper
-                          ? DriveConstants.kDrivingSpeed[1]
-                          : DriveConstants.kDrivingSpeed[0]),
-                  m_operatorController.getLeftX()
-                      * (m_operatorController.getRightBumper
-                          ? DriveConstants.kDrivingSpeed[1]
-                          : DriveConstants.kDrivingSpeed[0]))
+                  () ->
+                      m_operatorController.getLeftY()
+                          * (m_operatorController.rightBumper().getAsBoolean()
+                              ? DriveConstants.kDrivingSpeeds[1]
+                              : DriveConstants.kDrivingSpeeds[0]),
+                  () ->
+                      m_operatorController.getLeftX()
+                          * (m_operatorController.rightBumper().getAsBoolean()
+                              ? DriveConstants.kDrivingSpeeds[1]
+                              : DriveConstants.kDrivingSpeeds[0]))
               .withControllerRotationAxis(
                   () ->
                       -m_operatorController.getRightX()
-                          * (m_operatorController.getRightBumper
-                              ? DriveConstants.kTurningSpeed[1]
-                              : DriveConstants.kTurningSpeed[0]))
+                          * (m_operatorController.rightBumper().getAsBoolean()
+                              ? DriveConstants.kRotationSpeeds[1]
+                              : DriveConstants.kRotationSpeeds[0]))
               .deadband(0.1)
               .scaleTranslation(0.8)
               .allianceRelativeControl(true);
@@ -99,22 +101,22 @@ public class RobotContainer {
                   m_drive.getSwerveDrive(),
                   () ->
                       m_driverLeftJoystick.getY()
-                          * (m_driverRightJoystick.getButtonTwo
-                              ? DriveConstants.kDrivingSpeed[1]
-                              : DriveConstants.kDrivingSpeed[0])
+                          * (m_driverRightJoystick.getButtonTwo()
+                              ? DriveConstants.kDrivingSpeeds[1]
+                              : DriveConstants.kDrivingSpeeds[0])
                           * m_driverRightJoystick.getThrottle(),
                   () ->
                       m_driverLeftJoystick.getX()
-                          * (m_driverRightJoystick.getButtonTwo
-                              ? DriveConstants.kDrivingSpeed[1]
-                              : DriveConstants.kDrivingSpeed[0])
+                          * (m_driverRightJoystick.getButtonTwo()
+                              ? DriveConstants.kDrivingSpeeds[1]
+                              : DriveConstants.kDrivingSpeeds[0])
                           * m_driverRightJoystick.getThrottle())
               .withControllerRotationAxis(
                   () ->
                       -m_driverRightJoystick.getX()
-                          * (m_driverRightJoystick.getButtonTwo
-                              ? DriveConstants.kTurningSpeed[1]
-                              : DriveConstants.kTurningSpeed[0])
+                          * (m_driverRightJoystick.getButtonTwo()
+                              ? DriveConstants.kRotationSpeeds[1]
+                              : DriveConstants.kRotationSpeeds[0])
                           * m_driverRightJoystick.getThrottle())
               .deadband(0.1)
               .scaleTranslation(0.8)
