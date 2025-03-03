@@ -63,7 +63,7 @@ public class FilteredJoystick {
 
   /** Returns the x-value of the joystick */
   public double getX() {
-    return this.getX(Constants.OIConstants.kDriveDeadband);
+    return this.getX(Constants.IOConstants.kDriveDeadband);
   }
 
   /**
@@ -72,7 +72,7 @@ public class FilteredJoystick {
    * @param deadzone zone in which no value is returned
    */
   public double getY() {
-    return this.getY(Constants.OIConstants.kDriveDeadband);
+    return this.getY(Constants.IOConstants.kDriveDeadband);
   }
 
   /**
@@ -81,7 +81,7 @@ public class FilteredJoystick {
    * @param deadzone zone in which no value is returned
    */
   public double getZ() {
-    return this.getZ(Constants.OIConstants.kDriveDeadband);
+    return this.getZ(Constants.IOConstants.kDriveDeadband);
   }
 
   /**
@@ -90,7 +90,7 @@ public class FilteredJoystick {
    * @param deadzone zone in which no value is returned
    */
   public double getThrottle() {
-    return this.getThrottle(Constants.OIConstants.kDriveDeadband);
+    return this.getThrottle(Constants.IOConstants.kDriveDeadband);
   }
 
   /**
