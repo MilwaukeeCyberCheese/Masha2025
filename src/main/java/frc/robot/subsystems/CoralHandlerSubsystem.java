@@ -39,6 +39,8 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
+    // TODO: Update PID controller once we tune it
+
     if (Robot.isReal()) {
       // beam break stuff ooooooo magic
     }
