@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.IOConstants;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
@@ -42,12 +42,18 @@ public class RobotContainer {
           ? new CoralHandlerSubsystem()
           : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
 
+  // Driver joysticks
+  private final FilteredJoystick m_driverLeftJoystick =
+      new FilteredJoystick(IOConstants.kLeftJoystickPort);
+  private final FilteredJoystick m_driverRightJoystick =
+      new FilteredJoystick(IOConstants.kRightJoystickPort);
+
   // Operator controller
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OIConstants.kOperatorControllerPort);
+  private final CommandXboxController m_operatorController =
+      new CommandXboxController(IOConstants.kOperatorControllerPort);
 
   // Button Board
-  private final FilteredButton m_buttonBoard = new FilteredButton(OIConstants.kButtonBoardPort);
+  private final FilteredButton m_buttonBoard = new FilteredButton(IOConstants.kButtonBoardPort);
 
   public final AutoChooser m_autoChooser = new AutoChooser();
   //   private final AutoFactory m_autoFactory =
@@ -122,34 +128,85 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Zero gyro with A button
-    m_driverController.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
 
-    // TODO: x-mode
+    // Test mode allows everything to be run on a single controller
+    // Test mode should not be enabled in competition
+    if (IOConstants.kTestMode) {
+      driveInput =
+          SwerveInputStream.of(
+                  m_drive.getSwerveDrive(),
+                  () ->
+                      m_operatorController.getLeftY()
+                          * (m_operatorController.rightBumper().getAsBoolean()
+                              ? DriveConstants.kDrivingSpeeds[1]
+                              : DriveConstants.kDrivingSpeeds[0]),
+                  () ->
+                      m_operatorController.getLeftX()
+                          * (m_operatorController.rightBumper().getAsBoolean()
+                              ? DriveConstants.kDrivingSpeeds[1]
+                              : DriveConstants.kDrivingSpeeds[0]))
+              .withControllerRotationAxis(
+                  () ->
+                      -m_operatorController.getRightX()
+                          * (m_operatorController.rightBumper().getAsBoolean()
+                              ? DriveConstants.kRotationSpeeds[1]
+                              : DriveConstants.kRotationSpeeds[0]))
+              .deadband(0.1)
+              .scaleTranslation(0.8)
+              .allianceRelativeControl(true);
+    } else {
+      driveInput =
+          SwerveInputStream.of(
+                  m_drive.getSwerveDrive(),
+                  () ->
+                      m_driverLeftJoystick.getY()
+                          * (m_driverRightJoystick.getButtonTwo()
+                              ? DriveConstants.kDrivingSpeeds[1]
+                              : DriveConstants.kDrivingSpeeds[0])
+                          * m_driverRightJoystick.getThrottle(),
+                  () ->
+                      m_driverLeftJoystick.getX()
+                          * (m_driverRightJoystick.getButtonTwo()
+                              ? DriveConstants.kDrivingSpeeds[1]
+                              : DriveConstants.kDrivingSpeeds[0])
+                          * m_driverRightJoystick.getThrottle())
+              .withControllerRotationAxis(
+                  () ->
+                      -m_driverRightJoystick.getX()
+                          * (m_driverRightJoystick.getButtonTwo()
+                              ? DriveConstants.kRotationSpeeds[1]
+                              : DriveConstants.kRotationSpeeds[0])
+                          * m_driverRightJoystick.getThrottle())
+              .deadband(0.1)
+              .scaleTranslation(0.8)
+              .allianceRelativeControl(true);
 
-    if (!Robot.isReal()) {
-      m_driverController
-          .b()
-          .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
+      // Zero gyro with A button
+      m_operatorController.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
+
+      if (!Robot.isReal()) {
+        m_operatorController
+            .b()
+            .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
+      }
+
+      m_operatorController
+          .x()
+          .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
+      m_operatorController
+          .y()
+          .onTrue(
+              Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
+
+      m_operatorController
+          .rightBumper()
+          .onTrue(Commands.runOnce(m_coral::grab))
+          .onFalse(Commands.runOnce(m_coral::idle));
+      m_operatorController
+          .leftBumper()
+          .onTrue(Commands.runOnce(m_coral::release))
+          .onFalse(Commands.runOnce(m_coral::idle));
     }
-
-    // m_driverController
-    //     .x()
-    //     .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
-    // m_driverController
-    //     .y()
-    //     .onTrue(Commands.runOnce(() ->
-    // m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
-
-    m_driverController
-        .leftTrigger()
-        .onTrue(Commands.runOnce(() -> m_coral.setSpeed(.5)))
-        .onFalse(Commands.runOnce(() -> m_coral.setSpeed(0)));
-
-    m_driverController
-        .rightTrigger()
-        .onTrue(Commands.runOnce(() -> m_coral.setSpeed(-.5)))
-        .onFalse(Commands.runOnce(() -> m_coral.setSpeed(0)));
   }
 
   public void clearPositionDebug() {
