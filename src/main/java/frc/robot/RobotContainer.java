@@ -9,9 +9,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
 import frc.robot.commands.drive.Drive;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
@@ -29,104 +29,103 @@ import java.util.Optional;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    private final SwerveSubsystem m_drive = new SwerveSubsystem(
-            new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
-    private final ElevatorSubsystem m_elevator = Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
-    private final CoralHandlerSubsystem m_coral = Robot.isReal()
-            ? new CoralHandlerSubsystem()
-            : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
+  private final SwerveSubsystem m_drive =
+      new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
+  private final ElevatorSubsystem m_elevator =
+      Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
+  private final CoralHandlerSubsystem m_coral =
+      Robot.isReal()
+          ? new CoralHandlerSubsystem()
+          : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
 
-    // Driver joysticks
-    private final FilteredJoystick m_driverLeftJoystick = new FilteredJoystick(IOConstants.kLeftJoystickPort);
-    private final FilteredJoystick m_driverRightJoystick = new FilteredJoystick(IOConstants.kRightJoystickPort);
+  // Driver joysticks
+  private final FilteredJoystick m_driverLeftJoystick =
+      new FilteredJoystick(IOConstants.kLeftJoystickPort);
+  private final FilteredJoystick m_driverRightJoystick =
+      new FilteredJoystick(IOConstants.kRightJoystickPort);
 
-    // Operator controller
-    private final CommandXboxController m_operatorController = new CommandXboxController(
-            IOConstants.kOperatorControllerPort);
+  // Operator controller
+  private final CommandXboxController m_operatorController =
+      new CommandXboxController(IOConstants.kOperatorControllerPort);
 
-    // Button Board
-    private final FilteredButton m_buttonBoard = new FilteredButton(IOConstants.kButtonBoardPort);
+  // Button Board
+  private final FilteredButton m_buttonBoard = new FilteredButton(IOConstants.kButtonBoardPort);
 
-    /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
-     */
-    public RobotContainer() {
-        configureButtonBindings();
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  public RobotContainer() {
+    configureButtonBindings();
 
-        // Set default drive command
-        if (IOConstants.kTestMode) {
-            m_drive.setDefaultCommand(
-                    new Drive(
-                            m_drive,
-                            m_operatorController::getRightX,
-                            m_operatorController::getLeftY,
-                            () -> -m_operatorController.getRightX(),
-                            () -> m_operatorController.rightBumper().getAsBoolean(),
-                            Optional.empty()));
-        } else {
-            m_drive.setDefaultCommand(
-                    new Drive(
-                            m_drive,
-                            m_driverLeftJoystick::getX,
-                            m_driverLeftJoystick::getY,
-                            m_driverRightJoystick::getX,
-                            m_driverRightJoystick::getButtonTwo,
-                            Optional.of(m_driverLeftJoystick::getThrottle)));
-        }
+    // Set default drive command
+    if (IOConstants.kTestMode) {
+      m_drive.setDefaultCommand(
+          new Drive(
+              m_drive,
+              m_operatorController::getRightX,
+              m_operatorController::getLeftY,
+              () -> -m_operatorController.getRightX(),
+              () -> m_operatorController.rightBumper().getAsBoolean(),
+              Optional.empty()));
+    } else {
+      m_drive.setDefaultCommand(
+          new Drive(
+              m_drive,
+              m_driverLeftJoystick::getX,
+              m_driverLeftJoystick::getY,
+              m_driverRightJoystick::getX,
+              m_driverRightJoystick::getButtonTwo,
+              Optional.of(m_driverLeftJoystick::getThrottle)));
     }
+  }
 
-    /**
-     * Use this method to define your button->command mappings. Buttons can be
-     * created by
-     * instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its
-     * subclasses ({@link
-     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling
-     * passing it to a
-     * {@link JoystickButton}.
-     */
-    private void configureButtonBindings() {
+  /**
+   * Use this method to define your button->command mappings. Buttons can be created by
+   * instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its subclasses ({@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling passing it to a
+   * {@link JoystickButton}.
+   */
+  private void configureButtonBindings() {
 
-        // Test mode allows everything to be run on a single controller
-        // Test mode should not be enabled in competition
-        if (IOConstants.kTestMode) {
+    // Test mode allows everything to be run on a single controller
+    // Test mode should not be enabled in competition
+    if (IOConstants.kTestMode) {
 
-        } else {
+    } else {
 
-            // Zero gyro with A button
-            m_operatorController.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
+      // Zero gyro with A button
+      m_operatorController.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
 
-            if (!Robot.isReal()) {
-                m_operatorController
-                        .b()
-                        .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
-            }
+      if (!Robot.isReal()) {
+        m_operatorController
+            .b()
+            .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
+      }
 
-            m_operatorController
-                    .x()
-                    .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
-            m_operatorController
-                    .y()
-                    .onTrue(
-                            Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
+      m_operatorController
+          .x()
+          .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
+      m_operatorController
+          .y()
+          .onTrue(
+              Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-            m_operatorController
-                    .rightBumper()
-                    .onTrue(Commands.runOnce(m_coral::grab))
-                    .onFalse(Commands.runOnce(m_coral::idle));
-            m_operatorController
-                    .leftBumper()
-                    .onTrue(Commands.runOnce(m_coral::release))
-                    .onFalse(Commands.runOnce(m_coral::idle));
-        }
+      m_operatorController
+          .rightBumper()
+          .onTrue(Commands.runOnce(m_coral::grab))
+          .onFalse(Commands.runOnce(m_coral::idle));
+      m_operatorController
+          .leftBumper()
+          .onTrue(Commands.runOnce(m_coral::release))
+          .onFalse(Commands.runOnce(m_coral::idle));
     }
+  }
 
-    /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
-    public Command getAutonomousCommand() {
-        // return autoChooser.getSelected();
-        return null;
-    }
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand() {
+    // return autoChooser.getSelected();
+    return null;
+  }
 }
