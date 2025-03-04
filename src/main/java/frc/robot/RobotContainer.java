@@ -23,6 +23,7 @@ import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
 import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.FilteredButton;
+import frc.robot.utils.FilteredJoystick;
 import java.io.File;
 import swervelib.SwerveInputStream;
 
@@ -76,31 +77,7 @@ public class RobotContainer {
       this.m_drive.getSwerveDrive().field.getObject("All Trajectories");
 
   // Configure drive input stream
-  SwerveInputStream driveInput =
-      SwerveInputStream.of(
-              m_drive.getSwerveDrive(),
-              () ->
-                  m_driverController.getLeftY()
-                      * DriveConstants.kDrivingSpeed[
-                          m_driverController.rightBumper().getAsBoolean()
-                              ? 2
-                              : m_driverController.leftBumper().getAsBoolean() ? 0 : 1],
-              () ->
-                  m_driverController.getLeftX()
-                      * DriveConstants.kDrivingSpeed[
-                          m_driverController.rightBumper().getAsBoolean()
-                              ? 2
-                              : m_driverController.leftBumper().getAsBoolean() ? 0 : 1])
-          .withControllerRotationAxis(
-              () ->
-                  -m_driverController.getRightX()
-                      * DriveConstants.kRotationSpeed[
-                          m_driverController.rightBumper().getAsBoolean()
-                              ? 2
-                              : m_driverController.leftBumper().getAsBoolean() ? 0 : 1])
-          .deadband(0.1)
-          .scaleTranslation(0.8)
-          .allianceRelativeControl(true);
+  SwerveInputStream driveInput;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

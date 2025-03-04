@@ -81,7 +81,7 @@ public class Robot extends TimedRobot {
     if (this.isSimulation()) {
       this.m_robotContainer.updatePositionDebug();
     }
-      
+
     if (Constants.IOConstants.kTestMode) {
       System.out.println("Test Mode Enabled\nNot for competition use");
     }
