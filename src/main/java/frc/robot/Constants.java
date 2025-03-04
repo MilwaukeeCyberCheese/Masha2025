@@ -41,9 +41,7 @@ import java.util.function.BooleanSupplier;
 public final class Constants {
   public static final double kTau = Math.PI * 2;
 
-  public static class Sensors {
-   
-  }
+  public static class Sensors {}
 
   public static final class IOConstants {
     public static final int kOperatorControllerPort = 0;
