@@ -5,6 +5,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Handler.Coral;
+import frc.robot.Robot;
 import java.util.Optional;
 
 public class CoralHandlerSubsystem extends SubsystemBase {
@@ -38,9 +39,9 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    // if (Robot.isReal()) {
-    //   m_hasCoral = Sensors.handlerDistanceSensor.getRange() < Coral.kHasCoralDistance;
-    // }
+    if (Robot.isReal()) {
+      // beam break stuff ooooooo magic
+    }
     log();
   }
 
