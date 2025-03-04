@@ -76,9 +76,6 @@ public class RobotContainer {
   private final FieldObject2d allTrajectoriesObj =
       this.m_drive.getSwerveDrive().field.getObject("All Trajectories");
 
-  // Configure drive input stream
-  SwerveInputStream driveInput;
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureButtonBindings();
@@ -90,8 +87,9 @@ public class RobotContainer {
     // m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
 
-    if (Robot.getInstance().isSimulation()) {
+    if (!Robot.isReal()) {
       DriverStation.silenceJoystickConnectionWarning(true);
+    }
     if (IOConstants.kTestMode) {
       m_drive.setDefaultCommand(
           new Drive(
