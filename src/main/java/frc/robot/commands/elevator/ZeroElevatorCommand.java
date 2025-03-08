@@ -6,28 +6,28 @@ import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ZeroElevatorCommand extends Command {
 
-  private final ElevatorSubsystem m_elevatorSubsystem;
+  private final ElevatorSubsystem elevatorSubsystem;
 
   public ZeroElevatorCommand(ElevatorSubsystem elevatorSubsystem) {
-    m_elevatorSubsystem = elevatorSubsystem;
+    this.elevatorSubsystem = elevatorSubsystem;
 
-    addRequirements(m_elevatorSubsystem);
+    addRequirements(this.elevatorSubsystem);
   }
 
   @Override
   public void execute() {
-    m_elevatorSubsystem.setCustomTarget(m_elevatorSubsystem.getHeight() - Elevator.kZeroingStep);
-    m_elevatorSubsystem.setState(ElevatorSubsystem.ElevatorState.CUSTOM);
+    elevatorSubsystem.setCustomTarget(elevatorSubsystem.getHeight() - Elevator.ZEROING_STEP);
+    elevatorSubsystem.setState(ElevatorSubsystem.ElevatorState.CUSTOM);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_elevatorSubsystem.atBottom();
+    return elevatorSubsystem.atBottom();
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_elevatorSubsystem.zero();
+    elevatorSubsystem.zero();
   }
 }

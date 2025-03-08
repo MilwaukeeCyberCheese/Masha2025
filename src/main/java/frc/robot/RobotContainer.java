@@ -29,51 +29,51 @@ import java.util.Optional;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final SwerveSubsystem m_drive =
+  private final SwerveSubsystem drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
-  private final ElevatorSubsystem m_elevator =
+  private final ElevatorSubsystem elevator =
       Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
-  private final CoralHandlerSubsystem m_coral =
+  private final CoralHandlerSubsystem coral =
       Robot.isReal()
           ? new CoralHandlerSubsystem()
-          : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
+          : new CoralHandlerSubsystemSim(drive.getSimDrive(), elevator);
 
   // Driver joysticks
-  private final FilteredJoystick m_driverLeftJoystick =
-      new FilteredJoystick(IOConstants.kLeftJoystickPort);
-  private final FilteredJoystick m_driverRightJoystick =
-      new FilteredJoystick(IOConstants.kRightJoystickPort);
+  private final FilteredJoystick driverLeftJoystick =
+      new FilteredJoystick(IOConstants.LEFT_JOYSTICK_PORT);
+  private final FilteredJoystick driverRightJoystick =
+      new FilteredJoystick(IOConstants.RIGHT_JOYSTICK_PORT);
 
   // Operator controller
-  private final CommandXboxController m_operatorController =
-      new CommandXboxController(IOConstants.kOperatorControllerPort);
+  private final CommandXboxController operatorController =
+      new CommandXboxController(IOConstants.OPERATOR_CONTROLLER_PORT);
 
   // Button Board
-  private final FilteredButton m_buttonBoard = new FilteredButton(IOConstants.kButtonBoardPort);
+  private final FilteredButton buttonBoard = new FilteredButton(IOConstants.BUTTON_BOARD_PORT);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureButtonBindings();
 
     // Set default drive command
-    if (IOConstants.kTestMode) {
-      m_drive.setDefaultCommand(
+    if (IOConstants.TEST_MODE) {
+      drive.setDefaultCommand(
           new Drive(
-              m_drive,
-              m_operatorController::getRightX,
-              m_operatorController::getLeftY,
-              () -> -m_operatorController.getRightX(),
-              () -> m_operatorController.rightBumper().getAsBoolean(),
+                  drive,
+              operatorController::getRightX,
+              operatorController::getLeftY,
+              () -> -operatorController.getRightX(),
+              () -> operatorController.rightBumper().getAsBoolean(),
               Optional.empty()));
     } else {
-      m_drive.setDefaultCommand(
+      drive.setDefaultCommand(
           new Drive(
-              m_drive,
-              m_driverLeftJoystick::getX,
-              m_driverLeftJoystick::getY,
-              m_driverRightJoystick::getX,
-              m_driverRightJoystick::getButtonTwo,
-              Optional.of(m_driverLeftJoystick::getThrottle)));
+                  drive,
+              driverLeftJoystick::getX,
+              driverLeftJoystick::getY,
+              driverRightJoystick::getX,
+              driverRightJoystick::getButtonTwo,
+              Optional.of(driverLeftJoystick::getThrottle)));
     }
   }
 
@@ -87,35 +87,35 @@ public class RobotContainer {
 
     // Test mode allows everything to be run on a single controller
     // Test mode should not be enabled in competition
-    if (IOConstants.kTestMode) {
+    if (IOConstants.TEST_MODE) {
 
     } else {
 
       // Zero gyro with A button
-      m_operatorController.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
+      operatorController.a().onTrue(Commands.runOnce(drive::zeroGyro));
 
       if (!Robot.isReal()) {
-        m_operatorController
+        operatorController
             .b()
-            .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
+            .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) coral).getSimCoral()));
       }
 
-      m_operatorController
+      operatorController
           .x()
-          .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
-      m_operatorController
+          .onTrue(Commands.runOnce(() -> elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
+      operatorController
           .y()
           .onTrue(
-              Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
+              Commands.runOnce(() -> elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-      m_operatorController
+      operatorController
           .rightBumper()
-          .onTrue(Commands.runOnce(m_coral::grab))
-          .onFalse(Commands.runOnce(m_coral::idle));
-      m_operatorController
+          .onTrue(Commands.runOnce(coral::grab))
+          .onFalse(Commands.runOnce(coral::idle));
+      operatorController
           .leftBumper()
-          .onTrue(Commands.runOnce(m_coral::release))
-          .onFalse(Commands.runOnce(m_coral::idle));
+          .onTrue(Commands.runOnce(coral::release))
+          .onFalse(Commands.runOnce(coral::idle));
     }
   }
 

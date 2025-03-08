@@ -24,34 +24,34 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     CUSTOM
   }
 
-  private CoralHandlerState m_state = CoralHandlerState.INACTIVE;
-  protected boolean m_hasCoral = false;
-  private Optional<Double> m_customSpeed = null;
-  protected double m_speed;
+  private CoralHandlerState state = CoralHandlerState.INACTIVE;
+  protected boolean hasCoral = false;
+  private Optional<Double> customSpeed = null;
+  protected double speed;
 
   public CoralHandlerSubsystem() {
-    Coral.kLeftSparkMax.configure(
-        Coral.kLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    Coral.kRightSparkMax.configure(
-        Coral.kRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    Coral.LEFT_SPARK_MAX.configure(
+        Coral.LEFT_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    Coral.RIGHT_SPARK_MAX.configure(
+        Coral.RIGHT_CONFIG, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    setState(m_state);
+    setState(state);
   }
 
   @Override
   public void periodic() {
-    Coral.kLeftController.setReference(m_speed, ControlType.kMAXMotionVelocityControl);
-    Coral.kRightController.setReference(m_speed, ControlType.kMAXMotionVelocityControl);
+    Coral.LEFT_CONTROLLER.setReference(speed, ControlType.kMAXMotionVelocityControl);
+    Coral.RIGHT_CONTROLLER.setReference(speed, ControlType.kMAXMotionVelocityControl);
 
     if (Robot.isReal()) {
-      m_hasCoral = Sensors.handlerDistanceSensor.getRange() < Coral.kHasCoralDistance;
+      hasCoral = Sensors.handlerDistanceSensor.getRange() < Coral.HAS_CORAL_DISTANCE;
     }
     log();
   }
 
   public void log() {
-    SmartDashboard.putBoolean("Coral Handler Has Coral", m_hasCoral);
-    SmartDashboard.putNumber("Coral Handler Speed", m_speed);
+    SmartDashboard.putBoolean("Coral Handler Has Coral", hasCoral);
+    SmartDashboard.putNumber("Coral Handler Speed", speed);
   }
 
   /**
@@ -61,12 +61,12 @@ public class CoralHandlerSubsystem extends SubsystemBase {
    */
   public void setState(CoralHandlerState state) {
 
-    if (state == CoralHandlerState.CUSTOM && m_customSpeed.isEmpty()) {
+    if (state == CoralHandlerState.CUSTOM && customSpeed.isEmpty()) {
       return;
     }
 
-    m_state = state;
-    m_speed = m_state == CoralHandlerState.CUSTOM ? m_customSpeed.get() : Coral.kSpeeds.get(state);
+    this.state = state;
+    speed = this.state == CoralHandlerState.CUSTOM ? customSpeed.get() : Coral.SPEEDS.get(state);
   }
 
   /**
@@ -75,7 +75,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
    * @return {@link CoralHandlerState}
    */
   public CoralHandlerState getState() {
-    return m_state;
+    return state;
   }
 
   /**
@@ -85,8 +85,8 @@ public class CoralHandlerSubsystem extends SubsystemBase {
    * @param target double
    */
   public void setCustomSpeed(double target) {
-    m_state = CoralHandlerState.CUSTOM;
-    m_customSpeed = Optional.of(target);
+    state = CoralHandlerState.CUSTOM;
+    customSpeed = Optional.of(target);
   }
 
   /**
@@ -95,7 +95,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
    * @return double
    */
   public double getSpeed() {
-    return m_speed;
+    return speed;
   }
 
   /**
@@ -104,10 +104,10 @@ public class CoralHandlerSubsystem extends SubsystemBase {
    * @return boolean
    */
   public boolean atSpeed() {
-    return Math.abs(Coral.kSpeeds.get(m_state) - Coral.kLeftSparkMax.getEncoder().getVelocity())
-            < Coral.kTolerance
-        && Math.abs(Coral.kSpeeds.get(m_state) - Coral.kRightSparkMax.getEncoder().getVelocity())
-            < Coral.kTolerance;
+    return Math.abs(Coral.SPEEDS.get(state) - Coral.LEFT_SPARK_MAX.getEncoder().getVelocity())
+            < Coral.TOLERANCE
+        && Math.abs(Coral.SPEEDS.get(state) - Coral.RIGHT_SPARK_MAX.getEncoder().getVelocity())
+            < Coral.TOLERANCE;
   }
 
   /** Set state to index */
@@ -131,6 +131,6 @@ public class CoralHandlerSubsystem extends SubsystemBase {
    * @return boolean
    */
   public boolean hasCoral() {
-    return m_hasCoral;
+    return hasCoral;
   }
 }

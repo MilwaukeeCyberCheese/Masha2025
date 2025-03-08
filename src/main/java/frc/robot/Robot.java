@@ -21,9 +21,9 @@ import org.ironmaple.simulation.SimulatedArena;
  * project.
  */
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
+  private Command autonomousCommand;
 
-  private RobotContainer m_robotContainer;
+  private RobotContainer robotContainer;
 
   StructArrayPublisher<Pose3d> coralPoses =
       NetworkTableInstance.getDefault()
@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
           .getStructArrayTopic("Simulation/Algae", Pose3d.struct)
           .publish();
 
-  private static Robot m_instance;
+  private static Robot instance;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -45,8 +45,8 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
-    m_instance = this;
+    robotContainer = new RobotContainer();
+    instance = this;
 
     if (isSimulation()) {
       DriverStation.refreshData();
@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
   }
 
   public static Robot getInstance() {
-    return m_instance;
+    return instance;
   }
 
   /**
@@ -78,7 +78,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
 
-    if (Constants.IOConstants.kTestMode) {
+    if (Constants.IOConstants.TEST_MODE) {
       System.out.println("Test Mode Enabled\nNot for competition use");
     }
   }
@@ -93,7 +93,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    autonomousCommand = robotContainer.getAutonomousCommand();
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
@@ -103,8 +103,8 @@ public class Robot extends TimedRobot {
      */
 
     // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+    if (autonomousCommand != null) {
+      autonomousCommand.schedule();
     }
   }
 
@@ -121,8 +121,8 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
+    if (autonomousCommand != null) {
+      autonomousCommand.cancel();
     }
   }
 

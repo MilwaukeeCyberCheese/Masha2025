@@ -10,12 +10,12 @@ import swervelib.SwerveInputStream;
 
 public class Drive extends Command {
 
-  final SwerveSubsystem m_drive;
-  final DoubleSupplier m_x;
-  final DoubleSupplier m_y;
-  final DoubleSupplier m_rotation;
-  final BooleanSupplier m_slow;
-  final Optional<DoubleSupplier> m_throttle;
+  final SwerveSubsystem drive;
+  final DoubleSupplier x;
+  final DoubleSupplier y;
+  final DoubleSupplier rotation;
+  final BooleanSupplier slow;
+  final Optional<DoubleSupplier> throttle;
   SwerveInputStream driveInput;
 
   public Drive(
@@ -25,13 +25,13 @@ public class Drive extends Command {
       DoubleSupplier rotation,
       BooleanSupplier slow,
       Optional<DoubleSupplier> throttle) {
-    m_drive = drive;
-    m_x = x;
-    m_y = y;
-    m_rotation = rotation;
-    m_slow = slow;
-    m_throttle = throttle;
-    addRequirements(m_drive);
+    this.drive = drive;
+    this.x = x;
+    this.y = y;
+    this.rotation = rotation;
+    this.slow = slow;
+    this.throttle = throttle;
+    addRequirements(this.drive);
   }
 
   // Called when the command is initially scheduled.
@@ -39,26 +39,26 @@ public class Drive extends Command {
   public void initialize() {
     driveInput =
         SwerveInputStream.of(
-                m_drive.getSwerveDrive(),
+                drive.getSwerveDrive(),
                 () ->
-                    m_x.getAsDouble()
-                        * (m_slow.getAsBoolean()
-                            ? DriveConstants.kDrivingSpeeds[1]
-                            : DriveConstants.kDrivingSpeeds[0])
-                        * m_throttle.orElse(() -> 1.0).getAsDouble(),
+                    x.getAsDouble()
+                        * (slow.getAsBoolean()
+                            ? DriveConstants.DRIVING_SPEEDS[1]
+                            : DriveConstants.DRIVING_SPEEDS[0])
+                        * throttle.orElse(() -> 1.0).getAsDouble(),
                 () ->
-                    m_y.getAsDouble()
-                        * (m_slow.getAsBoolean()
-                            ? DriveConstants.kDrivingSpeeds[1]
-                            : DriveConstants.kDrivingSpeeds[0])
-                        * m_throttle.orElse(() -> 1.0).getAsDouble())
+                    y.getAsDouble()
+                        * (slow.getAsBoolean()
+                            ? DriveConstants.DRIVING_SPEEDS[1]
+                            : DriveConstants.DRIVING_SPEEDS[0])
+                        * throttle.orElse(() -> 1.0).getAsDouble())
             .withControllerRotationAxis(
                 () ->
-                    m_rotation.getAsDouble()
-                        * (m_slow.getAsBoolean()
-                            ? DriveConstants.kRotationSpeeds[1]
-                            : DriveConstants.kRotationSpeeds[0])
-                        * m_throttle.orElse(() -> 1.0).getAsDouble())
+                    rotation.getAsDouble()
+                        * (slow.getAsBoolean()
+                            ? DriveConstants.ROTATION_SPEEDS[1]
+                            : DriveConstants.ROTATION_SPEEDS[0])
+                        * throttle.orElse(() -> 1.0).getAsDouble())
             .deadband(0.1)
             .scaleTranslation(0.8)
             .allianceRelativeControl(true);
@@ -67,7 +67,7 @@ public class Drive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drive.driveFieldOriented(driveInput);
+    drive.driveFieldOriented(driveInput);
   }
 
   // Called once the command ends or is interrupted.
