@@ -10,6 +10,7 @@ import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
@@ -25,7 +26,6 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
 import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.utils.FilteredButton;
 import frc.robot.utils.FilteredJoystick;
 import java.io.File;
@@ -159,7 +159,7 @@ public class RobotContainer {
           .onFalse(Commands.runOnce(m_coral::idle));
 
       m_operatorController.rightStick()
-              .onTrue(new AlignToAprilTag(this.m_drive, () -> 18, () -> Vision.Camera.CENTER_CAM));
+              .onTrue(new AlignToAprilTag(this.m_drive, () -> 18, () -> new Translation2d(0.3, 1)));
     }
   }
 

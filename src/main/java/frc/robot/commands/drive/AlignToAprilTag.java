@@ -17,21 +17,20 @@ public class AlignToAprilTag extends Command {
 
     private final SwerveSubsystem drive;
     private final IntSupplier aprilTag;
-    // why the hell is this an enum
-    private final Supplier<Vision.Camera> camera;
+    private final Supplier<Translation2d> translation;
 
-    private PIDController xController = new PIDController(3.5, 0, 0);
-    private PIDController yController = new PIDController(3.5, 0, 0);
-    private PIDController thetaController = new PIDController(Math.PI/4, 0, 0);
+    private final PIDController xController = new PIDController(3.5, 0, 0);
+    private final PIDController yController = new PIDController(3.5, 0, 0);
+    private final PIDController thetaController = new PIDController(Math.PI/4, 0, 0);
 
     {
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
-    public AlignToAprilTag(SwerveSubsystem drive, IntSupplier aprilTag, Supplier<Vision.Camera> camera) {
+    public AlignToAprilTag(SwerveSubsystem drive, IntSupplier aprilTag, Supplier<Translation2d> translation) {
         this.drive = drive;
         this.aprilTag = aprilTag;
-        this.camera = camera;
+        this.translation = translation;
     }
 
     @Override
@@ -46,7 +45,7 @@ public class AlignToAprilTag extends Command {
             final var desiredPose = tagPose.get()
                     .getTranslation()
                     .toTranslation2d()
-                    .plus(new Translation2d(0.3, 1));
+                    .plus(this.translation.get());
             System.out.println(desiredPose);
 
             xOutput = xController.calculate(robotPose.getX(), desiredPose.getX());
