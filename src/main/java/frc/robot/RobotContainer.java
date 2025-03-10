@@ -18,12 +18,14 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
+import frc.robot.commands.drive.AlignToAprilTag;
 import frc.robot.commands.drive.Drive;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
 import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.utils.FilteredButton;
 import frc.robot.utils.FilteredJoystick;
 import java.io.File;
@@ -126,7 +128,7 @@ public class RobotContainer {
 
     // Test mode allows everything to be run on a single controller
     // Test mode should not be enabled in competition
-    if (IOConstants.kTestMode) {
+    if (IOConstants.kTestMode && false) {
 
     } else {
 
@@ -155,6 +157,9 @@ public class RobotContainer {
           .leftBumper()
           .onTrue(Commands.runOnce(m_coral::release))
           .onFalse(Commands.runOnce(m_coral::idle));
+
+      m_operatorController.rightStick()
+              .onTrue(new AlignToAprilTag(this.m_drive, () -> 18, () -> Vision.Camera.CENTER_CAM));
     }
   }
 

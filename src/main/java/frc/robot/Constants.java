@@ -47,10 +47,10 @@ public final class Constants {
   public static class Sensors {
     public static final AHRS gyro = new AHRS(NavXComType.kUSB1);
     public static final Rev2mDistanceSensor handlerDistanceSensor =
-        new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard);
+        /* new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard) */ null;
 
     static {
-      handlerDistanceSensor.setDistanceUnits(Rev2mDistanceSensor.Unit.kInches);
+//      handlerDistanceSensor.setDistanceUnits(Rev2mDistanceSensor.Unit.kInches);
     }
   }
 
@@ -63,7 +63,7 @@ public final class Constants {
 
     // When test mode is enabled, the operator controller is used for driving and testing
     // This should always be false on the main branch
-    public static final boolean kTestMode = false;
+    public static final boolean kTestMode = Robot.isSimulation();
   }
 
   public static final class Vision {

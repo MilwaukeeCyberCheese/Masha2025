@@ -54,6 +54,10 @@ public class Robot extends TimedRobot {
       DriverStation.silenceJoystickConnectionWarning(true);
       SimulatedArena.getInstance().resetFieldForAuto();
     }
+
+    if (Constants.IOConstants.kTestMode) {
+      System.out.println("Test Mode Enabled\nNot for competition use");
+    }
   }
 
   public static Robot getInstance() {

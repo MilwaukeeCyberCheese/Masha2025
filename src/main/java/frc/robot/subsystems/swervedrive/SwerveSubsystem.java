@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
-import frc.robot.subsystems.swervedrive.Vision.Cameras;
+import frc.robot.subsystems.swervedrive.Vision.Camera;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Optional;
@@ -51,7 +51,7 @@ public class SwerveSubsystem extends SubsystemBase {
   // private final AprilTagFieldLayout aprilTagFieldLayout =
   // AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
   /** Enable vision odometry updates while driving. */
-  private final boolean visionDriveTest = false;
+  private final boolean visionDriveTest = true;
 
   /** PhotonVision class to keep an accurate odometry. */
   private Vision vision;
@@ -170,6 +170,10 @@ public class SwerveSubsystem extends SubsystemBase {
     vision = new Vision(swerveDrive::getPose, swerveDrive.field);
   }
 
+  public Vision getVision() {
+    return vision;
+  }
+
   @Override
   public void periodic() {
     // When vision is enabled we must manually update odometry in SwerveDrive
@@ -187,7 +191,7 @@ public class SwerveSubsystem extends SubsystemBase {
    *
    * @return A {@link Command} which will run the alignment.
    */
-  public Command aimAtTarget(Cameras camera) {
+  public Command aimAtTarget(Camera camera) {
 
     return run(
         () -> {

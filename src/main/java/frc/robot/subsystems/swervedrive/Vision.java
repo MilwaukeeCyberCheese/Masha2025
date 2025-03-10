@@ -81,7 +81,7 @@ public class Vision {
       visionSim = new VisionSystemSim("Vision");
       visionSim.addAprilTags(fieldLayout);
 
-      for (Cameras c : Cameras.values()) {
+      for (Camera c : Camera.values()) {
         c.addToVisionSim(visionSim);
       }
 
@@ -124,7 +124,7 @@ public class Vision {
        */
       visionSim.update(swerveDrive.getSimulationDriveTrainPose().get());
     }
-    for (Cameras camera : Cameras.values()) {
+    for (Camera camera : Camera.values()) {
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
       if (poseEst.isPresent()) {
         var pose = poseEst.get();
@@ -145,7 +145,7 @@ public class Vision {
    * @return an {@link EstimatedRobotPose} with an estimated pose, timestamp, and targets used to
    *     create the estimate
    */
-  public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Cameras camera) {
+  public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Camera camera) {
     Optional<EstimatedRobotPose> poseEst = camera.getEstimatedGlobalPose();
     if (Robot.isSimulation()) {
       Field2d debugField = visionSim.getDebugField();
@@ -178,7 +178,7 @@ public class Vision {
    * @param camera Camera to check.
    * @return Tracked target.
    */
-  public PhotonTrackedTarget getTargetFromId(int id, Cameras camera) {
+  public PhotonTrackedTarget getTargetFromId(int id, Camera camera) {
     PhotonTrackedTarget target = null;
     for (PhotonPipelineResult result : camera.resultsList) {
       if (result.hasTargets()) {
@@ -223,7 +223,7 @@ public class Vision {
   public void updateVisionField() {
 
     List<PhotonTrackedTarget> targets = new ArrayList<PhotonTrackedTarget>();
-    for (Cameras c : Cameras.values()) {
+    for (Camera c : Camera.values()) {
       if (!c.resultsList.isEmpty()) {
         PhotonPipelineResult latest = c.resultsList.get(0);
         if (latest.hasTargets()) {
@@ -244,7 +244,7 @@ public class Vision {
   }
 
   /** Camera Enum to select each camera */
-  enum Cameras {
+  public enum Camera {
     /** Left Camera */
     LEFT_CAM(
         "left",
@@ -319,7 +319,7 @@ public class Vision {
      * @param multiTagStdDevsMatrix Multi AprilTag standard deviations of estimated poses from the
      *     camera.
      */
-    Cameras(
+    Camera(
         String name,
         Rotation3d robotToCamRotation,
         Translation3d robotToCamTranslation,
@@ -448,7 +448,7 @@ public class Vision {
      * only be called once per loop.
      *
      * <p>Also includes updates for the standard deviations, which can (optionally) be retrieved
-     * with {@link Cameras#updateEstimationStdDevs}
+     * with {@link Camera#updateEstimationStdDevs}
      *
      * @return An {@link EstimatedRobotPose} with an estimated pose, estimate timestamp, and targets
      *     used for estimation.
