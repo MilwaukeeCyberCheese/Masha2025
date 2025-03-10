@@ -17,8 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IOConstants;
+import frc.robot.commands.drive.Drive;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
@@ -29,8 +29,8 @@ import frc.robot.utils.FilteredJoystick;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
-
 import swervelib.SwerveInputStream;
+import java.util.Optional;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -94,6 +94,26 @@ public class RobotContainer {
     if (Robot.getInstance().isSimulation()) {
       DriverStation.silenceJoystickConnectionWarning(true);
     }
+
+    if (IOConstants.kTestMode) {
+      m_drive.setDefaultCommand(
+          new Drive(
+              m_drive,
+              m_operatorController::getRightX,
+              m_operatorController::getLeftY,
+              () -> -m_operatorController.getRightX(),
+              () -> m_operatorController.rightBumper().getAsBoolean(),
+              Optional.empty()));
+    } else {
+      m_drive.setDefaultCommand(
+          new Drive(
+              m_drive,
+              m_driverLeftJoystick::getX,
+              m_driverLeftJoystick::getY,
+              m_driverRightJoystick::getX,
+              m_driverRightJoystick::getButtonTwo,
+              Optional.of(m_driverLeftJoystick::getThrottle)));
+    }
   }
 
   /**
@@ -107,54 +127,8 @@ public class RobotContainer {
     // Test mode allows everything to be run on a single controller
     // Test mode should not be enabled in competition
     if (IOConstants.kTestMode) {
-      driveInput =
-          SwerveInputStream.of(
-                  m_drive.getSwerveDrive(),
-                  () ->
-                      m_operatorController.getLeftY()
-                          * (m_operatorController.rightBumper().getAsBoolean()
-                              ? DriveConstants.kDrivingSpeeds[1]
-                              : DriveConstants.kDrivingSpeeds[0]),
-                  () ->
-                      m_operatorController.getLeftX()
-                          * (m_operatorController.rightBumper().getAsBoolean()
-                              ? DriveConstants.kDrivingSpeeds[1]
-                              : DriveConstants.kDrivingSpeeds[0]))
-              .withControllerRotationAxis(
-                  () ->
-                      -m_operatorController.getRightX()
-                          * (m_operatorController.rightBumper().getAsBoolean()
-                              ? DriveConstants.kRotationSpeeds[1]
-                              : DriveConstants.kRotationSpeeds[0]))
-              .deadband(0.1)
-              .scaleTranslation(0.8)
-              .allianceRelativeControl(true);
+
     } else {
-      driveInput =
-          SwerveInputStream.of(
-                  m_drive.getSwerveDrive(),
-                  () ->
-                      m_driverLeftJoystick.getY()
-                          * (m_driverRightJoystick.getButtonTwo()
-                              ? DriveConstants.kDrivingSpeeds[1]
-                              : DriveConstants.kDrivingSpeeds[0])
-                          * m_driverRightJoystick.getThrottle(),
-                  () ->
-                      m_driverLeftJoystick.getX()
-                          * (m_driverRightJoystick.getButtonTwo()
-                              ? DriveConstants.kDrivingSpeeds[1]
-                              : DriveConstants.kDrivingSpeeds[0])
-                          * m_driverRightJoystick.getThrottle())
-              .withControllerRotationAxis(
-                  () ->
-                      -m_driverRightJoystick.getX()
-                          * (m_driverRightJoystick.getButtonTwo()
-                              ? DriveConstants.kRotationSpeeds[1]
-                              : DriveConstants.kRotationSpeeds[0])
-                          * m_driverRightJoystick.getThrottle())
-              .deadband(0.1)
-              .scaleTranslation(0.8)
-              .allianceRelativeControl(true);
 
       // Zero gyro with A button
       m_operatorController.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
