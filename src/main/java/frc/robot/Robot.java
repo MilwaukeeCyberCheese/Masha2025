@@ -78,9 +78,6 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
-    if (this.isSimulation()) {
-      this.m_robotContainer.updatePositionDebug();
-    }
 
     if (Constants.IOConstants.kTestMode) {
       System.out.println("Test Mode Enabled\nNot for competition use");
@@ -89,11 +86,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {
-    if (this.isSimulation()) {
-      this.m_robotContainer.clearPositionDebug();
-    }
-  }
+  public void disabledInit() {}
 
   @Override
   public void disabledPeriodic() {
@@ -115,9 +108,7 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousExit() {
-    // this.m_robotContainer.clearAutoTrajectories();
-  }
+  public void autonomousExit() {}
 
   /** This function is called periodically during autonomous. */
   @Override

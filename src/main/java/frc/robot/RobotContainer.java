@@ -5,12 +5,9 @@
 package frc.robot;
 
 import choreo.auto.AutoChooser;
-import choreo.trajectory.SwerveSample;
-import choreo.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -57,34 +54,16 @@ public class RobotContainer {
   private final FilteredButton m_buttonBoard = new FilteredButton(IOConstants.kButtonBoardPort);
 
   public final AutoChooser m_autoChooser = new AutoChooser();
-  //   private final AutoFactory m_autoFactory =
-  //       new AutoFactory(
-  //           m_drive::getPose,
-  //           m_drive::resetOdometry,
-  //           m_drive::followTrajectory,
-  //           true,
-  //           m_drive,
-  //           this::logTrajectory);
-  //   private final Routines m_routines = new Routines(m_autoFactory);
-
-  private final FieldObject2d allPositions =
-      this.m_drive.getSwerveDrive().field.getObject("Positions");
-
-  private String lastTrajectory;
-  private final FieldObject2d autoTrajectoryObj =
-      this.m_drive.getSwerveDrive().field.getObject("Auto Trajectory");
-  private final FieldObject2d allTrajectoriesObj =
-      this.m_drive.getSwerveDrive().field.getObject("All Trajectories");
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureButtonBindings();
 
-    // m_autoChooser.addRoutine("Test Routine", m_routines::test);
-    // m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
-    // m_autoChooser.addRoutine("Blue Coral Station Routine", m_routines::blueCoralStation);
-    // m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
-    // m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
+    m_autoChooser.addRoutine("Test Routine", m_routines::test);
+    m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
+    m_autoChooser.addRoutine("Blue Coral Station Routine", m_routines::blueCoralStation);
+    m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
+    m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
 
     if (!Robot.isReal()) {
@@ -152,62 +131,4 @@ public class RobotContainer {
           .onFalse(Commands.runOnce(m_coral::idle));
     }
   }
-
-  public void clearPositionDebug() {
-    this.allPositions.setPoses();
-  }
-
-  public void updatePositionDebug() {
-    if (Robot.isReal()) {
-      return;
-    }
-    final var newPoses = this.allPositions.getPoses();
-    final var currentPose = this.m_drive.getPose();
-  }
-
-  //     if (!newPoses.isEmpty()
-  //         && newPoses
-  //                 .get(newPoses.size() - 1)
-  //                 .getTranslation()
-  //                 .getDistance(currentPose.getTranslation())
-  //             >= 4) newPoses.clear();
-
-  //     newPoses.add(currentPose);
-  //     this.allPositions.setPoses(newPoses);
-  //   }
-
-  public void clearAutoTrajectories() {
-    if (Robot.isReal()) {
-      return;
-    }
-    this.lastTrajectory = null;
-    this.autoTrajectoryObj.setPoses();
-    this.allTrajectoriesObj.setPoses();
-  }
-
-  private void logTrajectory(Trajectory<SwerveSample> trajectory, boolean isStart) {
-    if (Robot.isReal()) {
-      return;
-    }
-    if (isStart) {
-      if (DriverStation.getAlliance().isPresent()
-          && DriverStation.getAlliance().get() == DriverStation.Alliance.Red)
-        trajectory = trajectory.flipped();
-    }
-  }
-
-  //       final var poses = new ArrayList<Pose2d>(trajectory.samples().size());
-  //       for (final var swerveSample : trajectory.samples()) {
-  //         poses.add(swerveSample.getPose());
-  //       }
-  //       this.lastTrajectory = trajectory.name();
-  //       this.autoTrajectoryObj.setPoses(poses);
-  //       final var oldAllPoses = this.allTrajectoriesObj.getPoses();
-  //       oldAllPoses.addAll(poses);
-  //       this.allTrajectoriesObj.setPoses(oldAllPoses);
-  //     } else if (Objects.equals(this.lastTrajectory, trajectory.name())) {
-  //       this.autoTrajectoryObj.setPoses();
-  //       this.lastTrajectory = null;
-  //     }
-  //   }
 }
