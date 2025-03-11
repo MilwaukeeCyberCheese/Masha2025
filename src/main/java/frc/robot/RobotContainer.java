@@ -9,13 +9,11 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.OIConstants;
-import frc.robot.commands.drive.Drive;
-import frc.robot.commands.drive.SnapToAngleWithDriver;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IOConstants;
 import frc.robot.commands.drive.Drive;
+import frc.robot.commands.drive.SnapToAngleWithDriver;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
@@ -112,24 +110,25 @@ public class RobotContainer {
           .onTrue(
               Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-    new Trigger(m_driverRightJoystick::getPOVPressed)
-        .onTrue(new SnapToAngleWithDriver(m_drive, null, null, null, null));
+      new Trigger(m_driverRightJoystick::getPOVPressed)
+          .onTrue(new SnapToAngleWithDriver(m_drive, null, null, null, null));
 
-    m_operatorController
-        .x()
-        .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
-    m_operatorController
-        .y()
-        .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
+      m_operatorController
+          .x()
+          .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
+      m_operatorController
+          .y()
+          .onTrue(
+              Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-    m_operatorController
-        .rightBumper()
-        .onTrue(Commands.runOnce(m_coral::grab))
-        .onFalse(Commands.runOnce(m_coral::idle));
-    m_operatorController
-        .leftBumper()
-        .onTrue(Commands.runOnce(m_coral::release))
-        .onFalse(Commands.runOnce(m_coral::idle));
+      m_operatorController
+          .rightBumper()
+          .onTrue(Commands.runOnce(m_coral::grab))
+          .onFalse(Commands.runOnce(m_coral::idle));
+      m_operatorController
+          .leftBumper()
+          .onTrue(Commands.runOnce(m_coral::release))
+          .onFalse(Commands.runOnce(m_coral::idle));
       m_operatorController
           .rightBumper()
           .onTrue(Commands.runOnce(m_coral::grab))
