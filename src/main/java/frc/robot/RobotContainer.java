@@ -9,8 +9,10 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.drive.Drive;
+import frc.robot.commands.drive.SnapToAngleWithDriver;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
@@ -81,6 +83,9 @@ public class RobotContainer {
           .b()
           .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
     }
+
+    new Trigger(m_driverRightJoystick::getPOVPressed)
+        .onTrue(new SnapToAngleWithDriver(m_drive, null, null, null, null));
 
     m_operatorController
         .x()
