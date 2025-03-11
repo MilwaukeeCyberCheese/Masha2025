@@ -5,6 +5,7 @@
 package frc.robot;
 
 import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -53,6 +54,10 @@ public class RobotContainer {
   private final FilteredButton m_buttonBoard = new FilteredButton(IOConstants.kButtonBoardPort);
 
   public final AutoChooser m_autoChooser = new AutoChooser();
+  private final AutoFactory m_autoFactory =
+      new AutoFactory(
+          m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive);
+  private final Routines m_routines = new Routines(m_autoFactory);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
