@@ -54,12 +54,16 @@ public final class Constants {
     }
   }
 
-  public static final class OIConstants {
+  public static final class IOConstants {
     public static final int kOperatorControllerPort = 0;
     public static final int kLeftJoystickPort = 1;
     public static final int kRightJoystickPort = 2;
     public static final int kButtonBoardPort = 3;
     public static final double kDriveDeadband = 0.05;
+
+    // When test mode is enabled, the operator controller is used for driving and testing
+    // This should always be false on the main branch
+    public static final boolean kTestMode = false;
   }
 
   public static final class Vision {
@@ -99,7 +103,7 @@ public final class Constants {
         new SparkMax(kRightElevatorCANid, MotorType.kBrushless);
 
     public static final SparkLimitSwitch kElevatorLimitSwitch =
-        kLeftElevatorSparkMax.getReverseLimitSwitch();
+        kRightElevatorSparkMax.getReverseLimitSwitch();
 
     public static final SparkMaxConfig kLeftElevatorConfig = new SparkMaxConfig();
     public static final SparkMaxConfig kRightElevatorConfig = new SparkMaxConfig();
@@ -110,7 +114,7 @@ public final class Constants {
 
     // only one cause we slave the other motor to this one
     public static final SparkClosedLoopController kElevatorController =
-        kLeftElevatorSparkMax.getClosedLoopController();
+        kRightElevatorSparkMax.getClosedLoopController();
 
     // TODO: veloc and accel is in inches per second and inches per second squared
     public static final PIDConstants kElevatorPIDConstants =
@@ -148,11 +152,11 @@ public final class Constants {
       kLeftElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kLeftInverted);
       kRightElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kRightInverted);
 
-      kRightElevatorConfig.follow(
+      kLeftElevatorConfig.follow(
           kLeftElevatorSparkMax); // you can pass in an inverted value after the
       // kLeftElevatorSparkMax, but idk quite how that works yet
 
-      kLeftElevatorConfig
+      kRightElevatorConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
           .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD)
@@ -160,10 +164,10 @@ public final class Constants {
           .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
           .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
 
-      kLeftElevatorConfig.encoder.positionConversionFactor(kConversionFactor);
+      kRightElevatorConfig.encoder.positionConversionFactor(kConversionFactor);
 
       // TODO: see if this is right
-      kLeftElevatorConfig
+      kRightElevatorConfig
           .limitSwitch
           .reverseLimitSwitchEnabled(true)
           .reverseLimitSwitchType(Type.kNormallyOpen);
