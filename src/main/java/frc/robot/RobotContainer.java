@@ -130,7 +130,6 @@ public class RobotContainer {
           .onTrue(Commands.runOnce(m_coral::release))
           .onFalse(Commands.runOnce(m_coral::idle));
       m_controller
-      m_controller
           .rightBumper()
           .onTrue(Commands.runOnce(m_coral::grab))
           .onFalse(Commands.runOnce(m_coral::idle));
