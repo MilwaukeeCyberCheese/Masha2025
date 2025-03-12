@@ -55,7 +55,7 @@ public final class Constants {
   }
 
   public static final class IOConstants {
-    public static final int kOperatorControllerPort = 0;
+    public static final int kControllerPort = 0;
     public static final int kLeftJoystickPort = 1;
     public static final int kRightJoystickPort = 2;
     public static final int kButtonBoardPort = 3;

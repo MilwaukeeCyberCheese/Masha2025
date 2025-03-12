@@ -39,14 +39,14 @@ public class RobotContainer {
           : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
 
   // Driver joysticks
-  private final FilteredJoystick m_driverLeftJoystick =
+  private final FilteredJoystick m_leftJoystick =
       new FilteredJoystick(IOConstants.kLeftJoystickPort);
-  private final FilteredJoystick m_driverRightJoystick =
+  private final FilteredJoystick m_rightJoystick =
       new FilteredJoystick(IOConstants.kRightJoystickPort);
 
   // Operator controller
-  private final CommandXboxController m_operatorController =
-      new CommandXboxController(IOConstants.kOperatorControllerPort);
+  private final CommandXboxController m_controller =
+      new CommandXboxController(IOConstants.kControllerPort);
 
   // Button Board
   private final FilteredButton m_buttonBoard = new FilteredButton(IOConstants.kButtonBoardPort);
@@ -60,20 +60,20 @@ public class RobotContainer {
       m_drive.setDefaultCommand(
           new Drive(
               m_drive,
-              m_operatorController::getRightX,
-              m_operatorController::getLeftY,
-              () -> -m_operatorController.getRightX(),
-              () -> m_operatorController.rightBumper().getAsBoolean(),
+              m_controller::getRightX,
+              m_controller::getLeftY,
+              () -> -m_controller.getRightX(),
+              () -> m_controller.rightBumper().getAsBoolean(),
               Optional.empty()));
     } else {
       m_drive.setDefaultCommand(
           new Drive(
               m_drive,
-              m_driverLeftJoystick::getX,
-              m_driverLeftJoystick::getY,
-              m_driverRightJoystick::getX,
-              m_driverRightJoystick::getButtonTwo,
-              Optional.of(m_driverLeftJoystick::getThrottle)));
+              m_leftJoystick::getX,
+              m_leftJoystick::getY,
+              m_rightJoystick::getX,
+              m_rightJoystick::getButtonTwo,
+              Optional.of(m_leftJoystick::getThrottle)));
     }
   }
 
@@ -92,27 +92,27 @@ public class RobotContainer {
     } else {
 
       // Zero gyro with A button
-      m_operatorController.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
+      m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
 
       if (!Robot.isReal()) {
-        m_operatorController
+        m_controller
             .b()
             .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
       }
 
-      m_operatorController
+      m_controller
           .x()
           .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
-      m_operatorController
+      m_controller
           .y()
           .onTrue(
               Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-      m_operatorController
+      m_controller
           .rightBumper()
           .onTrue(Commands.runOnce(m_coral::grab))
           .onFalse(Commands.runOnce(m_coral::idle));
-      m_operatorController
+      m_controller
           .leftBumper()
           .onTrue(Commands.runOnce(m_coral::release))
           .onFalse(Commands.runOnce(m_coral::idle));
