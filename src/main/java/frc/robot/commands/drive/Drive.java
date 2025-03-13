@@ -67,7 +67,8 @@ public class Drive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drive.driveFieldOriented(driveInput);
+
+    m_drive.driveFieldOriented(driveInput.get());
   }
 
   // Called once the command ends or is interrupted.
