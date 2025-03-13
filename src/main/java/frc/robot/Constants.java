@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.revrobotics.Rev2mDistanceSensor;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -13,8 +12,6 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import com.studica.frc.AHRS;
-import com.studica.frc.AHRS.NavXComType;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -44,15 +41,7 @@ import java.util.function.BooleanSupplier;
 public final class Constants {
   public static final double kTau = Math.PI * 2;
 
-  public static class Sensors {
-    public static final AHRS gyro = new AHRS(NavXComType.kUSB1);
-    public static final Rev2mDistanceSensor handlerDistanceSensor =
-        new Rev2mDistanceSensor(Rev2mDistanceSensor.Port.kOnboard);
-
-    static {
-      handlerDistanceSensor.setDistanceUnits(Rev2mDistanceSensor.Unit.kInches);
-    }
-  }
+  public static class Sensors {}
 
   public static final class IOConstants {
     public static final int kControllerPort = 0;
