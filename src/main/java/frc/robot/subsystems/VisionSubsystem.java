@@ -33,7 +33,7 @@ public class VisionSubsystem extends SubsystemBase {
   public VisionSubsystem(SwerveSubsystem drive) {
     try {
       tagLayout =
-          AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025Reefscape.m_resourceFile);
+          AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025ReefscapeWelded.m_resourceFile);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
