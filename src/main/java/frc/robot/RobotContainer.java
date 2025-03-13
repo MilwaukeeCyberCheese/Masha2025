@@ -102,7 +102,7 @@ public class RobotContainer {
     // Test mode allows everything to be run on a single controller
     // Test mode should not be enabled in competition
     if (IOConstants.kTestMode) {
-
+      m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
     } else {
 
       // Zero gyro with A button
