@@ -73,7 +73,12 @@ public final class Constants {
 
       // z is good
       public static final Transform3d kRobotToCamera =
-          new Transform3d(new Translation3d(Units.inchesToMeters(-6.94), Units.inchesToMeters(10.27), Units.inchesToMeters(10.75)), new Rotation3d(0, 0, Math.PI));
+          new Transform3d(
+              new Translation3d(
+                  Units.inchesToMeters(-6.94),
+                  Units.inchesToMeters(10.27),
+                  Units.inchesToMeters(10.75)),
+              new Rotation3d(0, 0, Math.PI));
     }
 
     public static final class RightCamera {
@@ -81,7 +86,12 @@ public final class Constants {
 
       // z is good
       public static final Transform3d kRobotToCamera =
-          new Transform3d(new Translation3d(Units.inchesToMeters(-6.94), Units.inchesToMeters(-10.27), Units.inchesToMeters(10.75)), new Rotation3d(0, 0, Math.PI));
+          new Transform3d(
+              new Translation3d(
+                  Units.inchesToMeters(-6.94),
+                  Units.inchesToMeters(-10.27),
+                  Units.inchesToMeters(10.75)),
+              new Rotation3d(0, 0, Math.PI));
     }
 
     // The layout of the AprilTags on the field
