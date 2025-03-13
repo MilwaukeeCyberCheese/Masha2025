@@ -4,10 +4,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 
-import com.revrobotics.Rev2mDistanceSensor.Unit;
 import edu.wpi.first.math.geometry.Translation2d;
-import frc.robot.Constants.Sensors;
-import frc.robot.Robot;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import org.dyn4j.geometry.Rectangle;
@@ -36,28 +33,25 @@ public class CoralHandlerSubsystemSim extends CoralHandlerSubsystem {
   @Override
   public void periodic() {
     super.periodic();
-    if (Robot.isReal()) {
-      m_hasCoral = Sensors.handlerDistanceSensor.getRange(Unit.kInches) < 5;
+
+    if (getState() == CoralHandlerState.GRAB) {
+      m_intakeSim.startIntake();
     } else {
-      if (getState() == CoralHandlerState.GRAB) {
-        m_intakeSim.startIntake();
-      } else {
-        m_intakeSim.stopIntake();
-      }
-      if (getState() == CoralHandlerState.RELEASE && m_intakeSim.obtainGamePieceFromIntake()) {
-        SimulatedArena.getInstance()
-            .addGamePieceProjectile(
-                new ReefscapeCoralOnFly(
-                    m_drive.getSimulatedDriveTrainPose().getTranslation(),
-                    new Translation2d(Inches.of(16.0), Inches.of(0)),
-                    m_drive.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
-                    m_drive.getSimulatedDriveTrainPose().getRotation(),
-                    m_elevator.getSimEjectHeight(),
-                    MetersPerSecond.of(0.8), // eject speed
-                    Radians.of(-Math.PI / 9)));
-      }
-      m_hasCoral = m_intakeSim.getGamePiecesAmount() != 0;
+      m_intakeSim.stopIntake();
     }
+    if (getState() == CoralHandlerState.RELEASE && m_intakeSim.obtainGamePieceFromIntake()) {
+      SimulatedArena.getInstance()
+          .addGamePieceProjectile(
+              new ReefscapeCoralOnFly(
+                  m_drive.getSimulatedDriveTrainPose().getTranslation(),
+                  new Translation2d(Inches.of(16.0), Inches.of(0)),
+                  m_drive.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+                  m_drive.getSimulatedDriveTrainPose().getRotation(),
+                  m_elevator.getSimEjectHeight(),
+                  MetersPerSecond.of(0.8), // eject speed
+                  Radians.of(-Math.PI / 9)));
+    }
+    m_hasCoral = m_intakeSim.getGamePiecesAmount() != 0;
   }
 
   /** Intake a simulated coral from thin air, like magic */

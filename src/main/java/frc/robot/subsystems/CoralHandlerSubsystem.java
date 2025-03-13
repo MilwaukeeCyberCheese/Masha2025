@@ -1,12 +1,10 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Handler.Coral;
-import frc.robot.Constants.Sensors;
 import frc.robot.Robot;
 import java.util.Optional;
 
@@ -40,11 +38,11 @@ public class CoralHandlerSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Coral.kLeftController.setReference(m_speed, ControlType.kMAXMotionVelocityControl);
-    Coral.kRightController.setReference(m_speed, ControlType.kMAXMotionVelocityControl);
+
+    // TODO: Update PID controller once we tune it
 
     if (Robot.isReal()) {
-      m_hasCoral = Sensors.handlerDistanceSensor.getRange() < Coral.kHasCoralDistance;
+      // beam break stuff ooooooo magic
     }
     log();
   }
@@ -52,6 +50,12 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   public void log() {
     SmartDashboard.putBoolean("Coral Handler Has Coral", m_hasCoral);
     SmartDashboard.putNumber("Coral Handler Speed", m_speed);
+  }
+
+  public void setSpeed(double speed) {
+
+    Coral.kLeftSparkMax.set(-speed);
+    Coral.kRightSparkMax.set(-speed);
   }
 
   /**
