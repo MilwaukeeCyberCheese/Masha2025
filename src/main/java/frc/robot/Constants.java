@@ -67,15 +67,23 @@ public final class Constants {
   }
 
   public static final class Vision {
-    public static final String kCameraName = "Brio_100";
-    // Cam mounted facing forward, half a meter forward of center, half a meter up
-    // from center.
-    public static final Transform3d kRobotToCam =
-        new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
+    public static final class LeftCamera {
+      public static final String kCameraName = "leftCamera";
+
+      public static final Transform3d kRobotToCamera =
+          new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, Math.PI));
+    }
+
+    public static final class RightCamera {
+      public static final String kCameraName = "rightCamera";
+
+      public static final Transform3d kRobotToCamera =
+          new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, Math.PI));
+    }
 
     // The layout of the AprilTags on the field
     public static final AprilTagFieldLayout kTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+        AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
     // The standard deviations of our vision estimated poses, which affect
     // correction rate
