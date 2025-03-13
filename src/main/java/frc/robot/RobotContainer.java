@@ -4,9 +4,11 @@
 
 package frc.robot;
 
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -29,7 +31,7 @@ import java.util.Optional;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final SwerveSubsystem m_drive =
+  public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
   private final ElevatorSubsystem m_elevator =
       Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
@@ -51,11 +53,23 @@ public class RobotContainer {
   // Button Board
   private final FilteredButton m_buttonBoard = new FilteredButton(IOConstants.kButtonBoardPort);
 
+  public final AutoChooser m_autoChooser = new AutoChooser();
+  private final AutoFactory m_autoFactory =
+      new AutoFactory(
+          m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive);
+  private final Routines m_routines = new Routines(m_autoFactory);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureButtonBindings();
 
-    // Set default drive command
+    m_autoChooser.addRoutine("Test Routine", m_routines::test);
+    m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
+    m_autoChooser.addRoutine("Blue Coral Station Routine", m_routines::blueCoralStation);
+    m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
+    m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
+    SmartDashboard.putData("Auto Chooser", m_autoChooser);
+
     if (IOConstants.kTestMode) {
       m_drive.setDefaultCommand(
           new Drive(
@@ -117,15 +131,5 @@ public class RobotContainer {
           .onTrue(Commands.runOnce(m_coral::release))
           .onFalse(Commands.runOnce(m_coral::idle));
     }
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // return autoChooser.getSelected();
-    return null;
   }
 }
