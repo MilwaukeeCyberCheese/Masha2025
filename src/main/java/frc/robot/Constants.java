@@ -24,6 +24,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.AlgaeHandlerSubsystem.AlgaeHandlerIntakeState;
 import frc.robot.subsystems.AlgaeHandlerSubsystem.AlgaeHandlerPositionState;
 import frc.robot.subsystems.ClimberSubsystem.ClimberState;
@@ -70,15 +71,17 @@ public final class Constants {
     public static final class LeftCamera {
       public static final String kCameraName = "leftCamera";
 
+      // z is good
       public static final Transform3d kRobotToCamera =
-          new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, Math.PI));
+          new Transform3d(new Translation3d(Units.inchesToMeters(-6.94), Units.inchesToMeters(10.27), Units.inchesToMeters(10.75)), new Rotation3d(0, 0, Math.PI));
     }
 
     public static final class RightCamera {
       public static final String kCameraName = "rightCamera";
 
+      // z is good
       public static final Transform3d kRobotToCamera =
-          new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, Math.PI));
+          new Transform3d(new Translation3d(Units.inchesToMeters(-6.94), Units.inchesToMeters(-10.27), Units.inchesToMeters(10.75)), new Rotation3d(0, 0, Math.PI));
     }
 
     // The layout of the AprilTags on the field
