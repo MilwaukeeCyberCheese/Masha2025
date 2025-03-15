@@ -9,17 +9,16 @@ import choreo.auto.AutoFactory;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
-import frc.robot.commands.drive.AlignToAprilTag;
+import frc.robot.commands.drive.MoveToPose;
 import frc.robot.commands.drive.Drive;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -93,7 +92,7 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
     SmartDashboard.putData("Xbox Controller Debug", m_operatorController.getHID());
 
-    if (Robot.getInstance().isSimulation()) {
+    if (Robot.isSimulation()) {
       DriverStation.silenceJoystickConnectionWarning(true);
     }
 
@@ -159,7 +158,7 @@ public class RobotContainer {
           .onFalse(Commands.runOnce(m_coral::idle));
 
       m_operatorController.rightStick()
-              .onTrue(new AlignToAprilTag(this.m_drive, () -> 18, () -> new Translation2d(0.3, 1)));
+              .onTrue(new MoveToPose(this.m_drive, () -> new Pose2d(8, 5, Rotation2d.kCCW_90deg)));
     }
   }
 
