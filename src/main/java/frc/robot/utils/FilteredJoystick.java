@@ -2,6 +2,7 @@ package frc.robot.utils;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 
 public class FilteredJoystick {
@@ -105,19 +106,19 @@ public class FilteredJoystick {
   /**
    * Returns whether or not the trigger is pressed
    *
-   * @return boolean
+   * @return Trigger
    */
-  public boolean getTriggerActive() {
-    return joystick.getRawButton(1);
+  public Trigger getTriggerActive() {
+    return new Trigger(() -> joystick.getRawButton(1));
   }
 
   /**
    * Returns if any POVButton is pressed or not
    *
-   * @return boolean
+   * @return Trigger
    */
-  public boolean getPOVPressed() {
-    return joystick.getPOV() != -1;
+  public Trigger getPOVPressed() {
+    return new Trigger(() -> joystick.getPOV() != -1);
   }
 
   /**
@@ -129,47 +130,47 @@ public class FilteredJoystick {
     return joystick.getPOV();
   }
 
-  public boolean getButtonTwo() {
-    return joystick.getRawButton(2);
+  public Trigger getButtonTwo() {
+    return new Trigger(() -> joystick.getRawButton(2));
   }
 
-  public boolean getButtonThree() {
-    return joystick.getRawButton(3);
+  public Trigger getButtonThree() {
+    return new Trigger(() -> joystick.getRawButton(3));
   }
 
-  public boolean getButtonFour() {
-    return joystick.getRawButton(4);
+  public Trigger getButtonFour() {
+    return new Trigger(() -> joystick.getRawButton(4));
   }
 
-  public boolean getButtonFive() {
-    return joystick.getRawButton(5);
+  public Trigger getButtonFive() {
+    return new Trigger(() -> joystick.getRawButton(5));
   }
 
-  public boolean getButtonSix() {
-    return joystick.getRawButton(6);
+  public Trigger getButtonSix() {
+    return new Trigger(() -> joystick.getRawButton(6));
   }
 
-  public boolean getButtonSeven() {
-    return joystick.getRawButton(7);
+  public Trigger getButtonSeven() {
+    return new Trigger(() -> joystick.getRawButton(7));
   }
 
-  public boolean getButtonEight() {
-    return joystick.getRawButton(8);
+  public Trigger getButtonEight() {
+    return new Trigger(() -> joystick.getRawButton(8));
   }
 
-  public boolean getButtonNine() {
-    return joystick.getRawButton(9);
+  public Trigger getButtonNine() {
+    return new Trigger(() -> joystick.getRawButton(9));
   }
 
-  public boolean getButtonTen() {
-    return joystick.getRawButton(10);
+  public Trigger getButtonTen() {
+    return new Trigger(() -> joystick.getRawButton(10));
   }
 
-  public boolean getButtonEleven() {
-    return joystick.getRawButton(11);
+  public Trigger getButtonEleven() {
+    return new Trigger(() -> joystick.getRawButton(11));
   }
 
-  public boolean getButtonTwelve() {
-    return joystick.getRawButton(12);
+  public Trigger getButtonTwelve() {
+    return new Trigger(() -> joystick.getRawButton(12));
   }
 }
