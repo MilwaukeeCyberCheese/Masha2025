@@ -4,14 +4,18 @@
 
 package frc.robot;
 
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
 import frc.robot.commands.drive.Drive;
+import frc.robot.subsystems.AlgaeHandlerSubsystem;
+import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
@@ -29,7 +33,7 @@ import java.util.Optional;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final SwerveSubsystem m_drive =
+  public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
   private final ElevatorSubsystem m_elevator =
       Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
@@ -37,6 +41,8 @@ public class RobotContainer {
       Robot.isReal()
           ? new CoralHandlerSubsystem()
           : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
+  private final ChuteSubsystem m_chute = new ChuteSubsystem();
+  private final AlgaeHandlerSubsystem m_algae = new AlgaeHandlerSubsystem();
 
   // Driver joysticks
   private final FilteredJoystick m_leftJoystick =
@@ -49,18 +55,30 @@ public class RobotContainer {
       new CommandXboxController(IOConstants.kControllerPort);
 
   // Button Board
-  private final FilteredButton m_buttonBoard = new FilteredButton(IOConstants.kButtonBoardPort);
+  private final FilteredButton m_buttons = new FilteredButton(IOConstants.kButtonBoardPort);
+
+  public final AutoChooser m_autoChooser = new AutoChooser();
+  private final AutoFactory m_autoFactory =
+      new AutoFactory(
+          m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive);
+  private final Routines m_routines = new Routines(m_autoFactory);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureButtonBindings();
 
-    // Set default drive command
+    m_autoChooser.addRoutine("Test Routine", m_routines::test);
+    m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
+    m_autoChooser.addRoutine("Blue Coral Station Routine", m_routines::blueCoralStation);
+    m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
+    m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
+    SmartDashboard.putData("Auto Chooser", m_autoChooser);
+
     if (IOConstants.kTestMode) {
       m_drive.setDefaultCommand(
           new Drive(
               m_drive,
-              m_controller::getRightX,
+              m_controller::getLeftX,
               m_controller::getLeftY,
               () -> -m_controller.getRightX(),
               () -> m_controller.rightBumper().getAsBoolean(),
@@ -72,7 +90,7 @@ public class RobotContainer {
               m_leftJoystick::getX,
               m_leftJoystick::getY,
               m_rightJoystick::getX,
-              m_rightJoystick::getButtonTwo,
+              () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
               Optional.of(m_rightJoystick::getThrottle)));
     }
   }
@@ -88,8 +106,11 @@ public class RobotContainer {
     // Test mode allows everything to be run on a single controller
     // Test mode should not be enabled in competition
     if (IOConstants.kTestMode) {
-
+      m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
     } else {
+
+      // drop chute
+      m_buttons.getChuteSwitch().onTrue(Commands.runOnce(m_chute::drop));
 
       // Zero gyro with A button
       m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
@@ -117,15 +138,5 @@ public class RobotContainer {
           .onTrue(Commands.runOnce(m_coral::release))
           .onFalse(Commands.runOnce(m_coral::idle));
     }
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // return autoChooser.getSelected();
-    return null;
   }
 }

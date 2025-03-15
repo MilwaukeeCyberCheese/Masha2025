@@ -10,4 +10,5 @@ jobs:
     steps:
       - uses: docker://chinthakagodawita/autoupdate-action:v1
         env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          GITHUB_TOKEN: '${{ secrets.AUTOUPDATE }}'
+          MERGE_MSG: "Oh boy! An update!"
