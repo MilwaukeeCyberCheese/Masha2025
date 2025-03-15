@@ -41,7 +41,7 @@ public class RobotContainer {
       Robot.isReal()
           ? new CoralHandlerSubsystem()
           : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
-    private final ChuteSubsystem m_chute = new ChuteSubsystem();
+  private final ChuteSubsystem m_chute = new ChuteSubsystem();
 
   // Driver joysticks
   private final FilteredJoystick m_leftJoystick =
@@ -108,8 +108,8 @@ public class RobotContainer {
       m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
     } else {
 
-        //drop chute
-        new Trigger(m_buttonBoard::getChuteSwitch).onTrue(Commands.runOnce(m_chute::drop));
+      // drop chute
+      new Trigger(m_buttonBoard::getChuteSwitch).onTrue(Commands.runOnce(m_chute::drop));
 
       // Zero gyro with A button
       m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
