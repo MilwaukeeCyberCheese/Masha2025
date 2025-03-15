@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
 import frc.robot.commands.drive.Drive;
+import frc.robot.subsystems.AlgaeHandlerSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
@@ -39,6 +40,7 @@ public class RobotContainer {
       Robot.isReal()
           ? new CoralHandlerSubsystem()
           : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
+  private final AlgaeHandlerSubsystem m_algae = new AlgaeHandlerSubsystem();
 
   // Driver joysticks
   private final FilteredJoystick m_leftJoystick =
