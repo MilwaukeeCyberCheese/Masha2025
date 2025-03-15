@@ -94,7 +94,7 @@ public class RobotContainer {
               m_leftJoystick::getY,
               m_rightJoystick::getX,
               () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
-              Optional.of(m_leftJoystick::getThrottle)));
+              Optional.of(m_rightJoystick::getThrottle)));
     }
   }
 
