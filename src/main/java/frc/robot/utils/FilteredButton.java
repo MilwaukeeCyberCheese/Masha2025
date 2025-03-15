@@ -65,7 +65,7 @@ public class FilteredButton {
     return new Trigger(() -> (controller.isConnected()) ? controller.getRawButton(5) : false);
   }
 
-  //TODO: this may change if we get a three-state for coral
+  // TODO: this may change if we get a three-state for coral
   /**
    * returns if the bottom switch is on or off
    *
