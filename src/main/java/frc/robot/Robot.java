@@ -24,7 +24,7 @@ import org.ironmaple.simulation.SimulatedArena;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
-  private RobotContainer m_robotContainer;
+  public RobotContainer m_robotContainer;
 
   StructArrayPublisher<Pose3d> coralPoses =
       NetworkTableInstance.getDefault()
