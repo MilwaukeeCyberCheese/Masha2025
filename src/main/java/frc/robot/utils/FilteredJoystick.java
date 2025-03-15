@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.Constants;
 
 public class FilteredJoystick {
-  private Joystick joystick;
+  private final Joystick joystick;
 
   /**
    * Filter class for the joysticks
@@ -14,6 +14,10 @@ public class FilteredJoystick {
    */
   public FilteredJoystick(int port) {
     joystick = new Joystick(port);
+  }
+
+  public Joystick getJoystick() {
+    return joystick;
   }
 
   /**
