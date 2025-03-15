@@ -8,6 +8,7 @@ import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -70,6 +71,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    this.setControllerState(ControllerState.UNKNOWN);
     this.updateControllerConnections();
     configureButtonBindings();
 
@@ -189,16 +191,22 @@ public class RobotContainer {
     return this.m_leftJoystick.getJoystick().isConnected() || this.m_rightJoystick.getJoystick().isConnected();
   }
 
+  private void setControllerState(ControllerState newState) {
+    this.controllerState = newState;
+    System.out.println("Controller state now " + this.controllerState);
+    SmartDashboard.putString("Controller State", this.controllerState.toString());
+  }
+
   public void updateControllerConnections() {
     if (this.controllerState == ControllerState.XBOX && !this.m_controller.isConnected()) {
-      this.controllerState = ControllerState.UNKNOWN;
+      this.setControllerState(ControllerState.UNKNOWN);
     } else if (this.controllerState == ControllerState.JOYSTICKS && !this.isAnyJoystickConnected()) {
-      this.controllerState = ControllerState.UNKNOWN;
+      this.setControllerState(ControllerState.UNKNOWN);
     }
 
     if (this.controllerState == ControllerState.UNKNOWN) {
-      if (this.m_controller.isConnected()) this.controllerState = ControllerState.XBOX;
-      else if (this.isAnyJoystickConnected()) this.controllerState = ControllerState.JOYSTICKS;
+      if (this.m_controller.isConnected()) this.setControllerState(ControllerState.XBOX);
+      else if (this.isAnyJoystickConnected()) this.setControllerState(ControllerState.JOYSTICKS);
     }
   }
 
