@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.Servo;
 import frc.robot.subsystems.AlgaeHandlerSubsystem.AlgaeHandlerIntakeState;
 import frc.robot.subsystems.AlgaeHandlerSubsystem.AlgaeHandlerPositionState;
 import frc.robot.subsystems.ClimberSubsystem.ClimberState;
@@ -350,6 +351,14 @@ public final class Constants {
           .pid(kClimberPIDConstants.kP, kClimberPIDConstants.kI, kClimberPIDConstants.kD)
           .outputRange(-1, 1);
     }
+  }
+
+  public static final class Chute {
+    public static final Servo kServo = new Servo(0);
+
+    // TODO: find these
+    public static final double kUp = 0.0;
+    public static final double kDown = 90.0;
   }
 
   public static final class DriveConstants {
