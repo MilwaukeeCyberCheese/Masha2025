@@ -1,5 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems.swervedrive;
@@ -181,6 +179,8 @@ public class SwerveSubsystem extends SubsystemBase {
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
     }
+
+    // System.out.println(swerveDrive.getGyroRotation3d());
   }
 
   @Override
@@ -327,7 +327,11 @@ public class SwerveSubsystem extends SubsystemBase {
                   scaledInputs.getY(),
                   headingX.getAsDouble(),
                   headingY.getAsDouble(),
-                  swerveDrive.getOdometryHeading().getRadians(),
+                  swerveDrive
+                      .getOdometryHeading()
+                      .getRadians(), // TODO: this is either Y or X, figure it out tmrw. Not Z cause
+                  // the
+                  // Z-axis is for a normal mounting
                   swerveDrive.getMaximumChassisVelocity()));
         });
   }

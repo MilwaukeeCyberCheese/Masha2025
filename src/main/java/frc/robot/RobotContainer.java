@@ -13,6 +13,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -20,6 +22,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
 import frc.robot.commands.drive.MoveToPose;
 import frc.robot.commands.drive.Drive;
+import frc.robot.subsystems.AlgaeHandlerSubsystem;
+import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
@@ -48,41 +52,31 @@ public class RobotContainer {
       Robot.isReal()
           ? new CoralHandlerSubsystem()
           : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
+  private final ChuteSubsystem m_chute = new ChuteSubsystem();
+  private final AlgaeHandlerSubsystem m_algae = new AlgaeHandlerSubsystem();
 
   // Driver joysticks
-  private final FilteredJoystick m_driverLeftJoystick =
+  private final FilteredJoystick m_leftJoystick =
       new FilteredJoystick(IOConstants.kLeftJoystickPort);
-  private final FilteredJoystick m_driverRightJoystick =
+  private final FilteredJoystick m_rightJoystick =
       new FilteredJoystick(IOConstants.kRightJoystickPort);
 
   // Operator controller
-  private final CommandXboxController m_operatorController =
-      new CommandXboxController(IOConstants.kOperatorControllerPort);
+  private final CommandXboxController m_controller =
+      new CommandXboxController(IOConstants.kControllerPort);
 
   // Button Board
-  private final FilteredButton m_buttonBoard = new FilteredButton(IOConstants.kButtonBoardPort);
+  private final FilteredButton m_buttons = new FilteredButton(IOConstants.kButtonBoardPort);
 
   public final AutoChooser m_autoChooser = new AutoChooser();
   private final AutoFactory m_autoFactory =
       new AutoFactory(
-          m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive, this::logTrajectory);
+          m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive);
   private final Routines m_routines = new Routines(m_autoFactory);
-
-  private final FieldObject2d allPositions = this.m_drive.getSwerveDrive().field.getObject("Positions");
-
-  private String lastTrajectory;
-  private final FieldObject2d autoTrajectoryObj = this.m_drive.getSwerveDrive().field.getObject("Auto Trajectory");
-  private final FieldObject2d allTrajectoriesObj = this.m_drive.getSwerveDrive().field.getObject("All Trajectories");
-
-  // Configure drive input stream
-  SwerveInputStream driveInput;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureButtonBindings();
-
-    // Set default drive command
-    m_drive.setDefaultCommand(m_drive.driveFieldOriented(driveInput));
 
     m_autoChooser.addRoutine("Test Routine", m_routines::test);
     m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
@@ -90,7 +84,7 @@ public class RobotContainer {
     m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
     m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
-    SmartDashboard.putData("Xbox Controller Debug", m_operatorController.getHID());
+    SmartDashboard.putData("Xbox Controller Debug", m_controller.getHID());
 
     if (Robot.isSimulation()) {
       DriverStation.silenceJoystickConnectionWarning(true);
@@ -100,20 +94,20 @@ public class RobotContainer {
       m_drive.setDefaultCommand(
           new Drive(
               m_drive,
-              m_operatorController::getRightX,
-              m_operatorController::getLeftY,
-              () -> -m_operatorController.getRightX(),
-              () -> m_operatorController.rightBumper().getAsBoolean(),
+              m_controller::getLeftX,
+              m_controller::getLeftY,
+              () -> -m_controller.getRightX(),
+              () -> m_controller.rightBumper().getAsBoolean(),
               Optional.empty()));
     } else {
       m_drive.setDefaultCommand(
           new Drive(
               m_drive,
-              m_driverLeftJoystick::getX,
-              m_driverLeftJoystick::getY,
-              m_driverRightJoystick::getX,
-              m_driverRightJoystick::getButtonTwo,
-              Optional.of(m_driverLeftJoystick::getThrottle)));
+              m_leftJoystick::getX,
+              m_leftJoystick::getY,
+              m_rightJoystick::getX,
+              () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
+              Optional.of(m_leftJoystick::getThrottle)));
     }
   }
 
@@ -127,77 +121,43 @@ public class RobotContainer {
 
     // Test mode allows everything to be run on a single controller
     // Test mode should not be enabled in competition
-    if (IOConstants.kTestMode && false) {
 
+    if (IOConstants.kTestMode) {
+      m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
     } else {
 
+      // drop chute
+      m_buttons.getChuteSwitch().onTrue(Commands.runOnce(m_chute::drop));
+
       // Zero gyro with A button
-      m_operatorController.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
+      m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
 
       if (!Robot.isReal()) {
-        m_operatorController
+        m_controller
             .b()
             .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
       }
 
-      m_operatorController
+
+      m_controller
           .x()
           .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
-      m_operatorController
+      m_controller
           .y()
           .onTrue(
               Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-      m_operatorController
-          .rightBumper()
-          .onTrue(Commands.runOnce(m_coral::grab))
-          .onFalse(Commands.runOnce(m_coral::idle));
-      m_operatorController
-          .leftBumper()
-          .onTrue(Commands.runOnce(m_coral::release))
-          .onFalse(Commands.runOnce(m_coral::idle));
+        m_controller
+                .rightBumper()
+                .onTrue(Commands.runOnce(m_coral::grab))
+                .onFalse(Commands.runOnce(m_coral::idle));
+        m_controller
+                .leftBumper()
+                .onTrue(Commands.runOnce(m_coral::release))
+                .onFalse(Commands.runOnce(m_coral::idle));
 
-      m_operatorController.rightStick()
+        m_controller.rightStick()
               .onTrue(new MoveToPose(this.m_drive, () -> new Pose2d(8, 5, Rotation2d.kCCW_90deg)));
-    }
-  }
-
-  public void clearPositionDebug() {
-    this.allPositions.setPoses();
-  }
-
-  public void updatePositionDebug() {
-    final var newPoses = this.allPositions.getPoses();
-    final var currentPose = this.m_drive.getPose();
-
-    if (!newPoses.isEmpty() && newPoses.getLast().getTranslation().getDistance(currentPose.getTranslation()) >= 4) newPoses.clear();
-
-    newPoses.add(currentPose);
-    this.allPositions.setPoses(newPoses);
-  }
-
-  public void clearAutoTrajectories() {
-    this.lastTrajectory = null;
-    this.autoTrajectoryObj.setPoses();
-    this.allTrajectoriesObj.setPoses();
-  }
-
-  private void logTrajectory(Trajectory<SwerveSample> trajectory, boolean isStart) {
-    if (isStart) {
-      if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) trajectory = trajectory.flipped();
-
-      final var poses = new ArrayList<Pose2d>(trajectory.samples().size());
-      for (final var swerveSample : trajectory.samples()) {
-        poses.add(swerveSample.getPose());
-      }
-      this.lastTrajectory = trajectory.name();
-      this.autoTrajectoryObj.setPoses(poses);
-      final var oldAllPoses = this.allTrajectoriesObj.getPoses();
-      oldAllPoses.addAll(poses);
-      this.allTrajectoriesObj.setPoses(oldAllPoses);
-    } else if (Objects.equals(this.lastTrajectory, trajectory.name())) {
-      this.autoTrajectoryObj.setPoses();
-      this.lastTrajectory = null;
     }
   }
 }

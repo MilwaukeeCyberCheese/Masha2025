@@ -22,8 +22,8 @@ public class Routines {
   }
 
   /**
-    * Routine to drive to the Processor, drop off the Algae, and drive back to the starting point.
-    */
+   * Routine to drive to the Processor, drop off the Algae, and drive back to the starting point.
+   */
   public AutoRoutine blueProcessor() {
     AutoRoutine routine = m_factory.newRoutine("Blue Processor");
     AutoTrajectory mainTraj = routine.trajectory("Blue To Processor");
@@ -33,9 +33,7 @@ public class Routines {
     return routine;
   }
 
-  /**
-    * Routine to drive to the Coral Station.
-    */
+  /** Routine to drive to the Coral Station. */
   public AutoRoutine blueCoralStation() {
     AutoRoutine routine = m_factory.newRoutine("Blue Coral Station");
     AutoTrajectory mainTraj = routine.trajectory("Blue To Coral Station");
@@ -44,10 +42,8 @@ public class Routines {
 
     return routine;
   }
-  
-  /**
-    * Routine to drive to the Coral Station.
-    */
+
+  /** Routine to drive to the Coral Station. */
   public AutoRoutine blueCoralToReefK() {
     AutoRoutine routine = m_factory.newRoutine("Blue Coral Station To Reef K");
     AutoTrajectory mainTraj = routine.trajectory("Blue Coral Station To Reef K");
@@ -57,17 +53,22 @@ public class Routines {
     return routine;
   }
 
-  /**
-    * Routine to drive to the Coral Station.
-    */
-    public AutoRoutine blueTestFull() {
-      AutoRoutine routine = m_factory.newRoutine("Blue Test Full");
-      AutoTrajectory processorTraj = routine.trajectory("Blue To Processor");
-      AutoTrajectory coralStationTraj = routine.trajectory("Blue To Coral Station");
-      AutoTrajectory reefKTraj = routine.trajectory("Blue Coral Station To Reef K");
+  /** Routine to drive to the Coral Station. */
+  public AutoRoutine blueTestFull() {
+    AutoRoutine routine = m_factory.newRoutine("Blue Test Full");
+    AutoTrajectory processorTraj = routine.trajectory("Blue To Processor");
+    AutoTrajectory coralStationTraj = routine.trajectory("Blue To Coral Station");
+    AutoTrajectory reefKTraj = routine.trajectory("Blue Coral Station To Reef K");
 
-      routine.active().onTrue(Commands.sequence(processorTraj.resetOdometry(), processorTraj.cmd(), coralStationTraj.cmd(), reefKTraj.cmd()));
-  
-      return routine;
-    }
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                processorTraj.resetOdometry(),
+                processorTraj.cmd(),
+                coralStationTraj.cmd(),
+                reefKTraj.cmd()));
+
+    return routine;
+  }
 }
