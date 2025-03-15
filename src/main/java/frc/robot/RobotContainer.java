@@ -130,7 +130,8 @@ public class RobotContainer {
           .onTrue(
               Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-      new Trigger(m_rightJoystick::getPOVPressed)
+      m_rightJoystick
+          .getPOVPressed()
           .onTrue(new SnapToAngleWithDriver(m_drive, null, null, null, null));
 
       m_controller
