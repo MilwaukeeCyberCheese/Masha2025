@@ -5,6 +5,7 @@
 package frc.robot.utils;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /** This is a filter class for the custom buttons on the driver station */
 public class FilteredButton {
@@ -22,54 +23,54 @@ public class FilteredButton {
   /**
    * Returns if the L1 button has been pressed
    *
-   * @return boolean
+   * @return Trigger
    */
-  public boolean getL1() {
-    return controller.getRawButton(1);
+  public Trigger getL1() {
+    return new Trigger(() -> controller.getRawButton(1));
   }
 
   /**
    * Returns if the L2 button has been pressed
    *
-   * @return boolean
+   * @return Trigger
    */
-  public boolean getL2() {
-    return controller.getRawButton(2);
+  public Trigger getL2() {
+    return new Trigger(() -> controller.getRawButton(2));
   }
 
   /**
    * Returns if the L3 button has been pressed
    *
-   * @return boolean
+   * @return Trigger
    */
-  public boolean getL3() {
-    return controller.getRawButton(3);
+  public Trigger getL3() {
+    return new Trigger(() -> controller.getRawButton(3));
   }
 
   /**
    * Returns if the L4 button has been pressed
    *
-   * @return boolean
+   * @return Trigger
    */
-  public boolean getL4() {
-    return controller.getRawButton(4);
+  public Trigger getL4() {
+    return new Trigger(() -> controller.getRawButton(4));
   }
 
   /**
    * returns if the chute switch is on or off
    *
-   * @return boolean
+   * @return Trigger
    */
-  public boolean getChuteSwitch() {
-    return (controller.isConnected()) ? controller.getRawButton(5) : false;
+  public Trigger getChuteSwitch() {
+    return new Trigger(() -> (controller.isConnected()) ? controller.getRawButton(5) : false);
   }
 
   /**
    * returns if the bottom switch is on or off
    *
-   * @return boolean
+   * @return Trigger
    */
-  public boolean getCoralSwitch() {
-    return controller.getRawButton(6);
+  public Trigger getCoralSwitch() {
+    return new Trigger(() -> controller.getRawButton(6));
   }
 }
