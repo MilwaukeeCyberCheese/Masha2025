@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IOConstants;
 import frc.robot.commands.drive.Drive;
 import frc.robot.commands.drive.SnapToAngleWithDriver;
@@ -57,7 +56,7 @@ public class RobotContainer {
       new CommandXboxController(IOConstants.kControllerPort);
 
   // Button Board
-  private final FilteredButton m_buttonBoard = new FilteredButton(IOConstants.kButtonBoardPort);
+  private final FilteredButton m_buttons = new FilteredButton(IOConstants.kButtonBoardPort);
 
   public final AutoChooser m_autoChooser = new AutoChooser();
   private final AutoFactory m_autoFactory =
@@ -112,7 +111,7 @@ public class RobotContainer {
     } else {
 
       // drop chute
-      new Trigger(m_buttonBoard::getChuteSwitch).onTrue(Commands.runOnce(m_chute::drop));
+      m_buttons.getChuteSwitch().onTrue(Commands.runOnce(m_chute::drop));
 
       // Zero gyro with A button
       m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
