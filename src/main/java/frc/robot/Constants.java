@@ -53,7 +53,7 @@ public final class Constants {
 
     // When test mode is enabled, the operator controller is used for driving and testing
     // This should always be false on the main branch
-    public static final boolean kTestMode = false;
+    public static final boolean kTestMode = true;
   }
 
   public static final class Vision {
