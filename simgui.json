@@ -14,7 +14,8 @@
       "/SmartDashboard/JSON": "Alerts",
       "/SmartDashboard/Motors": "Alerts",
       "/SmartDashboard/Scheduler": "Scheduler",
-      "/SmartDashboard/Swerve Drive": "Alerts"
+      "/SmartDashboard/Swerve Drive": "Alerts",
+      "/SmartDashboard/VisionSystemSim-Vision/Sim Field": "Field2d"
     },
     "windows": {
       "/SmartDashboard/Field": {
@@ -64,6 +65,15 @@
   },
   "NetworkTables": {
     "transitory": {
+      "CameraPublisher": {
+        "center-processed": {
+          "open": true,
+          "string[]##v_/CameraPublisher/center-processed/streams": {
+            "open": true
+          }
+        },
+        "open": true
+      },
       "SmartDashboard": {
         "Auto Chooser": {
           "string[]##v_/SmartDashboard/Auto Chooser/options": {
