@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
 import frc.robot.commands.drive.Drive;
 import frc.robot.commands.drive.MoveToPose;
-import frc.robot.subsystems.AlgaeHandlerSubsystem;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -47,7 +46,6 @@ public class RobotContainer {
           ? new CoralHandlerSubsystem()
           : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
   private final ChuteSubsystem m_chute = new ChuteSubsystem();
-  private final AlgaeHandlerSubsystem m_algae = new AlgaeHandlerSubsystem();
 
   // Driver joysticks
   private final FilteredJoystick m_leftJoystick =
@@ -101,7 +99,7 @@ public class RobotContainer {
               m_leftJoystick::getY,
               m_rightJoystick::getX,
               () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
-              Optional.of(m_leftJoystick::getThrottle)));
+              Optional.of(m_rightJoystick::getThrottle)));
     }
   }
 
