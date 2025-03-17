@@ -149,9 +149,9 @@ public class RobotContainer {
                 .leftBumper()
                 .onTrue(Commands.runOnce(m_coral::release))
                 .onFalse(Commands.runOnce(m_coral::idle));
-
-        m_controller.rightStick()
-              .onTrue(new MoveToPose(this.m_drive, () -> new Pose2d(8, 5, Rotation2d.kCCW_90deg)));
     }
+
+    m_controller.rightStick()
+            .onTrue(new MoveToPose(this.m_drive, () -> new Pose2d(8, 5, Rotation2d.kCCW_90deg)));
   }
 }

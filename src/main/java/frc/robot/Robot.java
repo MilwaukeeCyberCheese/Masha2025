@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData(CommandScheduler.getInstance());
 
     if (Constants.IOConstants.kTestMode) {
-      System.out.println("Test Mode Enabled\nNot for competition use");
+//      System.out.println("Test Mode Enabled\nNot for competition use");
     }
   }
 

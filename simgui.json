@@ -65,15 +65,6 @@
   },
   "NetworkTables": {
     "transitory": {
-      "CameraPublisher": {
-        "center-processed": {
-          "open": true,
-          "string[]##v_/CameraPublisher/center-processed/streams": {
-            "open": true
-          }
-        },
-        "open": true
-      },
       "SmartDashboard": {
         "Auto Chooser": {
           "string[]##v_/SmartDashboard/Auto Chooser/options": {
@@ -92,12 +83,14 @@
         "Tuning": {
           "open": true
         },
+        "Xbox Controller Debug": {
+          "open": true
+        },
         "open": true,
         "swerve": {
           "modules": {
             "open": true
-          },
-          "open": true
+          }
         }
       }
     }
