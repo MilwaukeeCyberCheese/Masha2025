@@ -64,11 +64,11 @@ public class RobotContainer {
           m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive);
   private final Routines m_routines = new Routines(m_autoFactory);
 
-  private ControllerState controllerState = ControllerState.UNKNOWN;
+  private ControllerState controllerState = Robot.isSimulation() ? ControllerState.XBOX : ControllerState.JOYSTICKS;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    this.setControllerState(ControllerState.UNKNOWN);
+    this.setControllerState(this.controllerState);
     this.updateControllerConnections();
     configureButtonBindings();
 
@@ -88,6 +88,8 @@ public class RobotContainer {
     m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
     m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
+
+    SmartDashboard.putData("Controllers/Xbox", m_controller.getHID());
   }
 
   /**
@@ -99,13 +101,13 @@ public class RobotContainer {
   private void configureButtonBindings() {
     m_controller
         .start()
-        .onTrue(Commands.runOnce(() -> this.controllerState = ControllerState.XBOX));
+        .onTrue(Commands.runOnce(() -> this.setControllerState(ControllerState.XBOX)));
     m_leftJoystick
         .getButtonNine()
-        .onTrue(Commands.runOnce(() -> this.controllerState = ControllerState.JOYSTICKS));
+        .onTrue(Commands.runOnce(() -> this.setControllerState(ControllerState.JOYSTICKS)));
     m_leftJoystick
         .getButtonNine()
-        .onTrue(Commands.runOnce(() -> this.controllerState = ControllerState.JOYSTICKS));
+        .onTrue(Commands.runOnce(() -> this.setControllerState(ControllerState.JOYSTICKS)));
 
     // Zero gyro with A button
     m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
@@ -194,19 +196,19 @@ public class RobotContainer {
 
   private void setControllerState(ControllerState newState) {
     this.controllerState = newState;
-    System.out.println("Controller state now " + this.controllerState);
+    System.out.println("Controller state: " + this.controllerState);
     SmartDashboard.putString("Controller State", this.controllerState.toString());
   }
 
   public void updateControllerConnections() {
     if (this.controllerState == ControllerState.XBOX && !this.m_controller.isConnected()) {
-      this.setControllerState(ControllerState.UNKNOWN);
+      this.setControllerState(ControllerState.DISCONNECTED);
     } else if (this.controllerState == ControllerState.JOYSTICKS
         && !this.isAnyJoystickConnected()) {
-      this.setControllerState(ControllerState.UNKNOWN);
+      this.setControllerState(ControllerState.DISCONNECTED);
     }
 
-    if (this.controllerState == ControllerState.UNKNOWN) {
+    if (this.controllerState == ControllerState.DISCONNECTED) {
       if (this.m_controller.isConnected()) this.setControllerState(ControllerState.XBOX);
       else if (this.isAnyJoystickConnected()) this.setControllerState(ControllerState.JOYSTICKS);
     }
@@ -214,6 +216,7 @@ public class RobotContainer {
 
   private enum ControllerState {
     UNKNOWN,
+    DISCONNECTED,
     XBOX,
     JOYSTICKS,
   }
