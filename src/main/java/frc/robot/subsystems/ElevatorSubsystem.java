@@ -26,12 +26,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   private ElevatorState m_state = ElevatorState.CUSTOM;
-  private Optional<Double> m_customHeight = null;
+  private Optional<Double> m_customHeight = Optional.empty();
   protected double m_height;
   private DashboardUpdater<Double> m_dashboardUpdater =
       new DashboardUpdater<>("Elevator Height", 0.0);
   private LivePIDTuner m_pidTuner =
-      new LivePIDTuner("Elevator", Elevator.kElevatorController, Elevator.kElevatorPIDConstants);
+      new LivePIDTuner("Elevator PID", Elevator.kElevatorController, Elevator.kElevatorPIDConstants);
 
   public ElevatorSubsystem() {
     Elevator.kLeftElevatorSparkMax.configure(
