@@ -24,7 +24,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   private ElevatorState m_state = ElevatorState.DOWN;
-  private Optional<Double> m_customHeight = null;
+  private Optional<Double> m_customHeight = Optional.empty();
   protected double m_height;
 
   public ElevatorSubsystem() {
