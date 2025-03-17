@@ -167,6 +167,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean atBottom() {
-    return Elevator.kElevatorLimitSwitch.isPressed();
+    // return Elevator.kElevatorLimitSwitch.isPressed();
+    return false;
   }
 }
