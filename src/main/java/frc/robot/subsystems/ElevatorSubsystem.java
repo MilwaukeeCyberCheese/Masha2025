@@ -6,6 +6,8 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Elevator;
+import frc.robot.utils.DashboardUpdater;
+import frc.robot.utils.LivePIDTuner;
 import java.util.Optional;
 
 // TODO: add sim support
@@ -23,9 +25,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     CUSTOM
   }
 
-  private ElevatorState m_state = ElevatorState.DOWN;
+  private ElevatorState m_state = ElevatorState.CUSTOM;
   private Optional<Double> m_customHeight = null;
   protected double m_height;
+  private DashboardUpdater<Double> m_dashboardUpdater =
+      new DashboardUpdater<>("Elevator Height", 0.0);
+  private LivePIDTuner m_pidTuner =
+      new LivePIDTuner("Elevator", Elevator.kElevatorController, Elevator.kElevatorPIDConstants);
 
   public ElevatorSubsystem() {
     Elevator.kLeftElevatorSparkMax.configure(
@@ -46,7 +52,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     log();
 
-    Elevator.kElevatorController.setReference(m_height, ControlType.kMAXMotionPositionControl);
+    m_pidTuner.update(Elevator.kLeftElevatorSparkMax);
+
+    Elevator.kElevatorController.setReference(
+        m_dashboardUpdater.get(), ControlType.kMAXMotionPositionControl);
   }
 
   public void log() {
