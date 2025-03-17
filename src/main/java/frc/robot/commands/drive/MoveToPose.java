@@ -47,8 +47,6 @@ public class MoveToPose extends Command {
 
     @Override
     public void initialize() {
-        System.out.println("move to pose cmd now");
-
         final var robotPose = this.drive.getPose();
         final var targetPose = this.pose.get();
         final var fieldVelocity = this.drive.getFieldVelocity();
@@ -140,6 +138,8 @@ public class MoveToPose extends Command {
                 thetaS
         );
 
+        driveVelocity = driveVelocity.rotateBy(Rotation2d.kCCW_Pi_2);
+
         // Command speeds
         drive.driveFieldOriented(ChassisSpeeds.fromFieldRelativeSpeeds(
                 driveVelocity.getX(),
@@ -152,7 +152,6 @@ public class MoveToPose extends Command {
 
     @Override
     public boolean isFinished() {
-        System.out.println("mtp is finished?");
         return this.driveController.atGoal() && this.thetaController.atGoal();
     }
 

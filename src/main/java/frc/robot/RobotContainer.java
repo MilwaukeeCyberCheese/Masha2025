@@ -150,6 +150,6 @@ public class RobotContainer {
     }
 
     m_controller.rightStick()
-            .onTrue(new MoveToPose(this.m_drive, () -> new Pose2d(8, 5, Rotation2d.kCCW_90deg)));
+            .onTrue(new MoveToPose(this.m_drive, () -> new Pose2d(3, 6.5, Rotation2d.kCCW_90deg)));
   }
 }

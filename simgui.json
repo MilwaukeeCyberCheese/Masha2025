@@ -13,7 +13,6 @@
       "/SmartDashboard/IMU": "Alerts",
       "/SmartDashboard/JSON": "Alerts",
       "/SmartDashboard/Motors": "Alerts",
-      "/SmartDashboard/PathPlanner": "Alerts",
       "/SmartDashboard/Scheduler": "Scheduler",
       "/SmartDashboard/Swerve Drive": "Alerts",
       "/SmartDashboard/VisionSystemSim-Vision/Sim Field": "Field2d"
@@ -72,8 +71,8 @@
             "open": true
           }
         },
-        "Auto Controllers": {
-          "X": {
+        "Controllers": {
+          "Xbox": {
             "open": true
           },
           "open": true
@@ -82,9 +81,6 @@
           "open": true
         },
         "Tuning": {
-          "open": true
-        },
-        "Xbox Controller Debug": {
           "open": true
         },
         "open": true,
