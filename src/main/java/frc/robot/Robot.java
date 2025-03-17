@@ -127,8 +127,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    Elevator.kRightElevatorSparkMax.set(0.1);
-    // Elevator.kLeftElevatorSparkMax.set(0.1);
+    
 
   }
 

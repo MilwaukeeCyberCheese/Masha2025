@@ -100,7 +100,7 @@ public final class Constants {
 
     // TODO: veloc and accel is in inches per second and inches per second squared
     public static final PIDConstants kElevatorPIDConstants =
-        new PIDConstants(0.1, 0.0, 0.0, 16.0, 20.0);
+        new PIDConstants(15.0, 0.0, 0.0, 0.5, 0.25);
 
     // TODO: figure out the heights
     public static final HashMap<ElevatorState, Double> kHeights =
@@ -117,7 +117,7 @@ public final class Constants {
         };
 
     // TODO: figure out the conversion factor
-    public static final double kConversionFactor = 1.0;
+    public static final double kConversionFactor = 9.0/23.0;
 
     // TODO: figure out the tolerance
     public static final double kElevatorTolerance = 0.01;
@@ -132,7 +132,7 @@ public final class Constants {
      */
     static {
       kLeftElevatorConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(30);
-      kRightElevatorConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(30);
+      kRightElevatorConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(30).inverted(true);
 
       kLeftElevatorConfig.follow(
           kRightElevatorSparkMax, true); // you can pass in an inverted value after the

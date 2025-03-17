@@ -15,6 +15,10 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
 import frc.robot.commands.drive.Drive;
 import frc.robot.subsystems.ChuteSubsystem;
+import frc.robot.subsystems.CoralHandlerSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
+import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.FilteredButton;
 import frc.robot.utils.FilteredJoystick;
@@ -30,12 +34,12 @@ import java.util.Optional;
 public class RobotContainer {
   public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
-  //   private final ElevatorSubsystem m_elevator =
-  //       Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
-  //   private final CoralHandlerSubsystem m_coral =
-  //       Robot.isReal()
-  //           ? new CoralHandlerSubsystem()
-  //           : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
+    private final ElevatorSubsystem m_elevator =
+        Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
+    private final CoralHandlerSubsystem m_coral =
+        Robot.isReal()
+            ? new CoralHandlerSubsystem()
+            : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
   private final ChuteSubsystem m_chute = new ChuteSubsystem();
 
   // Driver joysticks
