@@ -6,9 +6,6 @@ package frc.robot;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
@@ -139,6 +136,13 @@ public class RobotContainer {
 
     m_controller
         .rightStick()
-        .onTrue(Commands.defer(() -> MoveToPose.tagRelative(this.m_drive, AprilTags.findTagForAlignment(this.m_drive.getPose()), AprilTags.REEF_ALIGN_OFFSET), Set.of()));
+        .onTrue(
+            Commands.defer(
+                () ->
+                    MoveToPose.tagRelative(
+                        this.m_drive,
+                        AprilTags.findTagForAlignment(this.m_drive.getPose()),
+                        AprilTags.REEF_ALIGN_OFFSET),
+                Set.of()));
   }
 }
