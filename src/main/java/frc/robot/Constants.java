@@ -117,7 +117,7 @@ public final class Constants {
         };
 
     // TODO: figure out the conversion factor
-    public static final double kConversionFactor = 9.0/23.0;
+    public static final double kConversionFactor = 9.0 / 23.0;
 
     // TODO: figure out the tolerance
     public static final double kElevatorTolerance = 0.01;

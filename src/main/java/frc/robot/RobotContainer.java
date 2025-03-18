@@ -34,12 +34,12 @@ import java.util.Optional;
 public class RobotContainer {
   public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
-    private final ElevatorSubsystem m_elevator =
-        Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
-    private final CoralHandlerSubsystem m_coral =
-        Robot.isReal()
-            ? new CoralHandlerSubsystem()
-            : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
+  private final ElevatorSubsystem m_elevator =
+      Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
+  private final CoralHandlerSubsystem m_coral =
+      Robot.isReal()
+          ? new CoralHandlerSubsystem()
+          : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
   private final ChuteSubsystem m_chute = new ChuteSubsystem();
 
   // Driver joysticks
@@ -76,8 +76,8 @@ public class RobotContainer {
       m_drive.setDefaultCommand(
           new Drive(
               m_drive,
-              m_controller::getLeftX,
               m_controller::getLeftY,
+              m_controller::getLeftX,
               () -> -m_controller.getRightX(),
               () -> m_controller.rightBumper().getAsBoolean(),
               Optional.empty()));
@@ -85,8 +85,8 @@ public class RobotContainer {
       m_drive.setDefaultCommand(
           new Drive(
               m_drive,
-              m_leftJoystick::getX,
               m_leftJoystick::getY,
+              m_leftJoystick::getX,
               m_rightJoystick::getX,
               () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
               Optional.of(m_rightJoystick::getThrottle)));

@@ -51,14 +51,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // System.out.println(Elevator.kRightElevatorSparkMax.configAccessor.closedLoop.getP());
 
-    Elevator.kElevatorController.setReference(
-10.0, ControlType.kMAXMotionPositionControl);
+    Elevator.kElevatorController.setReference(10.0, ControlType.kMAXMotionPositionControl);
   }
 
   public void log() {
     // Log sensor data, etc. here
     // SmartDashboard.putNumber("Elevator Height", m_height);
-    SmartDashboard.putNumber("PID Tuning Shit", Elevator.kRightElevatorSparkMax.getEncoder().getPosition());
+    SmartDashboard.putNumber(
+        "PID Tuning Shit", Elevator.kRightElevatorSparkMax.getEncoder().getPosition());
     SmartDashboard.putNumber("ELEvator Shit", Elevator.kRightElevatorSparkMax.get());
     SmartDashboard.putString("Elevator State", m_state.toString());
   }
