@@ -18,12 +18,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     L2,
     L3,
     L4,
-    ALGAE_FROM_REEF,
-    ALGAE_FROM_FLOOR, // TBD if this is needed depending on how the intake for algae works
     CUSTOM
   }
 
-  private ElevatorState m_state = ElevatorState.DOWN;
+  private ElevatorState m_state = ElevatorState.DISABLED;
   private Optional<Double> m_customHeight = Optional.empty();
   protected double m_height;
 
@@ -61,7 +59,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    *
    * @param state {@link ElevatorState}
    */
-  public void setState(ElevatorState state) {
+  protected void setState(ElevatorState state) {
 
     if (state == ElevatorState.CUSTOM && m_customHeight.isEmpty()) {
       return;
@@ -89,14 +87,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   /**
-   * Set the custom target height, note that this will not change the state of the elevator To do
-   * so, call {@link #setState(ElevatorState.CUSTOM)}
+   * Set the custom target height, this will also change the state of the elevator
    *
    * @param target double
    */
   public void setCustomTarget(double target) {
-    m_state = ElevatorState.CUSTOM;
     m_customHeight = Optional.of(target);
+    m_state = ElevatorState.CUSTOM;
   }
 
   /**
@@ -116,6 +113,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   public boolean atHeight() {
     return Math.abs(m_height - Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition())
         < Elevator.kElevatorTolerance;
+  }
+
+  /** Set elevator state to disabled */
+  public void disable() {
+    setState(ElevatorState.DISABLED);
   }
 
   /** Set elevator state to down */
@@ -153,7 +155,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    *     note that this will cause the spark to become unresponsive for a short period of time
    */
   public void zero() {
-    Elevator.kLeftElevatorSparkMax.getEncoder().setPosition(0);
+    Elevator.kRightElevatorSparkMax.getEncoder().setPosition(0);
   }
 
   public boolean atBottom() {

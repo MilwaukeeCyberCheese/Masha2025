@@ -17,7 +17,7 @@ public class ZeroElevatorCommand extends Command {
   @Override
   public void execute() {
     m_elevatorSubsystem.setCustomTarget(m_elevatorSubsystem.getHeight() - Elevator.kZeroingStep);
-    m_elevatorSubsystem.setState(ElevatorSubsystem.ElevatorState.CUSTOM);
+    
   }
 
   // Returns true when the command should end.

@@ -12,15 +12,15 @@ import java.util.Optional;
 public class ClimberSubsystem extends SubsystemBase {
 
   public static enum ClimberState {
-    WAITING,
-    STOWED,
-    CLIMB,
+    INACTIVE,
+    UP,
+    DOWN,
     CUSTOM
   }
 
-  private ClimberState m_state = ClimberState.STOWED;
-  private double m_position = 0;
-  private Optional<Double> m_customPosition = Optional.empty();
+  private ClimberState m_state = ClimberState.INACTIVE;
+  private Optional<Double> m_customSpeed = Optional.empty();
+  protected double m_speed;
 
   public ClimberSubsystem() {
     Climber.kClimberSparkMax.configure(
@@ -31,7 +31,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Climber.kClimberController.setReference(m_position, ControlType.kPosition);
+    Climber.kClimberSparkMax.set(m_speed);
 
     log();
   }
@@ -47,15 +47,14 @@ public class ClimberSubsystem extends SubsystemBase {
    *
    * @param state options from {@link ClimberState}
    */
-  public void setState(ClimberState state) {
-    if (state == ClimberState.CUSTOM && m_customPosition.isEmpty()) {
+  private void setState(ClimberState state) {
+    if (state == ClimberState.CUSTOM && m_customSpeed.isEmpty()) {
       return;
     }
 
     m_state = state;
 
-    m_position =
-        m_state == ClimberState.CUSTOM ? m_customPosition.get() : Climber.kPositions.get(m_state);
+    m_speed = m_state == ClimberState.CUSTOM ? m_customSpeed.get() : Climber.kSpeeds.get(m_state);
   }
 
   /**
@@ -68,47 +67,45 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   /**
-   * Set the custom position of the climber Does not change the state of the climber
-   *
-   * @param position
-   */
-  public void setCustomPosition(double position) {
-    m_customPosition = Optional.of(position);
-  }
-
-  /**
    * Get the current position of the climber
    *
    * @return double
    */
-  public double getPosition() {
-    return Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition();
+  public double getSpeed() {
+    return m_speed;
   }
 
   /**
-   * Check if the climber is at the desired position
+   * Set the custom position of the climber
+   * Changes the state of the climber
    *
-   * @return boolean
+   * @param position
    */
-  public boolean atPosition() {
-    return Math.abs(
-            Climber.kPositions.get(m_state)
-                - Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition())
-        < Climber.kClimberTolerance;
+  public void setCustomPosition(double position) {
+    m_customSpeed = Optional.of(position);
+    m_state = ClimberState.CUSTOM;
   }
 
-  /** Set climber state to waiting */
-  public void waiting() {
-    setState(ClimberState.WAITING);
+  
+
+  /**
+   * Set the climber to inactive
+   */
+  public void inactive() {
+    setState(ClimberState.INACTIVE);
   }
 
-  /** Set climber state to stowed */
-  public void stowed() {
-    setState(ClimberState.STOWED);
+  /**
+   * Set the climber to go up
+   */
+  public void up() {
+    setState(ClimberState.UP);
   }
 
-  /** Set climber state to climb */
-  public void climb() {
-    setState(ClimberState.CLIMB);
+  /**
+   * Set the climber to go down
+   */
+  public void down() {
+    setState(ClimberState.DOWN);
   }
 }
