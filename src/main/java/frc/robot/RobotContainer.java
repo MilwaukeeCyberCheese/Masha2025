@@ -121,16 +121,8 @@ public class RobotContainer {
             .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
       }
 
-      m_controller
-          .x()
-          .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
-      m_controller
-          .y()
-          .onTrue(
-              Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
-
-      m_controller.rightBumper().onTrue(new GrabCoralCommand(m_coral));
-      m_controller.leftBumper().onTrue(new ReleaseCoralCommand(m_coral));
+      m_controller.rightBumper().onTrue(new ReleaseCoralCommand(m_coral));
+      m_controller.leftBumper().onTrue(new GrabCoralCommand(m_coral));
     }
   }
 }
