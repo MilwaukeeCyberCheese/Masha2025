@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
+import frc.robot.commands.GrabCoralCommand;
+import frc.robot.commands.ReleaseCoralCommand;
 import frc.robot.commands.drive.Drive;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
@@ -120,24 +122,8 @@ public class RobotContainer {
       // m_coral).getSimCoral()));
       //   }
 
-      //   m_controller
-      //       .x()
-      //       .onTrue(Commands.runOnce(() ->
-      // m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
-      //   m_controller
-      //       .y()
-      //       .onTrue(
-      //           Commands.runOnce(() ->
-      // m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
-
-      //   m_controller
-      //       .rightBumper()
-      //       .onTrue(Commands.runOnce(m_coral::grab))
-      //       .onFalse(Commands.runOnce(m_coral::idle));
-      //   m_controller
-      //       .leftBumper()
-      //       .onTrue(Commands.runOnce(m_coral::release))
-      //       .onFalse(Commands.runOnce(m_coral::idle));
+      m_controller.rightBumper().onTrue(new ReleaseCoralCommand(m_coral));
+      m_controller.leftBumper().onTrue(new GrabCoralCommand(m_coral));
     }
   }
 }

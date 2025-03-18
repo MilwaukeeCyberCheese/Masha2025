@@ -12,4 +12,8 @@ public class ChuteSubsystem extends SubsystemBase {
   public void drop() {
     Chute.kServo.set(Chute.kDown);
   }
+
+  public void raise() {
+    Chute.kServo.set(Chute.kUp);
+  }
 }
