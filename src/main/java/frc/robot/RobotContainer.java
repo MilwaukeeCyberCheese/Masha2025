@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
+import frc.robot.commands.GrabCoralCommand;
+import frc.robot.commands.ReleaseCoralCommand;
 import frc.robot.commands.drive.Drive;
 import frc.robot.commands.drive.MoveToPose;
 import frc.robot.subsystems.ChuteSubsystem;
@@ -137,14 +139,8 @@ public class RobotContainer {
           .onTrue(
               Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-      m_controller
-          .rightBumper()
-          .onTrue(Commands.runOnce(m_coral::grab))
-          .onFalse(Commands.runOnce(m_coral::idle));
-      m_controller
-          .leftBumper()
-          .onTrue(Commands.runOnce(m_coral::release))
-          .onFalse(Commands.runOnce(m_coral::idle));
+      m_controller.rightBumper().onTrue(new GrabCoralCommand(m_coral));
+      m_controller.leftBumper().onTrue(new ReleaseCoralCommand(m_coral));
     }
 
     m_controller
