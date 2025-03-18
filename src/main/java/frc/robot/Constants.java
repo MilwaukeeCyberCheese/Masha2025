@@ -175,14 +175,6 @@ public final class Constants {
       public static final SparkMaxConfig kLeftConfig = new SparkMaxConfig();
       public static final SparkMaxConfig kRightConfig = new SparkMaxConfig();
 
-      public static final SparkClosedLoopController kLeftController =
-          kLeftSparkMax.getClosedLoopController();
-      public static final SparkClosedLoopController kRightController =
-          kRightSparkMax.getClosedLoopController();
-
-      // Max accel is in RPM
-      public static final PIDConstants kPIDConstants = new PIDConstants(0.1, 0.0, 0.0, -1.0, 300.0);
-
       public static final boolean kLeftInverted = true;
       public static final boolean kRightInverted = false;
 
@@ -191,29 +183,17 @@ public final class Constants {
           new HashMap<>() {
             {
               put(CoralHandlerState.INACTIVE, 0.0);
-              put(CoralHandlerState.GRAB, 50.0);
-              put(CoralHandlerState.RELEASE, 20.00);
+              put(CoralHandlerState.GRAB, 0.6);
+              put(CoralHandlerState.RELEASE, 0.4);
             }
           };
 
       // TODO: find these
-      public static final double kConversionFactor = 1.0;
-      public static final double kTolerance = 10;
       public static final double kDetectionDelayTimeMS = 1000;
-      public static final double kHasCoralDistance = 2.0;
+      public static final double kReleaseTimeMS = 1000;
 
       static {
         kLeftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(20).inverted(kLeftInverted);
-
-        kLeftConfig.encoder.velocityConversionFactor(kConversionFactor);
-
-        kLeftConfig
-            .closedLoop
-            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(kPIDConstants.kP, kPIDConstants.kI, kPIDConstants.kD)
-            .outputRange(-1, 1)
-            .maxMotion
-            .maxAcceleration(kPIDConstants.kMaxAcceleration);
 
         kRightConfig.apply(kLeftConfig).inverted(kRightInverted);
       }

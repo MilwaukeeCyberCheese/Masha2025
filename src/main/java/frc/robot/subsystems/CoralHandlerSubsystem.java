@@ -24,7 +24,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
 
   private CoralHandlerState m_state = CoralHandlerState.INACTIVE;
   protected boolean m_hasCoral = false;
-  private Optional<Double> m_customSpeed = null;
+  private Optional<Double> m_customSpeed = Optional.empty();
   protected double m_speed;
 
   public CoralHandlerSubsystem() {
@@ -39,11 +39,12 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    // TODO: Update PID controller once we tune it
-
     if (Robot.isReal()) {
-      // beam break stuff ooooooo magic
+      // update m_hasCoral
     }
+
+    setSpeed(m_speed);
+
     log();
   }
 
@@ -63,7 +64,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
    *
    * @param state {@link CoralHandlerState}
    */
-  public void setState(CoralHandlerState state) {
+  private void setState(CoralHandlerState state) {
 
     if (state == CoralHandlerState.CUSTOM && m_customSpeed.isEmpty()) {
       return;
@@ -102,18 +103,6 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     return m_speed;
   }
 
-  /**
-   * Get whether the coral handler is at the right speed
-   *
-   * @return boolean
-   */
-  public boolean atSpeed() {
-    return Math.abs(Coral.kSpeeds.get(m_state) - Coral.kLeftSparkMax.getEncoder().getVelocity())
-            < Coral.kTolerance
-        && Math.abs(Coral.kSpeeds.get(m_state) - Coral.kRightSparkMax.getEncoder().getVelocity())
-            < Coral.kTolerance;
-  }
-
   /** Set state to index */
   public void grab() {
     setState(CoralHandlerState.GRAB);
@@ -125,7 +114,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   }
 
   /** Set state to inactive */
-  public void idle() {
+  public void inactive() {
     setState(CoralHandlerState.INACTIVE);
   }
 
