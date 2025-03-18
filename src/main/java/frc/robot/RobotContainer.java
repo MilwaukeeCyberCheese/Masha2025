@@ -64,7 +64,8 @@ public class RobotContainer {
           m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive);
   private final Routines m_routines = new Routines(m_autoFactory);
 
-  private ControllerState controllerState = Robot.isSimulation() ? ControllerState.XBOX : ControllerState.JOYSTICKS;
+  private ControllerState controllerState =
+      Robot.isSimulation() ? ControllerState.XBOX : ControllerState.JOYSTICKS;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
