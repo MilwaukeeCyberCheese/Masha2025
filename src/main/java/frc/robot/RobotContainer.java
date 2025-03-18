@@ -77,8 +77,8 @@ public class RobotContainer {
       m_drive.setDefaultCommand(
           new Drive(
               m_drive,
-              m_controller::getLeftX,
               m_controller::getLeftY,
+              m_controller::getLeftX,
               () -> -m_controller.getRightX(),
               () -> m_controller.rightBumper().getAsBoolean(),
               Optional.empty()));
@@ -86,8 +86,8 @@ public class RobotContainer {
       m_drive.setDefaultCommand(
           new Drive(
               m_drive,
-              m_leftJoystick::getX,
               m_leftJoystick::getY,
+              m_leftJoystick::getX,
               m_rightJoystick::getX,
               () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
               Optional.of(m_rightJoystick::getThrottle)));
