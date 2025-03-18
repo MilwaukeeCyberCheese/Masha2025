@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
 import frc.robot.commands.drive.Drive;
@@ -23,7 +22,6 @@ import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
 import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.FilteredButton;
-import frc.robot.utils.FilteredJoystick;
 import java.io.File;
 import java.util.Optional;
 
@@ -45,15 +43,7 @@ public class RobotContainer {
   private final ChuteSubsystem m_chute = new ChuteSubsystem();
   private final AlgaeHandlerSubsystem m_algae = new AlgaeHandlerSubsystem();
 
-  // Driver joysticks
-  private final FilteredJoystick m_leftJoystick =
-      new FilteredJoystick(IOConstants.kLeftJoystickPort);
-  private final FilteredJoystick m_rightJoystick =
-      new FilteredJoystick(IOConstants.kRightJoystickPort);
-
-  // Operator controller
-  private final CommandXboxController m_controller =
-      new CommandXboxController(IOConstants.kControllerPort);
+  private final Controllers controllers = new Controllers();
 
   // Button Board
   private final FilteredButton m_buttons = new FilteredButton(IOConstants.kButtonBoardPort);
@@ -64,23 +54,20 @@ public class RobotContainer {
           m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive);
   private final Routines m_routines = new Routines(m_autoFactory);
 
-  private ControllerState controllerState = Robot.isSimulation() ? ControllerState.XBOX : ControllerState.JOYSTICKS;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    this.setControllerState(this.controllerState);
-    this.updateControllerConnections();
     configureButtonBindings();
 
     // Set default drive command
     m_drive.setDefaultCommand(
         new Drive(
             m_drive,
-            this::getControllerX,
-            this::getControllerY,
-            this::getContollerRotation,
-            this::getControllerSlow,
-            Optional.of(this::getControllerThrottle)));
+            controllers::getControllerX,
+            controllers::getControllerY,
+            controllers::getControllerRotation,
+            controllers::getControllerSlow,
+            Optional.of(controllers::getControllerThrottle)));
 
     m_autoChooser.addRoutine("Test Routine", m_routines::test);
     m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
@@ -88,8 +75,6 @@ public class RobotContainer {
     m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
     m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
-
-    SmartDashboard.putData("Controllers/Xbox", m_controller.getHID());
   }
 
   /**
@@ -99,37 +84,37 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    m_controller
+    this.controllers.controller
         .start()
-        .onTrue(Commands.runOnce(() -> this.setControllerState(ControllerState.XBOX)));
-    m_leftJoystick
+        .onTrue(Commands.runOnce(() -> this.controllers.switchController(Controllers.ControllerState.XBOX)));
+    this.controllers.leftJoystick
         .getButtonNine()
-        .onTrue(Commands.runOnce(() -> this.setControllerState(ControllerState.JOYSTICKS)));
-    m_leftJoystick
+        .onTrue(Commands.runOnce(() -> this.controllers.switchController(Controllers.ControllerState.JOYSTICKS)));
+    this.controllers.rightJoystick
         .getButtonNine()
-        .onTrue(Commands.runOnce(() -> this.setControllerState(ControllerState.JOYSTICKS)));
+        .onTrue(Commands.runOnce(() -> this.controllers.switchController(Controllers.ControllerState.JOYSTICKS)));
 
     // Zero gyro with A button
-    m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
+    this.controllers.controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
 
-    if (!Robot.isReal()) {
-      m_controller
+    if (Robot.isSimulation()) {
+      this.controllers.controller
           .b()
           .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
     }
 
-    m_controller
+    this.controllers.controller
         .x()
         .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
-    m_controller
+    this.controllers.controller
         .y()
         .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-    m_controller
+    this.controllers.controller
         .rightBumper()
         .onTrue(Commands.runOnce(m_coral::grab))
         .onFalse(Commands.runOnce(m_coral::idle));
-    m_controller
+    this.controllers.controller
         .leftBumper()
         .onTrue(Commands.runOnce(m_coral::release))
         .onFalse(Commands.runOnce(m_coral::idle));
@@ -143,81 +128,5 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // return autoChooser.getSelected();
     return null;
-  }
-
-  public boolean isXboxController() {
-    return this.controllerState != ControllerState.JOYSTICKS;
-  }
-
-  public double getControllerX() {
-    if (this.isXboxController()) {
-      return m_controller.getLeftX();
-    } else {
-      return m_leftJoystick.getX();
-    }
-  }
-
-  public double getControllerY() {
-    if (this.isXboxController()) {
-      return m_controller.getLeftY();
-    } else {
-      return m_leftJoystick.getY();
-    }
-  }
-
-  public double getContollerRotation() {
-    if (this.isXboxController()) {
-      return -m_controller.getRightX();
-    } else {
-      return m_rightJoystick.getX();
-    }
-  }
-
-  public boolean getControllerSlow() {
-    if (this.isXboxController()) {
-      return m_controller.rightBumper().getAsBoolean();
-    } else {
-      return m_rightJoystick.getButtonTwo().getAsBoolean();
-    }
-  }
-
-  public double getControllerThrottle() {
-    if (this.isXboxController()) {
-      return 1.0;
-    } else {
-      return m_leftJoystick.getThrottle();
-    }
-  }
-
-  private boolean isAnyJoystickConnected() {
-    return this.m_leftJoystick.getJoystick().isConnected()
-        || this.m_rightJoystick.getJoystick().isConnected();
-  }
-
-  private void setControllerState(ControllerState newState) {
-    this.controllerState = newState;
-    System.out.println("Controller state: " + this.controllerState);
-    SmartDashboard.putString("Controller State", this.controllerState.toString());
-  }
-
-  public void updateControllerConnections() {
-    if (this.controllerState == ControllerState.XBOX && !this.m_controller.isConnected()) {
-      this.setControllerState(ControllerState.DISCONNECTED);
-    } else if (this.controllerState == ControllerState.JOYSTICKS
-        && !this.isAnyJoystickConnected()) {
-      this.setControllerState(ControllerState.DISCONNECTED);
-    }
-
-    if (this.controllerState == ControllerState.DISCONNECTED) {
-      if (this.m_controller.isConnected()) this.setControllerState(ControllerState.XBOX);
-      else if (this.isAnyJoystickConnected()) this.setControllerState(ControllerState.JOYSTICKS);
-    }
-  }
-
-  private enum ControllerState {
-    UNKNOWN,
-    DISCONNECTED,
-    XBOX,
-    JOYSTICKS,
   }
 }
