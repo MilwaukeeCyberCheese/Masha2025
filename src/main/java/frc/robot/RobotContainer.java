@@ -26,7 +26,6 @@ import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.FilteredButton;
 import frc.robot.utils.FilteredJoystick;
-
 import java.io.File;
 import java.util.Optional;
 
@@ -130,7 +129,6 @@ public class RobotContainer {
             .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
       }
 
-
       m_controller
           .x()
           .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
@@ -139,17 +137,18 @@ public class RobotContainer {
           .onTrue(
               Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-        m_controller
-                .rightBumper()
-                .onTrue(Commands.runOnce(m_coral::grab))
-                .onFalse(Commands.runOnce(m_coral::idle));
-        m_controller
-                .leftBumper()
-                .onTrue(Commands.runOnce(m_coral::release))
-                .onFalse(Commands.runOnce(m_coral::idle));
+      m_controller
+          .rightBumper()
+          .onTrue(Commands.runOnce(m_coral::grab))
+          .onFalse(Commands.runOnce(m_coral::idle));
+      m_controller
+          .leftBumper()
+          .onTrue(Commands.runOnce(m_coral::release))
+          .onFalse(Commands.runOnce(m_coral::idle));
     }
 
-    m_controller.rightStick()
-            .onTrue(new MoveToPose(this.m_drive, () -> new Pose2d(3, 6.5, Rotation2d.kCCW_90deg)));
+    m_controller
+        .rightStick()
+        .onTrue(new MoveToPose(this.m_drive, () -> new Pose2d(3, 6.5, Rotation2d.kCCW_90deg)));
   }
 }
