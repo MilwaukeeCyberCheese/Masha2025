@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.swervedrive.Vision;
+
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -46,104 +48,99 @@ public class MoveToPose extends Command {
     this.debugPos = this.drive.getSwerveDrive().field.getObject("Auto Alignment/Desired");
   }
 
+  public static MoveToPose tagRelative(SwerveSubsystem drive, int tagId, Transform2d transform) {
+    return new MoveToPose(drive, () -> Vision.getAprilTagPose(tagId, transform));
+  }
+
   @Override
   public void initialize() {
-    final var robotPose = this.drive.getPose();
+    final var currentPose = this.drive.getPose();
     final var targetPose = this.pose.get();
     final var fieldVelocity = this.drive.getFieldVelocity();
 
-    final var linearFieldVelocity =
-        new Translation2d(fieldVelocity.vxMetersPerSecond, fieldVelocity.vyMetersPerSecond);
+    Translation2d linearFieldVelocity =
+            new Translation2d(fieldVelocity.vxMetersPerSecond, fieldVelocity.vyMetersPerSecond);
     driveController.reset(
-        robotPose.getTranslation().getDistance(targetPose.getTranslation()),
-        Math.min(
-            0.0,
-            -linearFieldVelocity
-                .rotateBy(
-                    targetPose
-                        .getTranslation()
-                        .minus(robotPose.getTranslation())
-                        .getAngle()
-                        .unaryMinus())
-                .getX()));
+            currentPose.getTranslation().getDistance(targetPose.getTranslation()),
+            Math.min(
+                    0.0,
+                    -linearFieldVelocity
+                            .rotateBy(
+                                    targetPose
+                                            .getTranslation()
+                                            .minus(currentPose.getTranslation())
+                                            .getAngle()
+                                            .unaryMinus())
+                            .getX()));
     thetaController.reset(
-        robotPose.getRotation().getRadians(), fieldVelocity.omegaRadiansPerSecond);
-    lastSetpointTranslation = robotPose.getTranslation();
+            currentPose.getRotation().getRadians(), fieldVelocity.omegaRadiansPerSecond);
+    lastSetpointTranslation = currentPose.getTranslation();
   }
 
   @Override
   public void execute() {
-    final var robotPose = this.drive.getPose();
+    final var currentPose = this.drive.getPose();
     final var targetPose = this.pose.get();
     this.debugPos.setPose(targetPose);
 
     // https://github.com/Mechanical-Advantage/RobotCode2025Public/blob/main/src/main/java/org/littletonrobotics/frc2025/commands/DriveToPose.java
     // Calculate drive speed
-    double currentDistance = robotPose.getTranslation().getDistance(targetPose.getTranslation());
+    double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
     double ffScaler =
-        MathUtil.clamp((currentDistance - ffMinRadius) / (ffMaxRadius - ffMinRadius), 0., 1.);
-
+            MathUtil.clamp(
+                    (currentDistance - ffMinRadius) / (ffMaxRadius - ffMinRadius),
+                    0.0,
+                    1.0);
     driveErrorAbs = currentDistance;
     driveController.reset(
-        lastSetpointTranslation.getDistance(targetPose.getTranslation()),
-        driveController.getSetpoint().velocity);
-
+            lastSetpointTranslation.getDistance(targetPose.getTranslation()),
+            driveController.getSetpoint().velocity);
     double driveVelocityScalar =
-        driveController.getSetpoint().velocity * ffScaler
-            + driveController.calculate(driveErrorAbs, 0.0);
-    if (currentDistance < driveController.getPositionTolerance()) {
-      driveVelocityScalar = 0.0;
-    }
-
+            driveController.getSetpoint().velocity * ffScaler
+                    + driveController.calculate(driveErrorAbs, 0.0);
+    if (currentDistance < driveController.getPositionTolerance()) driveVelocityScalar = 0.0;
     lastSetpointTranslation =
-        new Pose2d(
-                targetPose.getTranslation(),
-                new Rotation2d(
-                    Math.atan2(
-                        robotPose.getTranslation().getY() - targetPose.getTranslation().getY(),
-                        robotPose.getTranslation().getX() - targetPose.getTranslation().getX())))
-            .transformBy(
-                new Transform2d(driveController.getSetpoint().position, 0.0, Rotation2d.kZero))
-            .getTranslation();
+            new Pose2d(
+                    targetPose.getTranslation(),
+                    new Rotation2d(
+                            Math.atan2(
+                                    currentPose.getTranslation().getY() - targetPose.getTranslation().getY(),
+                                    currentPose.getTranslation().getX() - targetPose.getTranslation().getX())))
+                    .transformBy(new Transform2d(driveController.getSetpoint().position, 0.0, Rotation2d.kZero))
+                    .getTranslation();
 
     // Calculate theta speed
     double thetaVelocity =
-        thetaController.getSetpoint().velocity * ffScaler
-            + thetaController.calculate(
-                robotPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
-    thetaErrorAbs = Math.abs(robotPose.getRotation().minus(targetPose.getRotation()).getRadians());
-    if (thetaErrorAbs < thetaController.getPositionTolerance()) {
-      thetaVelocity = 0.0;
-    }
+            thetaController.getSetpoint().velocity * ffScaler
+                    + thetaController.calculate(
+                    currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
+    thetaErrorAbs =
+            Math.abs(currentPose.getRotation().minus(targetPose.getRotation()).getRadians());
+    if (thetaErrorAbs < thetaController.getPositionTolerance()) thetaVelocity = 0.0;
 
     Translation2d driveVelocity =
-        new Pose2d(
-                Translation2d.kZero,
-                new Rotation2d(
-                    Math.atan2(
-                        robotPose.getTranslation().getY() - targetPose.getTranslation().getY(),
-                        robotPose.getTranslation().getX() - targetPose.getTranslation().getX())))
-            .transformBy(new Transform2d(driveVelocityScalar, 0.0, Rotation2d.kZero))
-            .getTranslation();
+            new Pose2d(
+                    Translation2d.kZero,
+                    new Rotation2d(
+                            Math.atan2(
+                                    currentPose.getTranslation().getY() - targetPose.getTranslation().getY(),
+                                    currentPose.getTranslation().getX() - targetPose.getTranslation().getX())))
+                    .transformBy(new Transform2d(driveVelocityScalar, 0.0, Rotation2d.kZero))
+                    .getTranslation();
 
     // Scale feedback velocities by input ff
     final double linearS = linearFF.get().getNorm() * 3.0;
     final double thetaS = Math.abs(omegaFF.getAsDouble()) * 3.0;
     driveVelocity =
-        driveVelocity.interpolate(
-            linearFF.get().times(Constants.DriveConstants.kMaxSpeedMetersPerSecond), linearS);
+            driveVelocity.interpolate(linearFF.get().times(Constants.DriveConstants.kMaxSpeedMetersPerSecond), linearS);
     thetaVelocity =
-        MathUtil.interpolate(
-            thetaVelocity,
-            omegaFF.getAsDouble() * Constants.DriveConstants.kMaxAngularSpeed,
-            thetaS);
-
-    driveVelocity = driveVelocity.rotateBy(Rotation2d.kCCW_Pi_2);
+            MathUtil.interpolate(
+                    thetaVelocity, omegaFF.getAsDouble() * Constants.DriveConstants.kMaxAngularSpeed, thetaS);
 
     // Command speeds
-    drive.driveFieldOriented(
-        ChassisSpeeds.fromFieldRelativeSpeeds(
-            driveVelocity.getX(), driveVelocity.getY(), thetaVelocity, robotPose.getRotation()));
+    drive.drive(
+            ChassisSpeeds.fromFieldRelativeSpeeds(
+                    driveVelocity.getX(), driveVelocity.getY(), thetaVelocity, currentPose.getRotation()));
   }
 
   @Override
@@ -153,6 +150,6 @@ public class MoveToPose extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    this.debugPos.close();
+    this.debugPos.setPoses();
   }
 }

@@ -8,6 +8,7 @@ import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
@@ -26,10 +27,12 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
 import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.utils.AprilTags;
 import frc.robot.utils.FilteredButton;
 import frc.robot.utils.FilteredJoystick;
 import java.io.File;
 import java.util.Optional;
+import java.util.Set;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -118,7 +121,6 @@ public class RobotContainer {
     if (IOConstants.kTestMode) {
       m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
     } else {
-
       // drop chute
       m_buttons.getChuteSwitch().onTrue(Commands.runOnce(m_chute::drop));
 
@@ -137,6 +139,6 @@ public class RobotContainer {
 
     m_controller
         .rightStick()
-        .onTrue(new MoveToPose(this.m_drive, () -> new Pose2d(3, 6.5, Rotation2d.kCCW_90deg)));
+        .onTrue(Commands.defer(() -> MoveToPose.tagRelative(this.m_drive, AprilTags.findTagForAlignment(this.m_drive.getPose()), AprilTags.REEF_ALIGN_OFFSET), Set.of()));
   }
 }

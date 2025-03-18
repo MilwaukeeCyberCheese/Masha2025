@@ -68,7 +68,7 @@ public class Drive extends Command {
   @Override
   public void execute() {
     m_drive.driveFieldOriented(driveInput.get());
-    System.out.println(driveInput.get());
+//    System.out.println(driveInput.get());
   }
 
   // Called once the command ends or is interrupted.
