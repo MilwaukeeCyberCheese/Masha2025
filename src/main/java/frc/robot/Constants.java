@@ -117,8 +117,6 @@ public final class Constants {
             put(ElevatorState.L2, 20.0);
             put(ElevatorState.L3, 45.0);
             put(ElevatorState.L4, 0.4);
-            put(ElevatorState.ALGAE_FROM_REEF, 0.5);
-            put(ElevatorState.ALGAE_FROM_FLOOR, 0.6);
           }
         };
 
@@ -223,12 +221,12 @@ public final class Constants {
     public static final double kConversionFactor = Math.PI * 2;
 
     // TODO: find these
-    public static final HashMap<ClimberState, Double> kPositions =
+    public static final HashMap<ClimberState, Double> kSpeeds =
         new HashMap<ClimberState, Double>() {
           {
-            put(ClimberState.WAITING, 0.0);
-            put(ClimberState.STOWED, 0.0);
-            put(ClimberState.CLIMB, 0.0);
+            put(ClimberState.INACTIVE, 0.0);
+            put(ClimberState.UP, 0.4);
+            put(ClimberState.DOWN, -1.0);
           }
         };
 
