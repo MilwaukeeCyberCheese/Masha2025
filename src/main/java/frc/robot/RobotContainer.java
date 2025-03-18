@@ -119,8 +119,6 @@ public class RobotContainer {
             .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
       }
 
-      
-
       m_controller
           .rightBumper()
           .onTrue(Commands.runOnce(m_coral::grab))

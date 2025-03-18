@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -76,8 +75,7 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   /**
-   * Set the custom position of the climber
-   * Changes the state of the climber
+   * Set the custom position of the climber Changes the state of the climber
    *
    * @param position
    */
@@ -86,25 +84,17 @@ public class ClimberSubsystem extends SubsystemBase {
     m_state = ClimberState.CUSTOM;
   }
 
-  
-
-  /**
-   * Set the climber to inactive
-   */
+  /** Set the climber to inactive */
   public void inactive() {
     setState(ClimberState.INACTIVE);
   }
 
-  /**
-   * Set the climber to go up
-   */
+  /** Set the climber to go up */
   public void up() {
     setState(ClimberState.UP);
   }
 
-  /**
-   * Set the climber to go down
-   */
+  /** Set the climber to go down */
   public void down() {
     setState(ClimberState.DOWN);
   }
