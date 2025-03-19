@@ -112,6 +112,7 @@ public class Controllers {
         SmartDashboard.putString("Controller", this.controllerState.toString());
 
         this.simulationJoysticksAlert.set(Robot.isSimulation() && this.controllerState == ControllerState.JOYSTICKS);
+        // TODO: Maybe only with fms?
         this.realXboxAlert.set(Robot.isReal() && this.controllerState == ControllerState.XBOX);
     }
 
@@ -128,7 +129,10 @@ public class Controllers {
                 this.switchController(DEFAULT_CONTROLLER_STATE);
             } else {
                 for (final var controller : ControllerState.VALUES) {
-                    if (this.isConnected(controller)) this.switchController(controller);
+                    if (this.isConnected(controller)) {
+                        this.switchController(controller);
+                        break;
+                    }
                 }
             }
         }
