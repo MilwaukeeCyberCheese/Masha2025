@@ -19,8 +19,8 @@ public class Drive extends Command {
 
   public Drive(
       SwerveSubsystem drive,
-      DoubleSupplier x,
       DoubleSupplier y,
+      DoubleSupplier x,
       DoubleSupplier rotation,
       BooleanSupplier slow,
       DoubleSupplier throttle) {
@@ -40,13 +40,13 @@ public class Drive extends Command {
         SwerveInputStream.of(
                 m_drive.getSwerveDrive(),
                 () ->
-                    m_x.getAsDouble()
+                    m_y.getAsDouble()
                         * (m_slow.getAsBoolean()
                             ? DriveConstants.kDrivingSpeeds[1]
                             : DriveConstants.kDrivingSpeeds[0])
                         * m_throttle.getAsDouble(),
                 () ->
-                    m_y.getAsDouble()
+                    m_x.getAsDouble()
                         * (m_slow.getAsBoolean()
                             ? DriveConstants.kDrivingSpeeds[1]
                             : DriveConstants.kDrivingSpeeds[0])
@@ -66,7 +66,6 @@ public class Drive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
     m_drive.driveFieldOriented(driveInput.get());
   }
 

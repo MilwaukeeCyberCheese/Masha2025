@@ -13,8 +13,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
+import frc.robot.commands.GrabCoralCommand;
+import frc.robot.commands.ReleaseCoralCommand;
 import frc.robot.commands.drive.Drive;
-import frc.robot.subsystems.AlgaeHandlerSubsystem;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -40,7 +41,6 @@ public class RobotContainer {
           ? new CoralHandlerSubsystem()
           : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
   private final ChuteSubsystem m_chute = new ChuteSubsystem();
-  private final AlgaeHandlerSubsystem m_algae = new AlgaeHandlerSubsystem();
 
   private final Controllers controllers = new Controllers();
 
@@ -61,8 +61,8 @@ public class RobotContainer {
     m_drive.setDefaultCommand(
         new Drive(
             m_drive,
-            controllers::getControllerX,
             controllers::getControllerY,
+            controllers::getControllerX,
             controllers::getControllerRotation,
             controllers::getControllerSlow,
             controllers::getControllerThrottle));
@@ -82,35 +82,25 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Zero gyro with A button
     this.controllers.controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
 
     if (Robot.isSimulation()) {
-      this.controllers
-          .controller
-          .b()
-          .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
+        this.controllers
+                .controller
+                .b()
+                .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
     }
 
-    this.controllers
-        .controller
-        .x()
-        .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
-    this.controllers
-        .controller
-        .y()
-        .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
+    m_buttons.getChuteSwitch().onTrue(Commands.runOnce(m_chute::drop));
 
     this.controllers
         .controller
         .rightBumper()
-        .onTrue(Commands.runOnce(m_coral::grab))
-        .onFalse(Commands.runOnce(m_coral::idle));
+        .onTrue(new ReleaseCoralCommand(m_coral));
     this.controllers
         .controller
         .leftBumper()
-        .onTrue(Commands.runOnce(m_coral::release))
-        .onFalse(Commands.runOnce(m_coral::idle));
+        .onTrue(new GrabCoralCommand(m_coral));
   }
 
   public void updateControllerConnections() {
