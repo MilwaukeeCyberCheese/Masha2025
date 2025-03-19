@@ -136,13 +136,33 @@ public class RobotContainer {
 
     m_controller
         .rightStick()
-        .onTrue(
+        .whileTrue(
             Commands.defer(
                 () ->
                     MoveToPose.tagRelative(
-                        this.m_drive,
-                        AprilTags.findTagForAlignment(this.m_drive.getPose()),
-                        AprilTags.REEF_ALIGN_OFFSET),
+                            this.m_drive,
+                            AprilTags.findReefTagForAlignment(this.m_drive.getPose()),
+                            AprilTags.REEF_ALIGN_OFFSET)
+                        .withDriveInputs(
+                            m_controller::getLeftX,
+                            m_controller::getLeftY,
+                            () -> -m_controller.getRightX(),
+                            0.5),
+                Set.of()));
+    m_controller
+        .leftStick()
+        .whileTrue(
+            Commands.defer(
+                () ->
+                    MoveToPose.tagRelative(
+                            this.m_drive,
+                            AprilTags.findStationTagForAlignment(this.m_drive.getPose()),
+                            AprilTags.STATION_ALIGN_OFFSET)
+                        .withDriveInputs(
+                            m_controller::getLeftX,
+                            m_controller::getLeftY,
+                            () -> -m_controller.getRightX(),
+                            0.5),
                 Set.of()));
   }
 }

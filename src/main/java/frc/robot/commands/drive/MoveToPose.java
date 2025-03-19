@@ -35,6 +35,12 @@ public class MoveToPose extends Command {
   private double driveErrorAbs = 0.0;
   private double thetaErrorAbs = 0.0;
 
+  private Translation2d lastLinearInput = Translation2d.kZero;
+  private double lastRotInput = 0.0;
+  private final double inputSmoothFactor = 0.4; // Lower = smoother (0.0-1.0)
+  private final double maxLinearDeviation = 0.4; // Maximum influence as fraction of max speed
+  private final double maxRotDeviation = 0.5; // Maximum influence as fraction of max rot speed
+
   private final FieldObject2d debugPos;
 
   {
@@ -141,6 +147,71 @@ public class MoveToPose extends Command {
     drive.drive(
         ChassisSpeeds.fromFieldRelativeSpeeds(
             driveVelocity.getX(), driveVelocity.getY(), thetaVelocity, currentPose.getRotation()));
+  }
+
+  /**
+   * Adds controller inputs to the autonomous movement, allowing manual adjustments while the
+   * command is running with smoothing and maximum deviation limits.
+   *
+   * @param xInput X axis input supplier (forward/backward)
+   * @param yInput Y axis input supplier (left/right)
+   * @param rotInput Rotational input supplier
+   * @param scale Scale factor for inputs (0.0-1.0)
+   * @return this command object for method chaining
+   */
+  public MoveToPose withDriveInputs(
+      DoubleSupplier xInput, DoubleSupplier yInput, DoubleSupplier rotInput, double scale) {
+    this.linearFF =
+        () -> {
+          // Apply deadband and get raw inputs
+          double x = MathUtil.applyDeadband(xInput.getAsDouble(), 0.1);
+          double y = MathUtil.applyDeadband(yInput.getAsDouble(), 0.1);
+          Translation2d rawInput = new Translation2d(x, y);
+
+          // Limit maximum magnitude
+          if (rawInput.getNorm() > 1.0) {
+            rawInput = rawInput.times(1.0 / rawInput.getNorm());
+          }
+
+          // Apply user scale factor
+          rawInput = rawInput.times(scale);
+
+          // Apply maximum deviation limit
+          rawInput = rawInput.times(maxLinearDeviation);
+
+          // Smooth the input
+          Translation2d smoothedInput =
+              new Translation2d(
+                  MathUtil.interpolate(lastLinearInput.getX(), rawInput.getX(), inputSmoothFactor),
+                  MathUtil.interpolate(lastLinearInput.getY(), rawInput.getY(), inputSmoothFactor));
+
+          // Save for next cycle
+          lastLinearInput = smoothedInput;
+
+          return smoothedInput;
+        };
+
+    this.omegaFF =
+        () -> {
+          // Apply deadband and get raw input
+          double rotVal = MathUtil.applyDeadband(rotInput.getAsDouble(), 0.1);
+
+          // Apply user scale factor
+          rotVal *= scale;
+
+          // Apply maximum deviation limit
+          rotVal *= maxRotDeviation;
+
+          // Smooth the input
+          double smoothedRotVal = MathUtil.interpolate(lastRotInput, rotVal, inputSmoothFactor);
+
+          // Save for next cycle
+          lastRotInput = smoothedRotVal;
+
+          return smoothedRotVal;
+        };
+
+    return this;
   }
 
   @Override
