@@ -148,7 +148,7 @@ public class RobotContainer {
                             m_controller::getLeftY,
                             () -> -m_controller.getRightX(),
                             0.5),
-                Set.of()));
+                Set.of(this.m_drive)));
     m_controller
         .leftStick()
         .whileTrue(
@@ -163,6 +163,6 @@ public class RobotContainer {
                             m_controller::getLeftY,
                             () -> -m_controller.getRightX(),
                             0.5),
-                Set.of()));
+                Set.of(this.m_drive)));
   }
 }
