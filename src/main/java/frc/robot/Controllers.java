@@ -125,7 +125,8 @@ public class Controllers {
     if (this.realXboxAlert.get() && this.lastControllerConsoleWarning < time - 15.) {
       this.lastControllerConsoleWarning = time;
       DriverStation.reportWarning(
-          "Oops! Looks like you have the Xbox controller selected for drive on a physical robot.", false);
+          "Oops! Looks like you have the Xbox controller selected for drive on a physical robot.",
+          false);
     }
 
     if (!this.isConnected(this.controllerState)) {
