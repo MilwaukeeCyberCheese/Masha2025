@@ -66,7 +66,7 @@ public class RobotContainer {
             controllers::getControllerY,
             controllers::getControllerRotation,
             controllers::getControllerSlow,
-            Optional.of(controllers::getControllerThrottle)));
+            controllers::getControllerThrottle));
 
     m_autoChooser.addRoutine("Test Routine", m_routines::test);
     m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
@@ -83,16 +83,6 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    this.controllers.controller
-        .start()
-        .onTrue(Commands.runOnce(() -> this.controllers.switchController(Controllers.ControllerState.XBOX)));
-    this.controllers.leftJoystick
-        .getButtonNine()
-        .onTrue(Commands.runOnce(() -> this.controllers.switchController(Controllers.ControllerState.JOYSTICKS)));
-    this.controllers.rightJoystick
-        .getButtonNine()
-        .onTrue(Commands.runOnce(() -> this.controllers.switchController(Controllers.ControllerState.JOYSTICKS)));
-
     // Zero gyro with A button
     this.controllers.controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
 
@@ -117,6 +107,10 @@ public class RobotContainer {
         .leftBumper()
         .onTrue(Commands.runOnce(m_coral::release))
         .onFalse(Commands.runOnce(m_coral::idle));
+  }
+
+  public void updateControllerConnections() {
+    this.controllers.updateControllerConnections();
   }
 
   /**
