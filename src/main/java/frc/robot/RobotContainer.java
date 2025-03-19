@@ -86,23 +86,28 @@ public class RobotContainer {
     this.controllers.controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
 
     if (Robot.isSimulation()) {
-      this.controllers.controller
+      this.controllers
+          .controller
           .b()
           .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
     }
 
-    this.controllers.controller
+    this.controllers
+        .controller
         .x()
         .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.L2)));
-    this.controllers.controller
+    this.controllers
+        .controller
         .y()
         .onTrue(Commands.runOnce(() -> m_elevator.setState(ElevatorSubsystem.ElevatorState.DOWN)));
 
-    this.controllers.controller
+    this.controllers
+        .controller
         .rightBumper()
         .onTrue(Commands.runOnce(m_coral::grab))
         .onFalse(Commands.runOnce(m_coral::idle));
-    this.controllers.controller
+    this.controllers
+        .controller
         .leftBumper()
         .onTrue(Commands.runOnce(m_coral::release))
         .onFalse(Commands.runOnce(m_coral::idle));
