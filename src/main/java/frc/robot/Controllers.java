@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -123,8 +124,8 @@ public class Controllers {
     final var time = Timer.getTimestamp();
     if (this.realXboxAlert.get() && this.lastControllerConsoleWarning < time - 15.) {
       this.lastControllerConsoleWarning = time;
-      System.err.println(
-          "Oops! Looks like you have the Xbox controller selected for drive on a physical robot.");
+      DriverStation.reportWarning(
+          "Oops! Looks like you have the Xbox controller selected for drive on a physical robot.", false);
     }
 
     if (!this.isConnected(this.controllerState)) {
