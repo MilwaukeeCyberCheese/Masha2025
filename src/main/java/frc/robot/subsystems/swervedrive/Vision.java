@@ -92,18 +92,18 @@ public class Vision {
   /**
    * Calculates a target pose relative to an AprilTag on the field.
    *
-   * @param aprilTag The ID of the AprilTag.
+   * @param aprilTagID The ID of the AprilTag.
    * @param robotOffset The offset {@link Transform2d} of the robot to apply to the pose for the
    *     robot to position itself correctly.
    * @return The target pose of the AprilTag.
    */
-  public static Pose2d getAprilTagPose(int aprilTag, Transform2d robotOffset) {
-    Optional<Pose3d> aprilTagPose3d = fieldLayout.getTagPose(aprilTag);
+  public static Pose2d getAprilTagPose(int aprilTagID, Transform2d robotOffset) {
+    Optional<Pose3d> aprilTagPose3d = fieldLayout.getTagPose(aprilTagID);
     if (aprilTagPose3d.isPresent()) {
       return aprilTagPose3d.get().toPose2d().transformBy(robotOffset);
     } else {
       throw new RuntimeException(
-          "Cannot get AprilTag " + aprilTag + " from field " + fieldLayout.toString());
+          "Cannot get AprilTag " + aprilTagID + " from field " + fieldLayout.toString());
     }
   }
 
