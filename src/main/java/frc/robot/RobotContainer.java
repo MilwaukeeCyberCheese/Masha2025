@@ -85,22 +85,16 @@ public class RobotContainer {
     this.controllers.controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
 
     if (Robot.isSimulation()) {
-        this.controllers
-                .controller
-                .b()
-                .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
+      this.controllers
+          .controller
+          .b()
+          .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
     }
 
     m_buttons.getChuteSwitch().onTrue(Commands.runOnce(m_chute::drop));
 
-    this.controllers
-        .controller
-        .rightBumper()
-        .onTrue(new ReleaseCoralCommand(m_coral));
-    this.controllers
-        .controller
-        .leftBumper()
-        .onTrue(new GrabCoralCommand(m_coral));
+    this.controllers.controller.rightBumper().onTrue(new ReleaseCoralCommand(m_coral));
+    this.controllers.controller.leftBumper().onTrue(new GrabCoralCommand(m_coral));
   }
 
   public void updateControllerConnections() {
