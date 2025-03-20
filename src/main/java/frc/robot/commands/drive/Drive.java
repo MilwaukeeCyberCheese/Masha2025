@@ -20,8 +20,8 @@ public class Drive extends Command {
 
   public Drive(
       SwerveSubsystem drive,
-      DoubleSupplier y,
       DoubleSupplier x,
+      DoubleSupplier y,
       DoubleSupplier rotation,
       BooleanSupplier slow,
       Optional<DoubleSupplier> throttle) {
@@ -41,13 +41,13 @@ public class Drive extends Command {
         SwerveInputStream.of(
                 m_drive.getSwerveDrive(),
                 () ->
-                    m_y.getAsDouble()
+                    m_x.getAsDouble()
                         * (m_slow.getAsBoolean()
                             ? DriveConstants.kDrivingSpeeds[1]
                             : DriveConstants.kDrivingSpeeds[0])
                         * m_throttle.orElse(() -> 1.0).getAsDouble(),
                 () ->
-                    m_x.getAsDouble()
+                    m_y.getAsDouble()
                         * (m_slow.getAsBoolean()
                             ? DriveConstants.kDrivingSpeeds[1]
                             : DriveConstants.kDrivingSpeeds[0])
