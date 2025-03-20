@@ -87,8 +87,8 @@ public class RobotContainer {
       m_drive.setDefaultCommand(
           new Drive(
               m_drive,
-              m_controller::getLeftY,
-              m_controller::getLeftX,
+              () -> -m_controller.getLeftY(),
+              () -> -m_controller.getLeftX(),
               () -> -m_controller.getRightX(),
               () -> m_controller.rightBumper().getAsBoolean(),
               Optional.empty()));
