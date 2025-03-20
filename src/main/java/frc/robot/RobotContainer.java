@@ -115,11 +115,12 @@ public class RobotContainer {
       // Zero gyro with A button
       m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
 
-      if (!Robot.isReal()) {
-        m_controller
-            .b()
-            .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
-      }
+      //   if (!Robot.isReal()) {
+      //     m_controller
+      //         .b()
+      //         .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim)
+      // m_coral).getSimCoral()));
+      //   }
 
       m_controller.rightBumper().onTrue(new ReleaseCoralCommand(m_coral));
       m_controller.leftBumper().onTrue(new GrabCoralCommand(m_coral));
