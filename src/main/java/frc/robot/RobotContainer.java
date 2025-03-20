@@ -6,6 +6,7 @@ package frc.robot;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,16 +17,19 @@ import frc.robot.Constants.IOConstants;
 import frc.robot.commands.GrabCoralCommand;
 import frc.robot.commands.ReleaseCoralCommand;
 import frc.robot.commands.drive.Drive;
+import frc.robot.commands.drive.MoveToPose;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
 import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.utils.AprilTags;
 import frc.robot.utils.FilteredButton;
 import frc.robot.utils.FilteredJoystick;
 import java.io.File;
 import java.util.Optional;
+import java.util.Set;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -73,13 +77,18 @@ public class RobotContainer {
     m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
     m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
+    SmartDashboard.putData("Xbox Controller Debug", m_controller.getHID());
+
+    if (Robot.isSimulation()) {
+      DriverStation.silenceJoystickConnectionWarning(true);
+    }
 
     if (IOConstants.kTestMode) {
       m_drive.setDefaultCommand(
           new Drive(
               m_drive,
-              m_controller::getLeftY,
-              m_controller::getLeftX,
+              () -> -m_controller.getLeftY(),
+              () -> -m_controller.getLeftX(),
               () -> -m_controller.getRightX(),
               () -> m_controller.rightBumper().getAsBoolean(),
               Optional.empty()));
@@ -105,10 +114,10 @@ public class RobotContainer {
 
     // Test mode allows everything to be run on a single controller
     // Test mode should not be enabled in competition
+
     if (IOConstants.kTestMode) {
       m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
     } else {
-
       // drop chute
       m_buttons.getChuteSwitch().onTrue(Commands.runOnce(m_chute::drop));
 
@@ -124,5 +133,36 @@ public class RobotContainer {
       m_controller.rightBumper().onTrue(new ReleaseCoralCommand(m_coral));
       m_controller.leftBumper().onTrue(new GrabCoralCommand(m_coral));
     }
+
+    m_controller
+        .rightStick()
+        .whileTrue(
+            Commands.defer(
+                () ->
+                    MoveToPose.tagRelative(
+                            this.m_drive,
+                            AprilTags.findReefTagForAlignment(this.m_drive.getPose()),
+                            AprilTags.REEF_ALIGN_OFFSET)
+                        .withDriveInputs(
+                            m_controller::getLeftX,
+                            m_controller::getLeftY,
+                            () -> -m_controller.getRightX(),
+                            0.5),
+                Set.of(this.m_drive)));
+    m_controller
+        .leftStick()
+        .whileTrue(
+            Commands.defer(
+                () ->
+                    MoveToPose.tagRelative(
+                            this.m_drive,
+                            AprilTags.findStationTagForAlignment(this.m_drive.getPose()),
+                            AprilTags.STATION_ALIGN_OFFSET)
+                        .withDriveInputs(
+                            m_controller::getLeftX,
+                            m_controller::getLeftY,
+                            () -> -m_controller.getRightX(),
+                            0.5),
+                Set.of(this.m_drive)));
   }
 }
