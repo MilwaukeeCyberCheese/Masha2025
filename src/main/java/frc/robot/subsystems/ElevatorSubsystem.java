@@ -49,7 +49,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // System.out.println(Elevator.kRightElevatorSparkMax.configAccessor.closedLoop.getP());
 
-    Elevator.kElevatorController.setReference(15.0, ControlType.kPosition);
+    Elevator.kElevatorController.setReference(m_height, ControlType.kPosition);
   }
 
   public void log() {
@@ -59,6 +59,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         "PID Tuning Shit", Elevator.kRightElevatorSparkMax.getEncoder().getPosition());
     SmartDashboard.putNumber("ELEvator Shit", Elevator.kRightElevatorSparkMax.get());
     SmartDashboard.putString("Elevator State", m_state.toString());
+    System.out.println(m_customHeight.orElse(-2000000.0));
   }
 
   // TODO: add limits logic
@@ -101,7 +102,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public void setCustomTarget(double target) {
     m_customHeight = Optional.of(target);
-    m_state = ElevatorState.CUSTOM;
+    setState(ElevatorState.CUSTOM);
   }
 
   /**

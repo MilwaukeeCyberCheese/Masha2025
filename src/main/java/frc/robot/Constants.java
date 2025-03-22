@@ -107,10 +107,10 @@ public final class Constants {
         new HashMap<>() {
           {
             put(ElevatorState.DOWN, 0.0);
-            put(ElevatorState.L1, 16.5);
-            put(ElevatorState.L2, 20.0);
-            put(ElevatorState.L3, 45.0);
-            put(ElevatorState.L4, 0.4);
+            put(ElevatorState.L1, 0.0);
+            put(ElevatorState.L2, 5.5);
+            put(ElevatorState.L3, 12.75);
+            put(ElevatorState.L4, 26.6);
           }
         };
 
