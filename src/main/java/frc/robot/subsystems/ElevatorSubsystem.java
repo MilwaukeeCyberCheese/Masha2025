@@ -49,7 +49,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // System.out.println(Elevator.kRightElevatorSparkMax.configAccessor.closedLoop.getP());
 
-    Elevator.kElevatorController.setReference(10.0, ControlType.kMAXMotionPositionControl);
+    Elevator.kElevatorController.setReference(15.0, ControlType.kPosition);
   }
 
   public void log() {

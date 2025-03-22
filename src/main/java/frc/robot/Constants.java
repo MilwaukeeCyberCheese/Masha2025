@@ -100,7 +100,7 @@ public final class Constants {
 
     // TODO: veloc and accel is in inches per second and inches per second squared
     public static final PIDConstants kElevatorPIDConstants =
-        new PIDConstants(15.0, 0.0, 0.0, 0.5, 0.25);
+        new PIDConstants(0.25, 0.0, 0.0, 0.5, 0.5);
 
     // TODO: figure out the heights
     public static final HashMap<ElevatorState, Double> kHeights =
@@ -139,10 +139,10 @@ public final class Constants {
       kRightElevatorConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD)
-          .maxMotion
-          .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
-          .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
+          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
+          // .maxMotion
+          // .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
+          // .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
 
       kRightElevatorConfig.encoder.positionConversionFactor(kConversionFactor);
 
