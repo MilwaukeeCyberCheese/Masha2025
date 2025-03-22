@@ -183,7 +183,7 @@ public final class Constants {
           new HashMap<>() {
             {
               put(CoralHandlerState.INACTIVE, 0.0);
-              put(CoralHandlerState.GRAB, 0.6);
+              put(CoralHandlerState.GRAB, 0.3);
               put(CoralHandlerState.RELEASE, 0.4);
             }
           };

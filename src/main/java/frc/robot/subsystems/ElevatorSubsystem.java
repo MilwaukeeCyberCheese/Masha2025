@@ -44,7 +44,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     log();
 
-    Elevator.kElevatorController.setReference(m_height, ControlType.kMAXMotionPositionControl);
+    // Elevator.kElevatorController.setReference(m_height, ControlType.kMAXMotionPositionControl);
+  }
+
+  public void setPower(double power) {
+    Elevator.kRightElevatorSparkMax.set(power);
   }
 
   public void log() {

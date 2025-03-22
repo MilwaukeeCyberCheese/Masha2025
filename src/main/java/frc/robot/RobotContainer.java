@@ -16,7 +16,9 @@ import frc.robot.Constants.IOConstants;
 import frc.robot.commands.GrabCoralCommand;
 import frc.robot.commands.ReleaseCoralCommand;
 import frc.robot.commands.drive.Drive;
+import frc.robot.commands.drive.SnapToAndAlignWithRange;
 import frc.robot.subsystems.ChuteSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
@@ -43,6 +45,7 @@ public class RobotContainer {
           ? new CoralHandlerSubsystem()
           : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
   private final ChuteSubsystem m_chute = new ChuteSubsystem();
+  private final ClimberSubsystem m_climber = new ClimberSubsystem();
 
   // Driver joysticks
   private final FilteredJoystick m_leftJoystick =
@@ -74,7 +77,7 @@ public class RobotContainer {
     m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
 
-    if (IOConstants.kTestMode) {
+    // if (IOConstants.kTestMode) {
       m_drive.setDefaultCommand(
           new Drive(
               m_drive,
@@ -83,16 +86,16 @@ public class RobotContainer {
               () -> -m_controller.getRightX(),
               () -> m_controller.rightBumper().getAsBoolean(),
               Optional.empty()));
-    } else {
-      m_drive.setDefaultCommand(
-          new Drive(
-              m_drive,
-              m_leftJoystick::getY,
-              m_leftJoystick::getX,
-              m_rightJoystick::getX,
-              () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
-              Optional.of(m_rightJoystick::getThrottle)));
-    }
+    // } else {
+    //   m_drive.setDefaultCommand(
+    //       new Drive(
+    //           m_drive,
+    //           m_leftJoystick::getY,
+    //           m_leftJoystick::getX,
+    //           m_rightJoystick::getX,
+    //           () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
+    //           Optional.of(m_rightJoystick::getThrottle)));
+    // }
   }
 
   /**
@@ -102,6 +105,21 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    // m_controller.povRight().whileTrue(Commands.runOnce(() -> m_elevator.setPower(0.6))).onFalse(Commands.runOnce(() -> m_elevator.setPower(0)));
+    // m_controller.povLeft().whileTrue(Commands.runOnce(() -> m_elevator.setPower(-0.4))).onFalse(Commands.runOnce(() -> m_elevator.setPower(0)));
+
+    m_controller.rightTrigger().whileTrue(Commands.runOnce(m_coral::grab)).onFalse(Commands.runOnce(m_coral::inactive));
+
+    m_controller.x().onTrue(Commands.runOnce(m_chute::drop));
+
+    
+    m_controller.povDown().onTrue(Commands.runOnce(m_climber::down)).onFalse(Commands.runOnce(m_climber::inactive));
+    m_controller.povUp().onTrue(Commands.runOnce(m_climber::up)).onFalse(Commands.runOnce(m_climber::inactive));
+
+    m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
+
+    m_controller.y().whileTrue(new SnapToAndAlignWithRange(m_drive, () -> 17));
 
     // Test mode allows everything to be run on a single controller
     // Test mode should not be enabled in competition
