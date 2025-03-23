@@ -140,9 +140,10 @@ public final class Constants {
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
           .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
-          // .maxMotion
-          // .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
-          // .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
+      // Not using these currently, uncomment if needed
+      // .maxMotion
+      // .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
+      // .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
 
       kRightElevatorConfig.encoder.positionConversionFactor(kConversionFactor);
 

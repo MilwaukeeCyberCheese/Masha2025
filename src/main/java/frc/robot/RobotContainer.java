@@ -38,7 +38,7 @@ import java.util.Optional;
 public class RobotContainer {
   public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
-  public final static ElevatorSubsystem m_elevator =
+  public static final ElevatorSubsystem m_elevator =
       Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
   private final CoralHandlerSubsystem m_coral =
       Robot.isReal()
@@ -77,27 +77,28 @@ public class RobotContainer {
     m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
 
-    m_elevator.setDefaultCommand(new ManualElevatorPositionCommand(m_elevator, () -> m_controller.getRightY()));
+    m_elevator.setDefaultCommand(
+        new ManualElevatorPositionCommand(m_elevator, () -> m_controller.getRightY()));
 
-  //   if (IOConstants.kTestMode) {
-  //     m_drive.setDefaultCommand(
-  //         new Drive(
-  //             m_drive,
-  //             m_controller::getLeftY,
-  //             m_controller::getLeftX,
-  //             () -> -m_controller.getRightX(),
-  //             () -> m_controller.rightBumper().getAsBoolean(),
-  //             Optional.empty()));
-  //   } else {
-  //     m_drive.setDefaultCommand(
-  //         new Drive(
-  //             m_drive,
-  //             m_leftJoystick::getY,
-  //             m_leftJoystick::getX,
-  //             m_rightJoystick::getX,
-  //             () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
-  //             Optional.of(m_rightJoystick::getThrottle)));
-  //   }
+    if (IOConstants.kTestMode) {
+      m_drive.setDefaultCommand(
+          new Drive(
+              m_drive,
+              m_controller::getLeftY,
+              m_controller::getLeftX,
+              () -> -m_controller.getRightX(),
+              () -> m_controller.rightBumper().getAsBoolean(),
+              Optional.empty()));
+    } else {
+      m_drive.setDefaultCommand(
+          new Drive(
+              m_drive,
+              m_leftJoystick::getY,
+              m_leftJoystick::getX,
+              m_rightJoystick::getX,
+              () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
+              Optional.of(m_rightJoystick::getThrottle)));
+    }
   }
 
   /**
@@ -108,10 +109,19 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    m_controller.rightTrigger().onTrue(Commands.runOnce(m_coral::release)).onFalse(Commands.runOnce(m_coral::inactive));
+    m_controller
+        .rightTrigger()
+        .onTrue(Commands.runOnce(m_coral::release))
+        .onFalse(Commands.runOnce(m_coral::inactive));
 
-    m_controller.povDown().onTrue(Commands.runOnce(m_climber::down)).onFalse(Commands.runOnce(m_climber::inactive));
-    m_controller.povUp().onTrue(Commands.runOnce(m_climber::up)).onFalse(Commands.runOnce(m_climber::inactive));
+    m_controller
+        .povDown()
+        .onTrue(Commands.runOnce(m_climber::down))
+        .onFalse(Commands.runOnce(m_climber::inactive));
+    m_controller
+        .povUp()
+        .onTrue(Commands.runOnce(m_climber::up))
+        .onFalse(Commands.runOnce(m_climber::inactive));
 
     // Test mode allows everything to be run on a single controller
     // Test mode should not be enabled in competition
@@ -125,12 +135,11 @@ public class RobotContainer {
       // Zero gyro with A button
       m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
 
-      //   if (!Robot.isReal()) {
-      //     m_controller
-      //         .b()
-      //         .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim)
-      // m_coral).getSimCoral()));
-      //   }
+      if (!Robot.isReal()) {
+        m_controller
+            .b()
+            .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
+      }
 
       m_controller.rightBumper().onTrue(new ReleaseCoralCommand(m_coral));
       m_controller.leftBumper().onTrue(new GrabCoralCommand(m_coral));
