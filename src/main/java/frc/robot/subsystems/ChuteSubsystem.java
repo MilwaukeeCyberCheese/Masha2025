@@ -12,12 +12,10 @@ public class ChuteSubsystem extends SubsystemBase {
 
   private ChuteState m_state = ChuteState.UP;
 
-  public ChuteSubsystem() {
-    
-  }
+  public ChuteSubsystem() {}
 
   @Override
-  public void periodic(){
+  public void periodic() {
     setState(m_state);
   }
 
