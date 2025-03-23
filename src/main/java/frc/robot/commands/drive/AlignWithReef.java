@@ -58,35 +58,36 @@ public class AlignWithReef extends Command {
     m_thetaController.enableContinuousInput(0, Math.PI * 2);
   }
 
-  private PhotonTrackedTarget getClosestAprilTag(PhotonCamera cam) {
-    var result = cam.getLatestResult();
-    List<PhotonTrackedTarget> targets = result.getTargets();
-    List<PhotonTrackedTarget> reefTargets = new LinkedList<>();
-    for (PhotonTrackedTarget target : targets) {
-      if (target.getFiducialId()
-              >= (DriverStation.getAlliance().equals(DriverStation.Alliance.Red) ? 6 : 11)
-          && target.getFiducialId()
-              <= (DriverStation.getAlliance().equals(DriverStation.Alliance.Red) ? 22 : 17)) {
-        reefTargets.add(target);
-      }
-    }
-
+  private PhotonTrackedTarget getClosestAprilTag(LinkedList<PhotonCamera> cams) {
     PhotonTrackedTarget bestTarget = null;
     double bestDistance = Double.MAX_VALUE;
 
-    if (reefTargets.size() > 0) {
-      for (PhotonTrackedTarget target : reefTargets) {
-        double targetDistance =
-            Math.sqrt(
-                Math.pow(target.bestCameraToTarget.getX(), 2)
-                    + Math.pow(target.bestCameraToTarget.getY(), 2));
-        if (targetDistance < bestDistance) {
-          bestDistance = targetDistance;
-          bestTarget = target;
+    for (PhotonCamera cam : cams) {
+      var result = cam.getLatestResult();
+      List<PhotonTrackedTarget> targets = result.getTargets();
+      List<PhotonTrackedTarget> reefTargets = new LinkedList<>();
+      for (PhotonTrackedTarget target : targets) {
+        if (target.getFiducialId()
+                >= (DriverStation.getAlliance().equals(DriverStation.Alliance.Red) ? 6 : 11)
+            && target.getFiducialId()
+                <= (DriverStation.getAlliance().equals(DriverStation.Alliance.Red) ? 22 : 17)) {
+          reefTargets.add(target);
+        }
+      }
+
+      if (reefTargets.size() > 0) {
+        for (PhotonTrackedTarget target : reefTargets) {
+          double targetDistance =
+              Math.sqrt(
+                  Math.pow(target.bestCameraToTarget.getX(), 2)
+                      + Math.pow(target.bestCameraToTarget.getY(), 2));
+          if (targetDistance < bestDistance) {
+            bestDistance = targetDistance;
+            bestTarget = target;
+          }
         }
       }
     }
-
     return bestTarget;
   }
 
@@ -97,8 +98,13 @@ public class AlignWithReef extends Command {
     double thetaOutput = 0;
 
     PhotonCamera camera = new PhotonCamera(Vision.kCameraName);
+    PhotonCamera camera2 = new PhotonCamera(Vision.kCameraName);
 
-    PhotonTrackedTarget target = getClosestAprilTag(camera);
+    LinkedList<PhotonCamera> cams = new LinkedList<>();
+    cams.add(camera);
+    cams.add(camera2);
+
+    PhotonTrackedTarget target = getClosestAprilTag(cams);
     // Check if target is present
     if (target != null) {
       // If target is present, get transform and calculate outputs
