@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Servo;
+import frc.robot.subsystems.ChuteSubsystem.ChuteState;
 import frc.robot.subsystems.ClimberSubsystem.ClimberState;
 import frc.robot.subsystems.CoralHandlerSubsystem.CoralHandlerState;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
@@ -212,14 +213,6 @@ public final class Constants {
     // TODO: find out if it's inverted
     public static final boolean kClimberInverted = false;
 
-    public static final SparkClosedLoopController kClimberController =
-        kClimberSparkMax.getClosedLoopController();
-
-    public static final PIDConstants kClimberPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
-
-    // TODO: confirm that this is right
-    public static final double kConversionFactor = Math.PI * 2;
-
     // TODO: find these
     public static final HashMap<ClimberState, Double> kSpeeds =
         new HashMap<ClimberState, Double>() {
@@ -227,6 +220,7 @@ public final class Constants {
             put(ClimberState.INACTIVE, 0.0);
             put(ClimberState.UP, 0.4);
             put(ClimberState.DOWN, -1.0);
+            put(ClimberState.DOWNSLOW, -0.4);
           }
         };
 
@@ -234,30 +228,23 @@ public final class Constants {
     public static final double[] kClimberLimits = {0.0, 0.0};
 
     // TODO: find this
-    public static final double kClimberTolerance = 0.01;
+    public static final double kDownPosition = 90.0;
 
     static {
       kClimberConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kClimberInverted);
-
-      kClimberConfig
-          .absoluteEncoder
-          .positionConversionFactor(kConversionFactor)
-          .velocityConversionFactor(kConversionFactor / 60.0);
-
-      kClimberConfig
-          .closedLoop
-          .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-          .pid(kClimberPIDConstants.kP, kClimberPIDConstants.kI, kClimberPIDConstants.kD)
-          .outputRange(-1, 1);
     }
   }
 
   public static final class Chute {
     public static final Servo kServo = new Servo(0);
 
-    // TODO: find these
-    public static final double kUp = 0.0;
-    public static final double kDown = 90.0;
+    public static final HashMap<ChuteState, Double> kPositions =
+        new HashMap<ChuteState, Double>() {
+          {
+            put(ChuteState.UP, 0.0);
+            put(ChuteState.DOWN, 90.0);
+          }
+        };
   }
 
   public static final class DriveConstants {

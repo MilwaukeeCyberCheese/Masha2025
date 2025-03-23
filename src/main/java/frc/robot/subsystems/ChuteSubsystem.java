@@ -5,15 +5,36 @@ import frc.robot.Constants.Chute;
 
 public class ChuteSubsystem extends SubsystemBase {
 
+  public enum ChuteState {
+    UP,
+    DOWN
+  }
+
+  private ChuteState m_state = ChuteState.UP;
+
   public ChuteSubsystem() {
-    Chute.kServo.set(Chute.kUp);
+    
+  }
+
+  @Override
+  public void periodic(){
+    setState(m_state);
+  }
+
+  public void setState(ChuteState state) {
+    m_state = state;
+    Chute.kServo.set(Chute.kPositions.get(m_state));
+  }
+
+  public ChuteState getState() {
+    return m_state;
   }
 
   public void drop() {
-    Chute.kServo.set(Chute.kDown);
+    setState(ChuteState.DOWN);
   }
 
   public void raise() {
-    Chute.kServo.set(Chute.kUp);
+    setState(ChuteState.UP);
   }
 }

@@ -14,6 +14,7 @@ public class ClimberSubsystem extends SubsystemBase {
     INACTIVE,
     UP,
     DOWN,
+    DOWNSLOW,
     CUSTOM
   }
 
@@ -75,6 +76,24 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   /**
+   * Get the position of the climber
+   *
+   * @return double
+   */
+  private double getPosition() {
+    return Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition();
+  }
+
+  /**
+   * Get whether the climber is fully down
+   *
+   * @return boolean
+   */
+  public boolean isDown() {
+    return getPosition() <= Climber.kDownPosition;
+  }
+
+  /**
    * Set the custom position of the climber Changes the state of the climber
    *
    * @param position
@@ -97,5 +116,10 @@ public class ClimberSubsystem extends SubsystemBase {
   /** Set the climber to go down */
   public void down() {
     setState(ClimberState.DOWN);
+  }
+
+  /** Set the climber to go down slow */
+  public void downSlow() {
+    setState(ClimberState.DOWNSLOW);
   }
 }

@@ -13,10 +13,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
+import frc.robot.commands.ChuteDrop;
 import frc.robot.commands.GrabCoralCommand;
-import frc.robot.commands.ReleaseCoralCommand;
 import frc.robot.commands.drive.Drive;
 import frc.robot.subsystems.ChuteSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
@@ -43,6 +44,7 @@ public class RobotContainer {
           ? new CoralHandlerSubsystem()
           : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
   private final ChuteSubsystem m_chute = new ChuteSubsystem();
+  private final ClimberSubsystem m_climber = new ClimberSubsystem();
 
   // Driver joysticks
   private final FilteredJoystick m_leftJoystick =
@@ -74,25 +76,25 @@ public class RobotContainer {
     m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
 
-    if (IOConstants.kTestMode) {
-      m_drive.setDefaultCommand(
-          new Drive(
-              m_drive,
-              m_controller::getLeftY,
-              m_controller::getLeftX,
-              () -> -m_controller.getRightX(),
-              () -> m_controller.rightBumper().getAsBoolean(),
-              Optional.empty()));
-    } else {
-      m_drive.setDefaultCommand(
-          new Drive(
-              m_drive,
-              m_leftJoystick::getY,
-              m_leftJoystick::getX,
-              m_rightJoystick::getX,
-              () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
-              Optional.of(m_rightJoystick::getThrottle)));
-    }
+    // Drive with controller
+    // m_drive.setDefaultCommand(
+    //     new Drive(
+    //         m_drive,
+    //         m_controller::getLeftY,
+    //         m_controller::getLeftX,
+    //         () -> -m_controller.getRightX(),
+    //         () -> m_controller.rightBumper().getAsBoolean(),
+    //         Optional.empty()));
+
+    // Drive with joysticks
+    m_drive.setDefaultCommand(
+        new Drive(
+            m_drive,
+            m_leftJoystick::getY,
+            m_leftJoystick::getX,
+            m_rightJoystick::getX,
+            () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
+            Optional.of(m_rightJoystick::getThrottle)));
   }
 
   /**
@@ -103,26 +105,23 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    // Test mode allows everything to be run on a single controller
-    // Test mode should not be enabled in competition
-    if (IOConstants.kTestMode) {
-      m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
-    } else {
+    // Driver Joysticks
 
-      // drop chute
-      m_buttons.getChuteSwitch().onTrue(Commands.runOnce(m_chute::drop));
+    // Left joystick intakes coral, right joystick aligns to reef.  When both are held at once,
+    // coral is released.
+    // m_rightJoystick.getTriggerActive().whileTrue(); // Align to reef
+    m_leftJoystick
+        .getTriggerActive()
+        .and(m_rightJoystick.getTriggerActive())
+        .whileTrue(Commands.runOnce(m_coral::release));
+    m_leftJoystick.getTriggerActive().whileTrue(new GrabCoralCommand(m_coral));
 
-      // Zero gyro with A button
-      m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
+    // Button Board
+    m_buttons.getL1().onTrue(Commands.runOnce(m_elevator::L1));
+    m_buttons.getL2().onTrue(Commands.runOnce(m_elevator::L2));
+    m_buttons.getL3().onTrue(Commands.runOnce(m_elevator::L3));
+    m_buttons.getL4().onTrue(Commands.runOnce(m_elevator::L4));
 
-      if (!Robot.isReal()) {
-        m_controller
-            .b()
-            .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
-      }
-
-      m_controller.rightBumper().onTrue(new ReleaseCoralCommand(m_coral));
-      m_controller.leftBumper().onTrue(new GrabCoralCommand(m_coral));
-    }
+    m_buttons.getChuteSwitch().onTrue(new ChuteDrop(m_chute, m_climber));
   }
 }
