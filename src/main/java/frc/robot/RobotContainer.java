@@ -114,7 +114,10 @@ public class RobotContainer {
         .getTriggerActive()
         .and(m_rightJoystick.getTriggerActive())
         .whileTrue(Commands.runOnce(m_coral::release));
-    m_leftJoystick.getTriggerActive().whileTrue(new GrabCoralCommand(m_coral));
+    m_leftJoystick
+        .getTriggerActive()
+        .and(m_rightJoystick.getTriggerActive().negate())
+        .whileTrue(new GrabCoralCommand(m_coral));
 
     // Button Board
     m_buttons.getL1().onTrue(Commands.runOnce(m_elevator::L1));
