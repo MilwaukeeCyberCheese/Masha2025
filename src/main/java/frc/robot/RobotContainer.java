@@ -38,7 +38,7 @@ import java.util.Optional;
 public class RobotContainer {
   public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
-  public static final ElevatorSubsystem m_elevator =
+  public final ElevatorSubsystem m_elevator =
       Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
   private final CoralHandlerSubsystem m_coral =
       Robot.isReal()
@@ -76,9 +76,6 @@ public class RobotContainer {
     m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
     m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
-
-    m_elevator.setDefaultCommand(
-        new ManualElevatorPositionCommand(m_elevator, () -> m_controller.getRightY()));
 
     if (IOConstants.kTestMode) {
       m_drive.setDefaultCommand(
