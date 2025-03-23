@@ -16,7 +16,6 @@ import frc.robot.Constants.IOConstants;
 import frc.robot.commands.GrabCoralCommand;
 import frc.robot.commands.ReleaseCoralCommand;
 import frc.robot.commands.drive.Drive;
-import frc.robot.commands.elevator.ManualElevatorPositionCommand;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
