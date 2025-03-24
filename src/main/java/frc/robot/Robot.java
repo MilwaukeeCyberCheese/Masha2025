@@ -78,10 +78,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     SmartDashboard.putData(CommandScheduler.getInstance());
-
-    if (Constants.IOConstants.kTestMode) {
-      System.out.println("Test Mode Enabled\nNot for competition use");
-    }
+    this.m_robotContainer.updateControllerConnections();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
