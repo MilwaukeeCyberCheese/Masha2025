@@ -124,6 +124,8 @@ public class FilteredJoystick {
   /**
    * Returns the state of the POV
    *
+   * <p>0 is up, 90 is right, 180 is down, 270 is left
+   *
    * @return the degree of the pov, -1 if not pressed
    */
   public int getPovState() {
