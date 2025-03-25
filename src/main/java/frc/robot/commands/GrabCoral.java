@@ -23,7 +23,7 @@ public class GrabCoral extends Command {
       m_finished = true;
       return;
     }
-    
+
     m_coralHandlerSubsystem.grab();
     m_timer.reset();
   }
