@@ -390,14 +390,24 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     if (!InputCOR.equals(previousCORInput)) {
-      // Scale the translation so that it falls on an oval with the major axis being the robot's
+      // Scale the translation so that it falls on a rectangle with the major axis being the robot's
       // length (32), and the minor axis being the robot's width (28).
       // Additionally, rotate the translation so that it is applied in a field-oriented manor.
-      COR =
-          new Translation2d(
-                  InputCOR.getCos() * Units.inchesToMeters(32),
-                  InputCOR.getSin() * Units.inchesToMeters(28))
-              .rotateBy(getPose().getRotation());
+
+      double height = 32;
+      double width = 28;
+      
+        // Compute r based on the smallest valid intersection
+        double rX = Units.inchesToMeters(height/2) / Math.abs(Math.cos(InputCOR.getRadians()));
+        double rY = Units.inchesToMeters(width/2) / Math.abs(Math.sin(InputCOR.getRadians()));
+        double r = Math.min(rX, rY);
+
+        // Compute x and y coordinates
+        double x = r * Math.cos(InputCOR.getRadians());
+        double y = r * Math.sin(InputCOR.getRadians());
+
+        
+      COR = new Translation2d(x, y).rotateBy(this.getPose().getRotation());
     }
 
     swerveDrive.driveFieldOriented(velocity, COR);
