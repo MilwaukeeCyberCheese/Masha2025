@@ -132,6 +132,10 @@ public class RobotContainer {
           .getButtonTen()
           .onTrue(Commands.runOnce(m_climber::down))
           .onFalse(Commands.runOnce(m_climber::inactive));
+
+      // Reset gyro and set swerve drive to X-mode
+      m_rightJoystick.getButtonThree().whileTrue(Commands.runOnce(m_drive::zeroGyro));
+      m_rightJoystick.getButtonFour().whileTrue(Commands.runOnce(m_drive::lock));
     }
 
     // BUTTON BOARD
