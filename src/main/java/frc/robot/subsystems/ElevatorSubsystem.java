@@ -25,6 +25,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private Optional<Double> m_customHeight = Optional.empty();
   protected double m_height;
 
+  /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
     Elevator.kLeftElevatorSparkMax.configure(
         Elevator.kLeftElevatorConfig,

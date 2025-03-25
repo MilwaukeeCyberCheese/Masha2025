@@ -11,6 +11,11 @@ public class GrabCoral extends Command {
   private final Stopwatch m_timer = new Stopwatch();
   private boolean m_finished = false;
 
+  /**
+   * Runs coral handler until coral is detected, then continues running for offset
+   *
+   * @param coralHandlerSubsystem
+   */
   public GrabCoral(CoralHandlerSubsystem coralHandlerSubsystem) {
     m_coralHandlerSubsystem = coralHandlerSubsystem;
 

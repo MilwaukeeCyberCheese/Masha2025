@@ -14,22 +14,36 @@ public class Drive extends Command {
   final DoubleSupplier m_x;
   final DoubleSupplier m_y;
   final DoubleSupplier m_rotation;
-  final BooleanSupplier m_slow;
+  final BooleanSupplier m_slowMode;
   final Optional<DoubleSupplier> m_throttle;
   SwerveInputStream driveInput;
 
+  /**
+   * Drives the robot using field-oriented control
+   *
+   * <p>Recall that the coordinate system used is NWU (North, West, Up)
+   *
+   * <p>See https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
+   *
+   * @param drive
+   * @param x
+   * @param y
+   * @param rotation
+   * @param slowMode
+   * @param throttle
+   */
   public Drive(
       SwerveSubsystem drive,
       DoubleSupplier x,
       DoubleSupplier y,
       DoubleSupplier rotation,
-      BooleanSupplier slow,
+      BooleanSupplier slowMode,
       Optional<DoubleSupplier> throttle) {
     m_drive = drive;
     m_x = x;
     m_y = y;
     m_rotation = rotation;
-    m_slow = slow;
+    m_slowMode = slowMode;
     m_throttle = throttle;
     addRequirements(m_drive);
   }
@@ -42,20 +56,20 @@ public class Drive extends Command {
                 m_drive.getSwerveDrive(),
                 () ->
                     m_x.getAsDouble()
-                        * (m_slow.getAsBoolean()
+                        * (m_slowMode.getAsBoolean()
                             ? DriveConstants.kDrivingSpeeds[1]
                             : DriveConstants.kDrivingSpeeds[0])
                         * m_throttle.orElse(() -> 1.0).getAsDouble(),
                 () ->
                     m_y.getAsDouble()
-                        * (m_slow.getAsBoolean()
+                        * (m_slowMode.getAsBoolean()
                             ? DriveConstants.kDrivingSpeeds[1]
                             : DriveConstants.kDrivingSpeeds[0])
                         * m_throttle.orElse(() -> 1.0).getAsDouble())
             .withControllerRotationAxis(
                 () ->
                     m_rotation.getAsDouble()
-                        * (m_slow.getAsBoolean()
+                        * (m_slowMode.getAsBoolean()
                             ? DriveConstants.kRotationSpeeds[1]
                             : DriveConstants.kRotationSpeeds[0])
                         * m_throttle.orElse(() -> 1.0).getAsDouble())

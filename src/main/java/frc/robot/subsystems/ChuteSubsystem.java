@@ -12,6 +12,7 @@ public class ChuteSubsystem extends SubsystemBase {
 
   private ChuteState m_state = ChuteState.UP;
 
+  /** Creates a new ChuteSubsystem. */
   public ChuteSubsystem() {}
 
   @Override

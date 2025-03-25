@@ -28,6 +28,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   private Optional<Double> m_customSpeed = Optional.empty();
   protected double m_speed;
 
+  /** Creates a new CoralHandlerSubsystem. */
   public CoralHandlerSubsystem() {
     Coral.kLeftSparkMax.configure(
         Coral.kLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

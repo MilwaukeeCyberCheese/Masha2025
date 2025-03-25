@@ -9,6 +9,12 @@ public class ChuteDrop extends Command {
   private final ChuteSubsystem m_chute;
   private final ClimberSubsystem m_climber;
 
+  /**
+   * Drops the chute if the climber is down, otherwise lowers the climber and then drops the chute
+   *
+   * @param chute
+   * @param climber
+   */
   public ChuteDrop(ChuteSubsystem chute, ClimberSubsystem climber) {
     m_chute = chute;
     m_climber = climber;
