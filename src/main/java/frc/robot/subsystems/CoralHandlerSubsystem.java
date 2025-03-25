@@ -19,6 +19,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     INACTIVE,
     GRAB,
     RELEASE,
+    REVERSE,
     CUSTOM
   }
 
@@ -116,6 +117,11 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   /** Set state to inactive */
   public void inactive() {
     setState(CoralHandlerState.INACTIVE);
+  }
+
+  /** Set state to reverse */
+  public void reverse() {
+    setState(CoralHandlerState.REVERSE);
   }
 
   /**

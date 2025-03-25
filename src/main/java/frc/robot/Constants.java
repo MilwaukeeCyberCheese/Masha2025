@@ -186,6 +186,7 @@ public final class Constants {
               put(CoralHandlerState.INACTIVE, 0.0);
               put(CoralHandlerState.GRAB, 0.3);
               put(CoralHandlerState.RELEASE, 0.3);
+              put(CoralHandlerState.REVERSE, -0.3);
             }
           };
 

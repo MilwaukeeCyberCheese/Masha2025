@@ -35,6 +35,8 @@ import java.util.Optional;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
+  // All da various subsystems
   public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
   private final ElevatorSubsystem m_elevator =
@@ -59,6 +61,7 @@ public class RobotContainer {
   // Button Board
   private final FilteredButton m_buttons = new FilteredButton(IOConstants.kButtonBoardPort);
 
+  // More auto stuff
   public final AutoChooser m_autoChooser = new AutoChooser();
   private final AutoFactory m_autoFactory =
       new AutoFactory(
@@ -69,6 +72,7 @@ public class RobotContainer {
   public RobotContainer() {
     configureButtonBindings();
 
+    // Add routines to auto chooser
     m_autoChooser.addRoutine("Test Routine", m_routines::test);
     m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
     m_autoChooser.addRoutine("Blue Coral Station Routine", m_routines::blueCoralStation);
@@ -90,9 +94,9 @@ public class RobotContainer {
     m_drive.setDefaultCommand(
         new Drive(
             m_drive,
-            m_leftJoystick::getY,
-            m_leftJoystick::getX,
+            m_rightJoystick::getY,
             m_rightJoystick::getX,
+            m_leftJoystick::getX,
             () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
             Optional.of(m_rightJoystick::getThrottle)));
   }
@@ -105,26 +109,65 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    // Driver Joysticks
+    // DRIVER JOYSTICKS
+    {
+      // Left joystick intakes coral, right joystick aligns to reef.  When both are held at once,
+      // coral is released.
+      // m_rightJoystick.getTriggerActive().whileTrue(); // Align to reef
+      m_leftJoystick
+          .getTriggerActive()
+          .and(m_rightJoystick.getTriggerActive())
+          .whileTrue(Commands.runOnce(m_coral::release));
+      m_leftJoystick
+          .getTriggerActive()
+          .and(m_rightJoystick.getTriggerActive().negate())
+          .whileTrue(new GrabCoral(m_coral));
 
-    // Left joystick intakes coral, right joystick aligns to reef.  When both are held at once,
-    // coral is released.
-    // m_rightJoystick.getTriggerActive().whileTrue(); // Align to reef
-    m_leftJoystick
-        .getTriggerActive()
-        .and(m_rightJoystick.getTriggerActive())
-        .whileTrue(Commands.runOnce(m_coral::release));
-    m_leftJoystick
-        .getTriggerActive()
-        .and(m_rightJoystick.getTriggerActive().negate())
-        .whileTrue(new GrabCoral(m_coral));
+      // Climber controls
+      m_leftJoystick
+          .getButtonEleven()
+          .onTrue(Commands.runOnce(m_climber::up))
+          .onFalse(Commands.runOnce(m_climber::inactive));
+      m_leftJoystick
+          .getButtonTen()
+          .onTrue(Commands.runOnce(m_climber::down))
+          .onFalse(Commands.runOnce(m_climber::inactive));
+    }
 
-    // Button Board
-    m_buttons.getL1().onTrue(Commands.runOnce(m_elevator::L1));
-    m_buttons.getL2().onTrue(Commands.runOnce(m_elevator::L2));
-    m_buttons.getL3().onTrue(Commands.runOnce(m_elevator::L3));
-    m_buttons.getL4().onTrue(Commands.runOnce(m_elevator::L4));
+    // BUTTON BOARD
+    {
+      // Elevator controls
+      m_buttons.getL1().onTrue(Commands.runOnce(m_elevator::L1));
+      m_buttons.getL2().onTrue(Commands.runOnce(m_elevator::L2));
+      m_buttons.getL3().onTrue(Commands.runOnce(m_elevator::L3));
+      m_buttons.getL4().onTrue(Commands.runOnce(m_elevator::L4));
 
-    m_buttons.getChuteSwitch().onTrue(new ChuteDrop(m_chute, m_climber));
+      // Command to drop the chute
+      m_buttons.getChuteSwitch().onTrue(new ChuteDrop(m_chute, m_climber));
+    }
+
+    // CONTROLLER
+    {
+      // Climber controls
+      m_controller
+          .povUp()
+          .onTrue(Commands.runOnce(m_climber::up))
+          .onFalse(Commands.runOnce(m_climber::inactive));
+      m_controller
+          .povDown()
+          .onTrue(Commands.runOnce(m_climber::down))
+          .onFalse(Commands.runOnce(m_climber::inactive));
+
+      // Coral controls
+      m_controller.leftBumper().whileTrue(new GrabCoral(m_coral));
+      m_controller
+          .leftTrigger()
+          .onTrue(Commands.runOnce(m_coral::release))
+          .onFalse(Commands.runOnce(m_coral::inactive));
+      m_controller
+          .rightTrigger()
+          .onTrue(Commands.runOnce(m_coral::reverse))
+          .onFalse(Commands.runOnce(m_coral::inactive));
+    }
   }
 }
