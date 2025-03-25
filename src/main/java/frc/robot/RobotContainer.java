@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
 import frc.robot.commands.ChuteDrop;
-import frc.robot.commands.GrabCoralCommand;
+import frc.robot.commands.GrabCoral;
 import frc.robot.commands.drive.Drive;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -117,7 +117,7 @@ public class RobotContainer {
     m_leftJoystick
         .getTriggerActive()
         .and(m_rightJoystick.getTriggerActive().negate())
-        .whileTrue(new GrabCoralCommand(m_coral));
+        .whileTrue(new GrabCoral(m_coral));
 
     // Button Board
     m_buttons.getL1().onTrue(Commands.runOnce(m_elevator::L1));

@@ -5,12 +5,13 @@ import frc.robot.Constants.Handler.Coral;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.utils.Stopwatch;
 
-public class GrabCoralCommand extends Command {
+public class GrabCoral extends Command {
 
   private final CoralHandlerSubsystem m_coralHandlerSubsystem;
-  private final Stopwatch timer = new Stopwatch();
+  private final Stopwatch m_timer = new Stopwatch();
+  private boolean m_finished = false;
 
-  public GrabCoralCommand(CoralHandlerSubsystem coralHandlerSubsystem) {
+  public GrabCoral(CoralHandlerSubsystem coralHandlerSubsystem) {
     m_coralHandlerSubsystem = coralHandlerSubsystem;
 
     addRequirements(coralHandlerSubsystem);
@@ -18,15 +19,22 @@ public class GrabCoralCommand extends Command {
 
   @Override
   public void initialize() {
+    if (m_coralHandlerSubsystem.hasCoral()) {
+      m_finished = true;
+      return;
+    }
+    
     m_coralHandlerSubsystem.grab();
-    timer.reset();
+    m_timer.reset();
   }
 
   @Override
   public void execute() {
-    if (m_coralHandlerSubsystem.hasCoral()) {
-      timer.start();
+    if (m_coralHandlerSubsystem.hasCoral() && !m_timer.isRunning()) {
+      m_timer.start();
     }
+
+    m_finished = m_timer.isRunning() ? m_timer.getTime() > Coral.kDetectionDelayTimeMS : false;
   }
 
   @Override
@@ -36,6 +44,6 @@ public class GrabCoralCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return timer.isRunning() ? timer.getTime() > Coral.kDetectionDelayTimeMS : false;
+    return m_finished;
   }
 }
