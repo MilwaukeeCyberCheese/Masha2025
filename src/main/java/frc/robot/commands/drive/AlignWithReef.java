@@ -97,12 +97,9 @@ public class AlignWithReef extends Command {
     double yOutput = 0;
     double thetaOutput = 0;
 
-    PhotonCamera camera = new PhotonCamera(Vision.kCameraName);
-    PhotonCamera camera2 = new PhotonCamera(Vision.kCameraName);
-
     LinkedList<PhotonCamera> cams = new LinkedList<>();
-    cams.add(camera);
-    cams.add(camera2);
+    cams.add(new PhotonCamera(Vision.LeftCamera.kCameraName));
+    cams.add(new PhotonCamera(Vision.RightCamera.kCameraName));
 
     PhotonTrackedTarget target = getClosestAprilTag(cams);
     // Check if target is present
