@@ -5,11 +5,9 @@
 package frc.robot;
 
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -90,15 +88,11 @@ public final class Constants {
     public static final SparkMax kRightElevatorSparkMax =
         new SparkMax(kRightElevatorCANid, MotorType.kBrushless);
 
-    public static final SparkLimitSwitch kElevatorLimitSwitch =
-        kRightElevatorSparkMax.getReverseLimitSwitch();
+    // public static final SparkLimitSwitch kElevatorLimitSwitch =
+    //     kRightElevatorSparkMax.getReverseLimitSwitch();
 
     public static final SparkMaxConfig kLeftElevatorConfig = new SparkMaxConfig();
     public static final SparkMaxConfig kRightElevatorConfig = new SparkMaxConfig();
-
-    // TODO: positive should be up
-    public static final boolean kLeftInverted = false;
-    public static final boolean kRightInverted = true;
 
     // only one cause we slave the other motor to this one
     public static final SparkClosedLoopController kElevatorController =
@@ -106,22 +100,22 @@ public final class Constants {
 
     // TODO: veloc and accel is in inches per second and inches per second squared
     public static final PIDConstants kElevatorPIDConstants =
-        new PIDConstants(0.1, 0.0, 0.0, 16.0, 20.0);
+        new PIDConstants(0.25, 0.0, 0.0, 0.5, 0.5);
 
     // TODO: figure out the heights
     public static final HashMap<ElevatorState, Double> kHeights =
         new HashMap<>() {
           {
             put(ElevatorState.DOWN, 0.0);
-            put(ElevatorState.L1, 16.5);
-            put(ElevatorState.L2, 20.0);
-            put(ElevatorState.L3, 45.0);
-            put(ElevatorState.L4, 0.4);
+            put(ElevatorState.L1, 0.0);
+            put(ElevatorState.L2, 5.5);
+            put(ElevatorState.L3, 12.75);
+            put(ElevatorState.L4, 26.6);
           }
         };
 
     // TODO: figure out the conversion factor
-    public static final double kConversionFactor = 1.0;
+    public static final double kConversionFactor = 9.0 / 23.0;
 
     // TODO: figure out the tolerance
     public static final double kElevatorTolerance = 0.01;
@@ -135,28 +129,30 @@ public final class Constants {
      * IF IT GETS MESSED UP, I'M LOSING IT
      */
     static {
-      kLeftElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kLeftInverted);
-      kRightElevatorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kRightInverted);
+      kLeftElevatorConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(30);
+      kRightElevatorConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(30).inverted(true);
 
       kLeftElevatorConfig.follow(
-          kLeftElevatorSparkMax); // you can pass in an inverted value after the
+          kRightElevatorSparkMax, true); // you can pass in an inverted value after the
       // kLeftElevatorSparkMax, but idk quite how that works yet
 
       kRightElevatorConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD)
-          .maxMotion
-          .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
-          .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
+          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
+      // Not using these currently, uncomment if needed
+      // .maxMotion
+      // .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
+      // .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
 
       kRightElevatorConfig.encoder.positionConversionFactor(kConversionFactor);
 
       // TODO: see if this is right
-      kRightElevatorConfig
-          .limitSwitch
-          .reverseLimitSwitchEnabled(true)
-          .reverseLimitSwitchType(Type.kNormallyOpen);
+      // it's not on there yet :(
+      // kRightElevatorConfig
+      //     .limitSwitch
+      //     .reverseLimitSwitchEnabled(true)
+      //     .reverseLimitSwitchType(Type.kNormallyOpen);
     }
   }
 
