@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -57,6 +58,9 @@ public class SwerveSubsystem extends SubsystemBase {
   private final PIDController xController = new PIDController(50, 0.0, 0);
   private final PIDController yController = new PIDController(50, 0.0, 0);
   private final PIDController thetaController = new PIDController(0.75, 0.0, 0.0);
+
+  private Translation2d COR = new Translation2d();
+  private Rotation2d previousCORInput = null;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -362,6 +366,55 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void driveFieldOriented(ChassisSpeeds velocity) {
     swerveDrive.driveFieldOriented(velocity);
+  }
+
+  /**
+   * Drive the robot given a chassis field oriented velocity.
+   *
+   * <p>COR should be in radians.
+   *
+   * <p>If the InputCOR is null, the COR is reset to zero.
+   *
+   * <p>COR is assigned once when the input changes, and is dependent on the robot's rotation. Once
+   * assigned, the input does not change until a different COR is chosen.
+   *
+   * @param velocity
+   * @param InputCOR
+   */
+  public void driveFieldOriented(ChassisSpeeds velocity, Rotation2d InputCOR) {
+    if (InputCOR == null) {
+      COR = new Translation2d();
+      previousCORInput = null;
+      swerveDrive.driveFieldOriented(velocity);
+      return;
+    }
+
+    if (!InputCOR.equals(previousCORInput)) {
+      // Scale the translation so that it falls on a rectangle with the major axis being the robot's
+      // length (32), and the minor axis being the robot's width (28).
+      // Additionally, rotate the input so that it is applied in a field-oriented manor.
+
+      // This part needs to be tested
+      InputCOR = InputCOR.rotateBy(getHeading().unaryMinus());
+
+      // I'm choosing an offset of 2 inches to account for the fact that the wheels are not exactly
+      // at the edge of the chassis.
+      double height = 32 - 2;
+      double width = 28 - 2;
+
+      // Compute r based on the smallest valid intersection
+      double rX = Units.inchesToMeters(height / 2) / Math.abs(Math.cos(InputCOR.getRadians()));
+      double rY = Units.inchesToMeters(width / 2) / Math.abs(Math.sin(InputCOR.getRadians()));
+      double r = Math.min(rX, rY);
+
+      // Compute x and y coordinates
+      double x = r * Math.cos(InputCOR.getRadians());
+      double y = r * Math.sin(InputCOR.getRadians());
+
+      COR = new Translation2d(x, y);
+    }
+
+    swerveDrive.driveFieldOriented(velocity, COR);
   }
 
   /**
