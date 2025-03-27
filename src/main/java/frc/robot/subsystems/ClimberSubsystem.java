@@ -34,11 +34,15 @@ public class ClimberSubsystem extends SubsystemBase {
   public void periodic() {
     Climber.kClimberSparkMax.set(m_speed);
 
-    if (getPosition() < Climber.kClimberLimits[0] && getSpeed() < 0.0) {
-      Climber.kClimberSparkMax.set(0.0);
-    } else if (getPosition() > Climber.kClimberLimits[1] && getSpeed() > 0.0) {
-      Climber.kClimberSparkMax.set(0.0);
-    }
+    // System.out.println(getPosition());
+
+    // if (getPosition() < Climber.kClimberLimits[0] && getSpeed() > 0.0) {
+    //   Climber.kClimberSparkMax.set(0.0);
+    // }
+    
+    // if (getPosition() > Climber.kClimberLimits[1] && getSpeed() < 0.0) {
+    //   Climber.kClimberSparkMax.set(0.0);
+    // }
 
     log();
   }

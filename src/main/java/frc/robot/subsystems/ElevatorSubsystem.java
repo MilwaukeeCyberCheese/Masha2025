@@ -60,7 +60,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         "PID Tuning Shit", Elevator.kRightElevatorSparkMax.getEncoder().getPosition());
     SmartDashboard.putNumber("ELEvator Shit", Elevator.kRightElevatorSparkMax.get());
     SmartDashboard.putString("Elevator State", m_state.toString());
-    System.out.println(m_customHeight.orElse(-2000000.0));
+    // System.out.println(m_customHeight.orElse(-2000000.0));
   }
 
   // TODO: add limits logic

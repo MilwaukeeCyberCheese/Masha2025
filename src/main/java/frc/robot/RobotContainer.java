@@ -159,7 +159,7 @@ public class RobotContainer {
           .onFalse(Commands.runOnce(m_climber::inactive));
       m_controller
           .povDown()
-          .onTrue(Commands.runOnce(m_climber::down))
+          .onTrue(Commands.runOnce(m_climber::downSlow))
           .onFalse(Commands.runOnce(m_climber::inactive));
 
       // Coral controls
