@@ -6,6 +6,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Elevator;
+import frc.robot.utils.DashboardUpdater;
 import java.util.Optional;
 
 // TODO: add sim support
@@ -24,6 +25,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private ElevatorState m_state = ElevatorState.DISABLED;
   private Optional<Double> m_customHeight = Optional.empty();
   protected double m_height;
+  private DashboardUpdater<Double> m_dashboardUpdater =
+      new DashboardUpdater<>("Elevator Height", 0.0);
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
@@ -45,13 +48,19 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     log();
 
-    Elevator.kElevatorController.setReference(m_height, ControlType.kMAXMotionPositionControl);
+    // System.out.println(Elevator.kRightElevatorSparkMax.configAccessor.closedLoop.getP());
+
+    Elevator.kElevatorController.setReference(m_height, ControlType.kPosition);
   }
 
   public void log() {
     // Log sensor data, etc. here
-    SmartDashboard.putNumber("Elevator Height", m_height);
+    // SmartDashboard.putNumber("Elevator Height", m_height);
+    SmartDashboard.putNumber(
+        "PID Tuning Shit", Elevator.kRightElevatorSparkMax.getEncoder().getPosition());
+    SmartDashboard.putNumber("ELEvator Shit", Elevator.kRightElevatorSparkMax.get());
     SmartDashboard.putString("Elevator State", m_state.toString());
+    System.out.println(m_customHeight.orElse(-2000000.0));
   }
 
   // TODO: add limits logic
@@ -94,7 +103,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public void setCustomTarget(double target) {
     m_customHeight = Optional.of(target);
-    m_state = ElevatorState.CUSTOM;
+    setState(ElevatorState.CUSTOM);
   }
 
   /**
@@ -160,6 +169,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean atBottom() {
-    return Elevator.kElevatorLimitSwitch.isPressed();
+    // return Elevator.kElevatorLimitSwitch.isPressed();
+    return false;
   }
 }

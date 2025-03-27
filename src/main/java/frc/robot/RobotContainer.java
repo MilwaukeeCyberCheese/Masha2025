@@ -16,6 +16,7 @@ import frc.robot.Constants.IOConstants;
 import frc.robot.commands.ChuteDrop;
 import frc.robot.commands.GrabCoral;
 import frc.robot.commands.drive.Drive;
+import frc.robot.commands.elevator.ManualElevatorPositionCommand;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
@@ -39,7 +40,7 @@ public class RobotContainer {
   // All da various subsystems
   public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
-  private final ElevatorSubsystem m_elevator =
+  public final static ElevatorSubsystem m_elevator =
       Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
   private final CoralHandlerSubsystem m_coral =
       Robot.isReal()
