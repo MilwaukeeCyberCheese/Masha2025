@@ -18,6 +18,7 @@ import frc.robot.commands.ReleaseCoralCommand;
 import frc.robot.commands.drive.Drive;
 import frc.robot.commands.drive.DriveCOR;
 import frc.robot.subsystems.ChuteSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
@@ -37,13 +38,14 @@ import java.util.Optional;
 public class RobotContainer {
   public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
-  private final ElevatorSubsystem m_elevator =
+  public final ElevatorSubsystem m_elevator =
       Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
   private final CoralHandlerSubsystem m_coral =
       Robot.isReal()
           ? new CoralHandlerSubsystem()
           : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
   private final ChuteSubsystem m_chute = new ChuteSubsystem();
+  private final ClimberSubsystem m_climber = new ClimberSubsystem();
 
   // Driver joysticks
   private final FilteredJoystick m_leftJoystick =
@@ -104,6 +106,20 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    m_controller
+        .rightTrigger()
+        .onTrue(Commands.runOnce(m_coral::release))
+        .onFalse(Commands.runOnce(m_coral::inactive));
+
+    m_controller
+        .povDown()
+        .onTrue(Commands.runOnce(m_climber::down))
+        .onFalse(Commands.runOnce(m_climber::inactive));
+    m_controller
+        .povUp()
+        .onTrue(Commands.runOnce(m_climber::up))
+        .onFalse(Commands.runOnce(m_climber::inactive));
 
     // Test mode allows everything to be run on a single controller
     // Test mode should not be enabled in competition
