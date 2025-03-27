@@ -131,6 +131,6 @@ public class CoralHandlerSubsystem extends SubsystemBase {
    * @return boolean
    */
   public boolean hasCoral() {
-    return m_hasCoral;
+    return !Coral.kBeamBreak.get();
   }
 }

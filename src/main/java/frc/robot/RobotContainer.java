@@ -16,7 +16,6 @@ import frc.robot.Constants.IOConstants;
 import frc.robot.commands.ChuteDrop;
 import frc.robot.commands.GrabCoral;
 import frc.robot.commands.drive.Drive;
-import frc.robot.commands.elevator.ManualElevatorPositionCommand;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
@@ -40,7 +39,7 @@ public class RobotContainer {
   // All da various subsystems
   public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
-  public final static ElevatorSubsystem m_elevator =
+  public static final ElevatorSubsystem m_elevator =
       Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
   private final CoralHandlerSubsystem m_coral =
       Robot.isReal()
@@ -96,7 +95,7 @@ public class RobotContainer {
         new Drive(
             m_drive,
             m_rightJoystick::getY,
-            m_rightJoystick::getX,
+            () -> m_rightJoystick.getX(),
             m_leftJoystick::getX,
             () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
             Optional.of(m_rightJoystick::getThrottle)));
@@ -173,6 +172,18 @@ public class RobotContainer {
           .rightTrigger()
           .onTrue(Commands.runOnce(m_coral::reverse))
           .onFalse(Commands.runOnce(m_coral::inactive));
+
+      // Elevator Controls
+      m_controller.a().onTrue(Commands.runOnce(m_elevator::L1));
+      m_controller.x().onTrue(Commands.runOnce(m_elevator::L2));
+      m_controller.b().onTrue(Commands.runOnce(m_elevator::L3));
+      m_controller.y().onTrue(Commands.runOnce(m_elevator::L4));
+
+      // Chute drop
+      m_controller
+          .leftStick()
+          .and(m_controller.rightStick())
+          .onTrue(Commands.runOnce(m_chute::drop));
     }
   }
 }

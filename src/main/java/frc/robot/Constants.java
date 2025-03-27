@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 import frc.robot.subsystems.ChuteSubsystem.ChuteState;
 import frc.robot.subsystems.ClimberSubsystem.ClimberState;
@@ -141,9 +142,9 @@ public final class Constants {
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
           .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
-          // .maxMotion
-          // .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
-          // .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
+      // .maxMotion
+      // .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
+      // .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
 
       kRightElevatorConfig.encoder.positionConversionFactor(kConversionFactor);
 
@@ -159,6 +160,11 @@ public final class Constants {
   // TODO: find like all of these
   public static final class Handler {
     public static final class Coral {
+
+      // Beam Break
+
+      public static final DigitalInput kBeamBreak = new DigitalInput(9);
+
       // TODO: figure these out
       public static final int kLeftMotorCANid = 11;
       public static final int kRightMotorCANid = 12;
@@ -186,7 +192,7 @@ public final class Constants {
           };
 
       // TODO: find these
-      public static final double kDetectionDelayTimeMS = 1000;
+      public static final double kDetectionDelayTimeMS = 300;
       public static final double kReleaseTimeMS = 1000;
 
       static {
@@ -221,7 +227,7 @@ public final class Constants {
         };
 
     // TODO: find this
-    public static final double[] kClimberLimits = {0.0, 0.0};
+    public static final double[] kClimberLimits = {20.0, 180.0};
 
     // TODO: find this
     public static final double kDownPosition = 90.0;
