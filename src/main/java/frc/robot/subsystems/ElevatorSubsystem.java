@@ -61,6 +61,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("ELEvator Shit", Elevator.kRightElevatorSparkMax.get());
     SmartDashboard.putString("Elevator State", m_state.toString());
     System.out.println(m_customHeight.orElse(-2000000.0));
+    SmartDashboard.putNumber("Elevator Height", m_height);
   }
 
   // TODO: add limits logic
