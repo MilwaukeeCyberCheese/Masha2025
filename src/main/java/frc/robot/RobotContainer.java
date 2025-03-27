@@ -39,7 +39,7 @@ public class RobotContainer {
   // All da various subsystems
   public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
-  public static final ElevatorSubsystem m_elevator =
+  public final ElevatorSubsystem m_elevator =
       Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
   private final CoralHandlerSubsystem m_coral =
       Robot.isReal()

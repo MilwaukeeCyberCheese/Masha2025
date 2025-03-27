@@ -120,8 +120,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-
-    RobotContainer.m_elevator.setCustomTarget(0);
   }
 
   /** This function is called periodically during operator control. */
