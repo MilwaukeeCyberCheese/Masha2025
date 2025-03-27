@@ -164,7 +164,7 @@ public final class Constants {
 
       // Beam Break
 
-      public static final DigitalInput kBeamBreak = new DigitalInput(9);
+      public static final DigitalInput kBeamBreak = new DigitalInput(5);
 
       // TODO: figure these out
       public static final int kLeftMotorCANid = 11;
@@ -193,7 +193,7 @@ public final class Constants {
           };
 
       // TODO: find these
-      public static final double kDetectionDelayTimeMS = 300;
+      public static final double kDetectionDelayTimeMS = 150;
       public static final double kReleaseTimeMS = 1000;
 
       static {
