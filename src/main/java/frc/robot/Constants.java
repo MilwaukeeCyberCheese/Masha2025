@@ -234,7 +234,13 @@ public final class Constants {
     public static final double kDownPosition = 90.0;
 
     static {
-      kClimberConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kClimberInverted).absoluteEncoder.positionConversionFactor(360).inverted(true);
+      kClimberConfig
+          .idleMode(IdleMode.kBrake)
+          .smartCurrentLimit(50)
+          .inverted(kClimberInverted)
+          .absoluteEncoder
+          .positionConversionFactor(360)
+          .inverted(true);
     }
   }
 

@@ -39,7 +39,7 @@ public class ClimberSubsystem extends SubsystemBase {
     // if (getPosition() < Climber.kClimberLimits[0] && getSpeed() > 0.0) {
     //   Climber.kClimberSparkMax.set(0.0);
     // }
-    
+
     // if (getPosition() > Climber.kClimberLimits[1] && getSpeed() < 0.0) {
     //   Climber.kClimberSparkMax.set(0.0);
     // }
