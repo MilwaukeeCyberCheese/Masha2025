@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
-import frc.robot.commands.ChuteDrop;
 import frc.robot.commands.GrabCoral;
 import frc.robot.commands.drive.Drive;
 import frc.robot.subsystems.ChuteSubsystem;
@@ -98,6 +97,7 @@ public class RobotContainer {
             () -> -m_rightJoystick.getX(),
             () -> -m_leftJoystick.getX(),
             () -> m_leftJoystick.getY(),
+            () -> m_leftJoystick.getButtonThree().getAsBoolean(),
             () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
         
             Optional.of(m_rightJoystick::getThrottle)));
