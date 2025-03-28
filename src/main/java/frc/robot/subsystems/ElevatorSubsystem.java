@@ -47,7 +47,21 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // System.out.println(Elevator.kRightElevatorSparkMax.configAccessor.closedLoop.getP());
 
-    Elevator.kElevatorController.setReference(m_height, ControlType.kPosition);
+    // Elevator.kElevatorController.setReference(m_height, ControlType.kPosition);
+
+    
+  }
+
+  public void upManual() {
+    Elevator.kRightElevatorSparkMax.set(0.4);
+  }
+
+  public void downManual() {
+    Elevator.kRightElevatorSparkMax.set(-0.4);
+  }
+
+  public void stop() {
+    Elevator.kRightElevatorSparkMax.set(0.0);
   }
 
   public void log() {
