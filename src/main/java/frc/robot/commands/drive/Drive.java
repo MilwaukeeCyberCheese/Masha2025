@@ -13,7 +13,8 @@ public class Drive extends Command {
   final SwerveSubsystem m_drive;
   final DoubleSupplier m_x;
   final DoubleSupplier m_y;
-  final DoubleSupplier m_rotation;
+  final DoubleSupplier m_rotationX;
+  final DoubleSupplier m_rotationY;
   final BooleanSupplier m_slowMode;
   final Optional<DoubleSupplier> m_throttle;
   SwerveInputStream driveInput;
@@ -28,7 +29,8 @@ public class Drive extends Command {
    * @param drive
    * @param x
    * @param y
-   * @param rotation
+   * @param rotationX
+   * @param rotationY
    * @param slowMode
    * @param throttle
    */
@@ -36,13 +38,15 @@ public class Drive extends Command {
       SwerveSubsystem drive,
       DoubleSupplier x,
       DoubleSupplier y,
-      DoubleSupplier rotation,
+      DoubleSupplier rotationX,
+      DoubleSupplier rotationY,
       BooleanSupplier slowMode,
       Optional<DoubleSupplier> throttle) {
     m_drive = drive;
     m_x = x;
     m_y = y;
-    m_rotation = rotation;
+    m_rotationX = rotationX;
+    m_rotationY = rotationY;
     m_slowMode = slowMode;
     m_throttle = throttle;
     addRequirements(m_drive);
@@ -66,16 +70,11 @@ public class Drive extends Command {
                             ? DriveConstants.kDrivingSpeeds[1]
                             : DriveConstants.kDrivingSpeeds[0])
                         * m_throttle.orElse(() -> 1.0).getAsDouble())
-            .withControllerRotationAxis(
-                () ->
-                    m_rotation.getAsDouble()
-                        * (m_slowMode.getAsBoolean()
-                            ? DriveConstants.kRotationSpeeds[1]
-                            : DriveConstants.kRotationSpeeds[0])
-                        * m_throttle.orElse(() -> 1.0).getAsDouble())
+            .withControllerHeadingAxis(
+                m_rotationX, m_rotationY)
             .deadband(0.1)
             .scaleTranslation(0.8)
-            .allianceRelativeControl(true);
+            .allianceRelativeControl(true).headingWhile(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

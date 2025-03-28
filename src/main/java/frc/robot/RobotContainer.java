@@ -97,6 +97,7 @@ public class RobotContainer {
             m_rightJoystick::getY,
             () -> -m_rightJoystick.getX(),
             () -> -m_leftJoystick.getX(),
+            () -> m_leftJoystick.getY(),
             () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
         
             Optional.of(m_rightJoystick::getThrottle)));
@@ -140,18 +141,18 @@ public class RobotContainer {
 
       // Zero lift
       m_rightJoystick.getButtonEleven().onTrue(Commands.runOnce(m_elevator::zero));
+
+      // Custom elevator
+      m_leftJoystick.getButtonSix().whileTrue(Commands.runOnce(m_elevator::customUp));
+      m_leftJoystick.getButtonSeven().whileTrue(Commands.runOnce(m_elevator::customDown));
     }
 
     // BUTTON BOARD
     {
       // Elevator controls
-      m_buttons.getL1().onTrue(Commands.runOnce(m_elevator::L1));
-      m_buttons.getL2().onTrue(Commands.runOnce(m_elevator::L2));
-      m_buttons.getL3().onTrue(Commands.runOnce(m_elevator::L3));
-      m_buttons.getL4().onTrue(Commands.runOnce(m_elevator::L4));
+      
 
-      // Command to drop the chute
-      m_buttons.getChuteSwitch().onTrue(new ChuteDrop(m_chute, m_climber));
+      
     }
 
     // CONTROLLER

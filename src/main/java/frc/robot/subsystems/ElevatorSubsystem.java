@@ -152,6 +152,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     setState(ElevatorState.L4);
   }
 
+  public void customUp() {
+    m_customHeight = Optional.of(m_customHeight.orElse(Elevator.kHeights.get(getState())) + 0.5);
+    setState(ElevatorState.CUSTOM);
+  }
+
+  public void customDown() {
+    m_customHeight = Optional.of(m_customHeight.orElse(0.0) + 0.5);
+    setState(ElevatorState.CUSTOM);
+  }
   // TODO: test this
   /**
    * Zero the absolute encoder of the elevator
