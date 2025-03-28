@@ -95,9 +95,10 @@ public class RobotContainer {
         new Drive(
             m_drive,
             m_rightJoystick::getY,
-            () -> m_rightJoystick.getX(),
-            m_leftJoystick::getX,
+            () -> -m_rightJoystick.getX(),
+            () -> -m_leftJoystick.getX(),
             () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
+        
             Optional.of(m_rightJoystick::getThrottle)));
   }
 
@@ -136,6 +137,9 @@ public class RobotContainer {
       // Reset gyro and set swerve drive to X-mode
       m_rightJoystick.getButtonThree().whileTrue(Commands.runOnce(m_drive::zeroGyro));
       m_rightJoystick.getButtonFour().whileTrue(Commands.runOnce(m_drive::lock));
+
+      // Zero lift
+      m_rightJoystick.getButtonEleven().onTrue(Commands.runOnce(m_elevator::zero));
     }
 
     // BUTTON BOARD
@@ -185,5 +189,11 @@ public class RobotContainer {
           .and(m_controller.rightStick())
           .onTrue(Commands.runOnce(m_chute::drop));
     }
+  }
+
+  public void ResetStates() {
+    Commands.runOnce(m_climber::inactive);
+    Commands.runOnce(m_elevator::L1);
+    Commands.runOnce(m_coral::inactive);
   }
 }

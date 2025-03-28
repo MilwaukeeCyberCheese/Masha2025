@@ -267,6 +267,6 @@ public final class Constants {
 
     // First one is normal, second is slow
     public static final double[] kRotationSpeeds = {0.7, 0.3};
-    public static final double[] kDrivingSpeeds = {0.5, 0.3};
+    public static final double[] kDrivingSpeeds = {0.7, 0.3};
   }
 }
