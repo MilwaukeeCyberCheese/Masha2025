@@ -49,6 +49,10 @@ public final class Constants {
 
   public static final class Vision {
 
+    public static final class HandlerCamera {
+      public static final String kCameraName = "handlerCamera";
+    }
+
     public static final class LeftCamera {
       public static final String kCameraName = "leftCamera";
 
