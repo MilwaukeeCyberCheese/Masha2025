@@ -82,14 +82,10 @@ public class DriveWithAlignment extends Command {
   public void execute() {
     PhotonTrackedTarget target = m_camera.getLatestResult().getBestTarget();
 
-   
-
     // m_y = () -> (target != null) ? m_yController.calculate(target.getYaw()) : 0.0;
     m_y = () -> 0.3;
 
-  
-      System.out.println(m_y.getAsDouble());
-    
+    System.out.println(m_y.getAsDouble());
 
     m_drive.driveFieldOriented(
         m_rotationMode.getAsBoolean() ? rotationMode.get() : headingMode.get());
