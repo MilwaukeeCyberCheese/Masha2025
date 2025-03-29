@@ -1,6 +1,7 @@
 package frc.robot.commands.drive;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -27,7 +28,7 @@ public class DriveWithAlignment extends Command {
 
   private final PhotonCamera m_camera;
 
-  private final PIDController m_yController = new PIDController(0.02, 0, 0);
+  private final PIDController m_yController = new PIDController(5, 0, 0);
 
   /**
    * @param drive
@@ -99,10 +100,16 @@ public class DriveWithAlignment extends Command {
 
     m_y = () -> (target != null) ? m_yController.calculate(target.bestCameraToTarget.getY()) : 0.0;
 
-    System.out.println(m_y.getAsDouble());
-
     m_drive.driveFieldOriented(
-        m_rotationMode.getAsBoolean() ? rotationMode.get() : headingMode.get());
+        m_rotationMode.getAsBoolean()
+            ? new ChassisSpeeds(
+                rotationMode.get().vxMetersPerSecond,
+                m_y.getAsDouble(),
+                rotationMode.get().omegaRadiansPerSecond)
+            : new ChassisSpeeds(
+                headingMode.get().vxMetersPerSecond,
+                m_y.getAsDouble(),
+                headingMode.get().omegaRadiansPerSecond));
   }
 
   // Called once the command ends or is interrupted.

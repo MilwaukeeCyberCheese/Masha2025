@@ -68,7 +68,7 @@ public final class Constants {
                   Units.inchesToMeters(10.75)),
               new Rotation3d(0, 0, Math.PI));
 
-      public static final DoubleSupplier kAlignOffset = () -> 0.0;
+      public static final DoubleSupplier kAlignOffset = () -> 0.12;
     }
 
     public static final class RightCamera {
@@ -83,7 +83,7 @@ public final class Constants {
                   Units.inchesToMeters(10.75)),
               new Rotation3d(0, 0, Math.PI));
 
-      public static final DoubleSupplier kAlignOffset = () -> 0.0;
+      public static final DoubleSupplier kAlignOffset = () -> 0.12;
     }
   }
 
@@ -117,7 +117,7 @@ public final class Constants {
 
     // TODO: veloc and accel is in inches per second and inches per second squared
     public static final PIDConstants kElevatorPIDConstants =
-        new PIDConstants(0.25, 0.0, 0.0, 0.5, 0.5);
+        new PIDConstants(0.3, 0.0, 0.0, 0.5, 0.5);
 
     // TODO: figure out the heights
     public static final HashMap<ElevatorState, Double> kHeights =
@@ -125,9 +125,9 @@ public final class Constants {
           {
             put(ElevatorState.DOWN, 0.0);
             put(ElevatorState.L1, 0.0);
-            put(ElevatorState.L2, 5.5);
-            put(ElevatorState.L3, 12.75);
-            put(ElevatorState.L4, 26.6);
+            put(ElevatorState.L2, 5.75);
+            put(ElevatorState.L3, 13.0);
+            put(ElevatorState.L4, 27.0);
           }
         };
 

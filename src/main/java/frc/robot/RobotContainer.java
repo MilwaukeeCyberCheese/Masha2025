@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.Vision;
 import frc.robot.commands.GrabCoral;
@@ -127,13 +128,13 @@ public class RobotContainer {
           .whileTrue(
               new DriveWithAlignment(
                   m_drive,
-                  m_buttons.getSwitch2()
-                      ? Vision.LeftCamera.kCameraName
-                      : Vision.RightCamera.kCameraName,
-                  m_buttons.getSwitch2()
-                      ? Vision.LeftCamera.kAlignOffset
-                      : Vision.RightCamera.kAlignOffset,
-                  m_rightJoystick::getX,
+                  //   m_buttons.getSwitch2() ?
+                  Vision.LeftCamera.kCameraName,
+                  //   : Vision.RightCamera.kCameraName,
+                  //   m_buttons.getSwitch2() ?
+                  Vision.LeftCamera.kAlignOffset,
+                  //   : Vision.RightCamera.kAlignOffset,
+                  m_rightJoystick::getY,
                   m_leftJoystick::getX,
                   m_leftJoystick::getY,
                   () -> m_leftJoystick.getTriggerActive().getAsBoolean(),
@@ -142,7 +143,8 @@ public class RobotContainer {
       m_leftJoystick
           .getTriggerActive()
           .and(m_rightJoystick.getTriggerActive())
-          .whileTrue(Commands.runOnce(m_coral::release));
+          .whileTrue(Commands.runOnce(m_coral::release))
+          .onFalse(Commands.runOnce(m_coral::inactive));
       m_leftJoystick
           .getTriggerActive()
           .and(m_rightJoystick.getTriggerActive().negate())
@@ -172,8 +174,7 @@ public class RobotContainer {
 
     // BUTTON BOARD
     {
-      // Elevator controls
-
+      new Trigger(() -> m_buttons.getSwitch3()).onTrue(Commands.runOnce(m_chute::drop));
     }
 
     // CONTROLLER
