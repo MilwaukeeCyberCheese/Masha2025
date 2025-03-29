@@ -73,8 +73,12 @@ public class RobotContainer {
 
     // Add routines to auto chooser
     m_autoChooser.addRoutine("Drive Out", m_routines::driveOut);
-    m_autoChooser.addRoutine("Left Score India 4", m_routines::scoreIndia4);
-    m_autoChooser.addRoutine("Left Score India 4 Kilo 4", m_routines::scoreIndia4Kilo4);
+    m_autoChooser.addRoutine("Left Score India 4", m_routines::leftIndia4);
+    m_autoChooser.addRoutine("Left Score India 4 Kilo 4", m_routines::leftIndia4Kilo4);
+    m_autoChooser.addRoutine("Right Score Foxtrot 4", m_routines::rightFoxtrot4);
+    m_autoChooser.addRoutine("Right Score Foxtrot 4 Delta 4", m_routines::rightFoxtrot4Delta4);
+    m_autoChooser.addRoutine("Middle Own India 4", m_routines::middleOwnIndia4);
+    m_autoChooser.addRoutine("Middle Opposing Foxtrot 4", m_routines::middleOpposingFoxtrot4);
 
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
 

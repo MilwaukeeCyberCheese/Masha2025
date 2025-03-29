@@ -30,7 +30,7 @@ public class Routines {
     return routine;
   }
 
-  public AutoRoutine scoreIndia4() {
+  public AutoRoutine leftIndia4() {
     AutoRoutine routine = m_factory.newRoutine("leftIndia4");
     AutoTrajectory leftStartToIndia = routine.trajectory("leftStartToIndia");
 
@@ -43,7 +43,7 @@ public class Routines {
     return routine;
   }
 
-  public AutoRoutine scoreIndia4Kilo4() {
+  public AutoRoutine leftIndia4Kilo4() {
     AutoRoutine routine = m_factory.newRoutine("leftIndia4Kilo4");
     AutoTrajectory leftStartToIndia = routine.trajectory("leftStartToIndia");
     AutoTrajectory indiaToLeftStation = routine.trajectory("indiaToLeftStation");
@@ -64,7 +64,7 @@ public class Routines {
     return routine;
   }
 
-  public AutoRoutine scoreFoxtrot4() {
+  public AutoRoutine rightFoxtrot4() {
     AutoRoutine routine = m_factory.newRoutine("leftFoxtrot4");
     AutoTrajectory rightStartToFoxtrot = routine.trajectory("rightStartToFoxtrot");
 
@@ -77,7 +77,7 @@ public class Routines {
     return routine;
   }
 
-  public AutoRoutine scoreFoxtrot4Delta4() {
+  public AutoRoutine rightFoxtrot4Delta4() {
     AutoRoutine routine = m_factory.newRoutine("leftFoxtrot4Delta4");
     AutoTrajectory rightStartToFoxtrot = routine.trajectory("rightStartToFoxtrot");
     AutoTrajectory foxtrotToRightStation = routine.trajectory("foxtrotToRightStation");
@@ -110,14 +110,15 @@ public class Routines {
     return routine;
   }
 
-  public AutoRoutine middleOpposingIndia4() {
-    AutoRoutine routine = m_factory.newRoutine("middleOpposingIndia4");
-    AutoTrajectory middleToIndia = routine.trajectory("middleOpposingToIndia");
+  public AutoRoutine middleOpposingFoxtrot4() {
+    AutoRoutine routine = m_factory.newRoutine("middleOpposingFoxtrot4");
+    AutoTrajectory middleToFoxtrot = routine.trajectory("middleOpposingToFoxtrot");
 
     routine
         .active()
         .onTrue(
-            Commands.sequence(middleToIndia.resetOdometry(), middleToIndia.cmd(), upScore4Down()));
+            Commands.sequence(
+                middleToFoxtrot.resetOdometry(), middleToFoxtrot.cmd(), upScore4Down()));
 
     return routine;
   }
