@@ -84,7 +84,8 @@ public class DriveWithAlignment extends Command {
 
     m_y = () -> (target != null) ? m_yController.calculate(target.getYaw()) : 0.0;
 
-    m_drive.driveFieldOriented(m_rotationMode.getAsBoolean() ? rotationMode.get() : headingMode.get());
+    m_drive.driveFieldOriented(
+        m_rotationMode.getAsBoolean() ? rotationMode.get() : headingMode.get());
   }
 
   // Called once the command ends or is interrupted.
