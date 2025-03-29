@@ -17,10 +17,13 @@ public class DriveWithAlignment extends Command {
   private final SwerveSubsystem m_drive;
   private final DoubleSupplier m_x;
   private DoubleSupplier m_y;
-  private final DoubleSupplier m_rotation;
-  private final BooleanSupplier m_slow;
+  private final DoubleSupplier m_rotationX;
+  private final DoubleSupplier m_rotationY;
+  private final BooleanSupplier m_rotationMode;
+  private final BooleanSupplier m_slowMode;
   private final Optional<DoubleSupplier> m_throttle;
-  private SwerveInputStream driveInput;
+  private SwerveInputStream rotationMode;
+  private SwerveInputStream headingMode;
 
   private final PhotonCamera m_camera = new PhotonCamera(HandlerCamera.kCameraName);
 
@@ -29,13 +32,17 @@ public class DriveWithAlignment extends Command {
   public DriveWithAlignment(
       SwerveSubsystem drive,
       DoubleSupplier x,
-      DoubleSupplier rotation,
+      DoubleSupplier rotationX,
+      DoubleSupplier rotationY,
+      BooleanSupplier rotationMode,
       BooleanSupplier slow,
       Optional<DoubleSupplier> throttle) {
     m_drive = drive;
     m_x = x;
-    m_rotation = rotation;
-    m_slow = slow;
+    m_rotationX = rotationX;
+    m_rotationY = rotationY;
+    m_rotationMode = rotationMode;
+    m_slowMode = slow;
     m_throttle = throttle;
     addRequirements(m_drive);
   }
@@ -43,26 +50,29 @@ public class DriveWithAlignment extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    driveInput =
+    rotationMode =
         SwerveInputStream.of(
                 m_drive.getSwerveDrive(),
                 () ->
                     m_x.getAsDouble()
-                        * (m_slow.getAsBoolean()
+                        * (m_slowMode.getAsBoolean()
                             ? DriveConstants.kDrivingSpeeds[1]
                             : DriveConstants.kDrivingSpeeds[0])
                         * m_throttle.orElse(() -> 1.0).getAsDouble(),
                 m_y)
-            .withControllerRotationAxis(
-                () ->
-                    m_rotation.getAsDouble()
-                        * (m_slow.getAsBoolean()
-                            ? DriveConstants.kRotationSpeeds[1]
-                            : DriveConstants.kRotationSpeeds[0])
-                        * m_throttle.orElse(() -> 1.0).getAsDouble())
             .deadband(0.1)
             .scaleTranslation(0.8)
-            .allianceRelativeControl(true);
+            .allianceRelativeControl(true)
+            .withControllerRotationAxis(
+                () ->
+                    m_rotationX.getAsDouble()
+                        * (m_slowMode.getAsBoolean()
+                            ? DriveConstants.kRotationSpeeds[1]
+                            : DriveConstants.kRotationSpeeds[0])
+                        * m_throttle.orElse(() -> 1.0).getAsDouble());
+
+    headingMode =
+        rotationMode.copy().headingWhile(true).withControllerHeadingAxis(m_rotationX, m_rotationY);
 
     m_yController.setSetpoint(0.0);
   }
@@ -74,7 +84,7 @@ public class DriveWithAlignment extends Command {
 
     m_y = () -> (target != null) ? m_yController.calculate(target.getYaw()) : 0.0;
 
-    m_drive.driveFieldOriented(driveInput.get());
+    m_drive.driveFieldOriented(m_rotationMode.getAsBoolean() ? rotationMode.get() : headingMode.get());
   }
 
   // Called once the command ends or is interrupted.
