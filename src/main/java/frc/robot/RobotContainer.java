@@ -191,7 +191,7 @@ public class RobotContainer {
 
   public void ResetStates() {
     Commands.runOnce(m_climber::inactive);
-    Commands.runOnce(m_elevator::L1);
+    Commands.runOnce(m_elevator::disable);
     Commands.runOnce(m_coral::inactive);
   }
 }
