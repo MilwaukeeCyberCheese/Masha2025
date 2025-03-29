@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
+import frc.robot.Constants.Vision;
 import frc.robot.commands.GrabCoral;
 import frc.robot.commands.drive.Drive;
 import frc.robot.commands.drive.DriveWithAlignment;
@@ -126,6 +127,12 @@ public class RobotContainer {
           .whileTrue(
               new DriveWithAlignment(
                   m_drive,
+                  m_buttons.getSwitch2()
+                      ? Vision.LeftCamera.kCameraName
+                      : Vision.RightCamera.kCameraName,
+                  m_buttons.getSwitch2()
+                      ? Vision.LeftCamera.kAlignOffset
+                      : Vision.RightCamera.kAlignOffset,
                   m_rightJoystick::getX,
                   m_leftJoystick::getX,
                   m_leftJoystick::getY,

@@ -3,7 +3,6 @@ package frc.robot.commands.drive;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.Vision.LeftCamera;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
@@ -15,6 +14,7 @@ import swervelib.SwerveInputStream;
 public class DriveWithAlignment extends Command {
 
   private final SwerveSubsystem m_drive;
+  private final DoubleSupplier m_ySetpoint;
   private final DoubleSupplier m_x;
   private DoubleSupplier m_y = () -> 0.0;
   private final DoubleSupplier m_rotationX;
@@ -25,12 +25,25 @@ public class DriveWithAlignment extends Command {
   private SwerveInputStream rotationMode;
   private SwerveInputStream headingMode;
 
-  private final PhotonCamera m_camera = new PhotonCamera(LeftCamera.kCameraName);
+  private final PhotonCamera m_camera;
 
   private final PIDController m_yController = new PIDController(0.02, 0, 0);
 
+  /**
+   * @param drive
+   * @param cameraName
+   * @param ySetpoint
+   * @param x
+   * @param rotationX
+   * @param rotationY
+   * @param rotationMode
+   * @param slow
+   * @param throttle
+   */
   public DriveWithAlignment(
       SwerveSubsystem drive,
+      String cameraName,
+      DoubleSupplier ySetpoint,
       DoubleSupplier x,
       DoubleSupplier rotationX,
       DoubleSupplier rotationY,
@@ -38,6 +51,8 @@ public class DriveWithAlignment extends Command {
       BooleanSupplier slow,
       Optional<DoubleSupplier> throttle) {
     m_drive = drive;
+    m_camera = new PhotonCamera(cameraName);
+    m_ySetpoint = ySetpoint;
     m_x = x;
     m_rotationX = rotationX;
     m_rotationY = rotationY;
@@ -74,7 +89,7 @@ public class DriveWithAlignment extends Command {
     headingMode =
         rotationMode.copy().headingWhile(true).withControllerHeadingAxis(m_rotationX, m_rotationY);
 
-    m_yController.setSetpoint(16.5);
+    m_yController.setSetpoint(m_ySetpoint.getAsDouble());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -82,8 +97,7 @@ public class DriveWithAlignment extends Command {
   public void execute() {
     PhotonTrackedTarget target = m_camera.getLatestResult().getBestTarget();
 
-    // m_y = () -> (target != null) ? m_yController.calculate(target.getYaw()) : 0.0;
-    m_y = () -> 0.3;
+    m_y = () -> (target != null) ? m_yController.calculate(target.bestCameraToTarget.getY()) : 0.0;
 
     System.out.println(m_y.getAsDouble());
 

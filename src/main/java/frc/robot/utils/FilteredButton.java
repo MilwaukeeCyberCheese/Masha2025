@@ -100,4 +100,16 @@ public class FilteredButton {
   public Trigger getC3() {
     return new Trigger(() -> controller.getRawButton(9));
   }
+
+  public boolean getSwitch1() {
+    return controller.getRawButton(10);
+  }
+
+  public boolean getSwitch2() {
+    return controller.getRawButton(11);
+  }
+
+  public boolean getSwitch3() {
+    return controller.getRawButton(12);
+  }
 }
