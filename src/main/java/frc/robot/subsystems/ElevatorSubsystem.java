@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -47,7 +48,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // System.out.println(Elevator.kRightElevatorSparkMax.configAccessor.closedLoop.getP());
 
-    Elevator.kElevatorController.setReference(m_height, ControlType.kPosition);
+    Elevator.kElevatorController.setReference(
+        m_height, ControlType.kPosition, ClosedLoopSlot.kSlot0, Elevator.kG);
   }
 
   public void log() {
