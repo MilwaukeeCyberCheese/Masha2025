@@ -1,58 +1,63 @@
 package frc.robot.commands.drive;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
 import swervelib.SwerveInputStream;
 
-public class Drive extends Command {
+public class DriveWithAlignment extends Command {
 
-  final SwerveSubsystem m_drive;
-  final DoubleSupplier m_x;
-  final DoubleSupplier m_y;
-  final DoubleSupplier m_rotationX;
-  final DoubleSupplier m_rotationY;
-  final BooleanSupplier m_rotationMode;
-  final BooleanSupplier m_slowMode;
-  final Optional<DoubleSupplier> m_throttle;
-  SwerveInputStream rotationMode;
-  SwerveInputStream headingMode;
+  private final SwerveSubsystem m_drive;
+  private final DoubleSupplier m_ySetpoint;
+  private final DoubleSupplier m_x;
+  private DoubleSupplier m_y = () -> 0.0;
+  private final DoubleSupplier m_rotationX;
+  private final DoubleSupplier m_rotationY;
+  private final BooleanSupplier m_rotationMode;
+  private final BooleanSupplier m_slowMode;
+  private final Optional<DoubleSupplier> m_throttle;
+  private SwerveInputStream rotationMode;
+  private SwerveInputStream headingMode;
+
+  private final PhotonCamera m_camera;
+
+  private final PIDController m_yController = new PIDController(0.02, 0, 0);
 
   /**
-   * Drives the robot using field-oriented control
-   *
-   * <p>Recall that the coordinate system used is NWU (North, West, Up)
-   *
-   * <p>See https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
-   *
    * @param drive
+   * @param cameraName
+   * @param ySetpoint
    * @param x
-   * @param y
    * @param rotationX
    * @param rotationY
-   * @param rotationMode false is heading, true is rotation
-   * @param slowMode
+   * @param rotationMode
+   * @param slow
    * @param throttle
    */
-  public Drive(
+  public DriveWithAlignment(
       SwerveSubsystem drive,
+      String cameraName,
+      DoubleSupplier ySetpoint,
       DoubleSupplier x,
-      DoubleSupplier y,
       DoubleSupplier rotationX,
       DoubleSupplier rotationY,
       BooleanSupplier rotationMode,
-      BooleanSupplier slowMode,
+      BooleanSupplier slow,
       Optional<DoubleSupplier> throttle) {
     m_drive = drive;
+    m_camera = new PhotonCamera(cameraName);
+    m_ySetpoint = ySetpoint;
     m_x = x;
-    m_y = y;
     m_rotationX = rotationX;
     m_rotationY = rotationY;
     m_rotationMode = rotationMode;
-    m_slowMode = slowMode;
+    m_slowMode = slow;
     m_throttle = throttle;
     addRequirements(m_drive);
   }
@@ -69,12 +74,7 @@ public class Drive extends Command {
                             ? DriveConstants.kDrivingSpeeds[1]
                             : DriveConstants.kDrivingSpeeds[0])
                         * m_throttle.orElse(() -> 1.0).getAsDouble(),
-                () ->
-                    m_y.getAsDouble()
-                        * (m_slowMode.getAsBoolean()
-                            ? DriveConstants.kDrivingSpeeds[1]
-                            : DriveConstants.kDrivingSpeeds[0])
-                        * m_throttle.orElse(() -> 1.0).getAsDouble())
+                m_y)
             .deadband(0.1)
             .scaleTranslation(0.8)
             .allianceRelativeControl(true)
@@ -88,11 +88,19 @@ public class Drive extends Command {
 
     headingMode =
         rotationMode.copy().headingWhile(true).withControllerHeadingAxis(m_rotationX, m_rotationY);
+
+    m_yController.setSetpoint(m_ySetpoint.getAsDouble());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    PhotonTrackedTarget target = m_camera.getLatestResult().getBestTarget();
+
+    m_y = () -> (target != null) ? m_yController.calculate(target.bestCameraToTarget.getY()) : 0.0;
+
+    System.out.println(m_y.getAsDouble());
+
     m_drive.driveFieldOriented(
         m_rotationMode.getAsBoolean() ? rotationMode.get() : headingMode.get());
   }

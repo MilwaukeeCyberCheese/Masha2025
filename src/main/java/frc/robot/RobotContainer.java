@@ -9,13 +9,15 @@ import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
-import frc.robot.commands.GrabCoralCommand;
-import frc.robot.commands.ReleaseCoralCommand;
+import frc.robot.Constants.Vision;
+import frc.robot.commands.GrabCoral;
 import frc.robot.commands.drive.Drive;
+import frc.robot.commands.drive.DriveWithAlignment;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
@@ -35,6 +37,8 @@ import java.util.Optional;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
+  // All da various subsystems
   public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
   public final ElevatorSubsystem m_elevator =
@@ -59,42 +63,51 @@ public class RobotContainer {
   // Button Board
   private final FilteredButton m_buttons = new FilteredButton(IOConstants.kButtonBoardPort);
 
+  // More auto stuff
   public final AutoChooser m_autoChooser = new AutoChooser();
   private final AutoFactory m_autoFactory =
       new AutoFactory(
           m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive);
-  private final Routines m_routines = new Routines(m_autoFactory);
+  private final Routines m_routines = new Routines(m_autoFactory, m_elevator, m_coral);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureButtonBindings();
 
-    m_autoChooser.addRoutine("Test Routine", m_routines::test);
-    m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
-    m_autoChooser.addRoutine("Blue Coral Station Routine", m_routines::blueCoralStation);
-    m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
-    m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
+    // Add routines to auto chooser
+    m_autoChooser.addRoutine("Drive Out", m_routines::driveOut);
+    m_autoChooser.addRoutine("Left Score India 4", m_routines::leftIndia4);
+    m_autoChooser.addRoutine("Left Score India 4 Kilo 4", m_routines::leftIndia4Kilo4);
+    m_autoChooser.addRoutine("Right Score Foxtrot 4", m_routines::rightFoxtrot4);
+    m_autoChooser.addRoutine("Right Score Foxtrot 4 Delta 4", m_routines::rightFoxtrot4Delta4);
+    m_autoChooser.addRoutine("Middle Own India 4", m_routines::middleOwnIndia4);
+    m_autoChooser.addRoutine("Middle Opposing Foxtrot 4", m_routines::middleOpposingFoxtrot4);
+
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
 
-    if (IOConstants.kTestMode) {
-      m_drive.setDefaultCommand(
-          new Drive(
-              m_drive,
-              m_controller::getLeftY,
-              m_controller::getLeftX,
-              () -> -m_controller.getRightX(),
-              () -> m_controller.rightBumper().getAsBoolean(),
-              Optional.empty()));
-    } else {
-      m_drive.setDefaultCommand(
-          new Drive(
-              m_drive,
-              m_leftJoystick::getY,
-              m_leftJoystick::getX,
-              m_rightJoystick::getX,
-              () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
-              Optional.of(m_rightJoystick::getThrottle)));
-    }
+    // Drive with controller
+    // m_drive.setDefaultCommand(
+    //     new Drive(
+    //         m_drive,
+    //         m_controller::getLeftY,
+    //         m_controller::getLeftX,
+    //         () -> -m_controller.getRightX(),
+    //         () -> m_controller.getRightY(),
+    //         () -> m_controller.leftBumper().getAsBoolean(),
+    //         () -> m_controller.rightBumper().getAsBoolean(),
+    //         Optional.empty()));
+
+    // Drive with joysticks
+    m_drive.setDefaultCommand(
+        new Drive(
+            m_drive,
+            m_rightJoystick::getY,
+            () -> -m_rightJoystick.getX(),
+            () -> -m_leftJoystick.getX(),
+            () -> m_leftJoystick.getY(),
+            () -> m_leftJoystick.getButtonThree().getAsBoolean(),
+            () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
+            Optional.of(m_rightJoystick::getThrottle)));
   }
 
   /**
@@ -105,40 +118,105 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    m_controller
-        .rightTrigger()
-        .onTrue(Commands.runOnce(m_coral::release))
-        .onFalse(Commands.runOnce(m_coral::inactive));
+    // DRIVER JOYSTICKS
+    {
+      // Left joystick intakes coral, right joystick aligns to reef.  When both are held at once,
+      // coral is released.
+      m_rightJoystick
+          .getTriggerActive()
+          .whileTrue(
+              new DriveWithAlignment(
+                  m_drive,
+                  m_buttons.getSwitch2()
+                      ? Vision.LeftCamera.kCameraName
+                      : Vision.RightCamera.kCameraName,
+                  m_buttons.getSwitch2()
+                      ? Vision.LeftCamera.kAlignOffset
+                      : Vision.RightCamera.kAlignOffset,
+                  m_rightJoystick::getX,
+                  m_leftJoystick::getX,
+                  m_leftJoystick::getY,
+                  () -> m_leftJoystick.getTriggerActive().getAsBoolean(),
+                  () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
+                  Optional.of(() -> m_rightJoystick.getThrottle())));
+      m_leftJoystick
+          .getTriggerActive()
+          .and(m_rightJoystick.getTriggerActive())
+          .whileTrue(Commands.runOnce(m_coral::release));
+      m_leftJoystick
+          .getTriggerActive()
+          .and(m_rightJoystick.getTriggerActive().negate())
+          .whileTrue(new GrabCoral(m_coral));
 
-    m_controller
-        .povDown()
-        .onTrue(Commands.runOnce(m_climber::down))
-        .onFalse(Commands.runOnce(m_climber::inactive));
-    m_controller
-        .povUp()
-        .onTrue(Commands.runOnce(m_climber::up))
-        .onFalse(Commands.runOnce(m_climber::inactive));
+      // Climber controls
+      m_leftJoystick
+          .getButtonEleven()
+          .onTrue(Commands.runOnce(m_climber::up))
+          .onFalse(Commands.runOnce(m_climber::inactive));
+      m_leftJoystick
+          .getButtonTen()
+          .onTrue(Commands.runOnce(m_climber::downSlow))
+          .onFalse(Commands.runOnce(m_climber::inactive));
 
-    // Test mode allows everything to be run on a single controller
-    // Test mode should not be enabled in competition
-    if (IOConstants.kTestMode) {
-      m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
-    } else {
+      // Reset gyro and set swerve drive to X-mode
+      m_rightJoystick.getButtonThree().whileTrue(Commands.runOnce(m_drive::zeroGyro));
+      m_rightJoystick.getButtonFour().whileTrue(Commands.runOnce(m_drive::lock));
 
-      // drop chute
-      m_buttons.getChuteSwitch().onTrue(Commands.runOnce(m_chute::drop));
+      // Zero lift
+      m_rightJoystick.getButtonEleven().onTrue(Commands.runOnce(m_elevator::zero));
 
-      // Zero gyro with A button
-      m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
-
-      if (!Robot.isReal()) {
-        m_controller
-            .b()
-            .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
-      }
-
-      m_controller.rightBumper().onTrue(new ReleaseCoralCommand(m_coral));
-      m_controller.leftBumper().onTrue(new GrabCoralCommand(m_coral));
+      // Custom elevator
+      m_leftJoystick.getButtonSix().whileTrue(Commands.runOnce(m_elevator::customUp));
+      m_leftJoystick.getButtonSeven().whileTrue(Commands.runOnce(m_elevator::customDown));
     }
+
+    // BUTTON BOARD
+    {
+      // Elevator controls
+
+    }
+
+    // CONTROLLER
+    {
+      // Climber controls
+      m_controller
+          .povUp()
+          .onTrue(Commands.runOnce(m_climber::up))
+          .onFalse(Commands.runOnce(m_climber::inactive));
+      m_controller
+          .povDown()
+          .onTrue(Commands.runOnce(m_climber::downSlow))
+          .onFalse(Commands.runOnce(m_climber::inactive));
+
+      // Coral controls
+      //   m_controller.leftBumper().whileTrue(new GrabCoral(m_coral));
+      m_controller
+          .leftTrigger()
+          .onTrue(Commands.runOnce(m_coral::release))
+          .onFalse(Commands.runOnce(m_coral::inactive));
+      m_controller
+          .rightTrigger()
+          .onTrue(Commands.runOnce(m_coral::reverse))
+          .onFalse(Commands.runOnce(m_coral::inactive));
+
+      // Elevator Controls
+      m_controller.a().onTrue(Commands.runOnce(m_elevator::L1));
+      m_controller.x().onTrue(Commands.runOnce(m_elevator::L2));
+      m_controller.b().onTrue(Commands.runOnce(m_elevator::L3));
+      m_controller.y().onTrue(Commands.runOnce(m_elevator::L4));
+
+      // Chute drop
+      m_controller
+          .leftStick()
+          .and(m_controller.rightStick())
+          .onTrue(Commands.runOnce(m_chute::drop));
+    }
+  }
+
+  public Command ResetStates() {
+    return Commands.sequence(
+        Commands.runOnce(m_climber::inactive),
+        Commands.runOnce(m_elevator::disable),
+        Commands.runOnce(m_coral::inactive));
   }
 }

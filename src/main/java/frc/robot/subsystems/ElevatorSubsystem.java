@@ -25,6 +25,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private Optional<Double> m_customHeight = Optional.empty();
   protected double m_height;
 
+  /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
     Elevator.kLeftElevatorSparkMax.configure(
         Elevator.kLeftElevatorConfig,
@@ -51,7 +52,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void log() {
     // Log sensor data, etc. here
-    SmartDashboard.putNumber("Elevator Height", m_height);
+    // SmartDashboard.putNumber("Elevator Height", m_height);
+    SmartDashboard.putNumber(
+        "PID Tuning Shit", Elevator.kRightElevatorSparkMax.getEncoder().getPosition());
+    SmartDashboard.putNumber("ELEvator Shit", Elevator.kRightElevatorSparkMax.get());
+    SmartDashboard.putString("Elevator State", m_state.toString());
+    // System.out.println(m_customHeight.orElse(-2000000.0));
   }
 
   // TODO: add limits logic
@@ -144,6 +150,24 @@ public class ElevatorSubsystem extends SubsystemBase {
   /** Set elevator state to L4 */
   public void L4() {
     setState(ElevatorState.L4);
+  }
+
+  public void customUp() {
+    m_customHeight =
+        Optional.of(
+            (getState().equals(ElevatorState.CUSTOM))
+                ? m_customHeight.orElse(Elevator.kHeights.get(getState())) + 0.5
+                : Elevator.kHeights.get(getState()) + 0.5);
+    setState(ElevatorState.CUSTOM);
+  }
+
+  public void customDown() {
+    m_customHeight =
+        Optional.of(
+            (getState().equals(ElevatorState.CUSTOM))
+                ? m_customHeight.orElse(Elevator.kHeights.get(getState())) - 0.5
+                : Elevator.kHeights.get(getState()) - 0.5);
+    setState(ElevatorState.CUSTOM);
   }
 
   // TODO: test this

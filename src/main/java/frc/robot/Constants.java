@@ -10,22 +10,20 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
+import frc.robot.subsystems.ChuteSubsystem.ChuteState;
 import frc.robot.subsystems.ClimberSubsystem.ClimberState;
 import frc.robot.subsystems.CoralHandlerSubsystem.CoralHandlerState;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.utils.PIDConstants;
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -53,21 +51,40 @@ public final class Constants {
   }
 
   public static final class Vision {
-    public static final String kCameraName = "Brio_100";
-    // Cam mounted facing forward, half a meter forward of center, half a meter up
-    // from center.
-    public static final Transform3d kRobotToCam =
-        new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
 
-    // The layout of the AprilTags on the field
-    public static final AprilTagFieldLayout kTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+    public static final class HandlerCamera {
+      public static final String kCameraName = "handlerCamera";
+    }
 
-    // The standard deviations of our vision estimated poses, which affect
-    // correction rate
-    // (Fake values. Experiment and determine estimation noise on an actual robot.)
-    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+    public static final class LeftCamera {
+      public static final String kCameraName = "leftCamera";
+
+      // z is good
+      public static final Transform3d kRobotToCamera =
+          new Transform3d(
+              new Translation3d(
+                  Units.inchesToMeters(-6.94),
+                  Units.inchesToMeters(10.27),
+                  Units.inchesToMeters(10.75)),
+              new Rotation3d(0, 0, Math.PI));
+
+      public static final DoubleSupplier kAlignOffset = () -> 0.0;
+    }
+
+    public static final class RightCamera {
+      public static final String kCameraName = "rightCamera";
+
+      // z is good
+      public static final Transform3d kRobotToCamera =
+          new Transform3d(
+              new Translation3d(
+                  Units.inchesToMeters(-6.94),
+                  Units.inchesToMeters(-10.27),
+                  Units.inchesToMeters(10.75)),
+              new Rotation3d(0, 0, Math.PI));
+
+      public static final DoubleSupplier kAlignOffset = () -> 0.0;
+    }
   }
 
   // TODO: figure out the best way to run the elevator
@@ -139,11 +156,11 @@ public final class Constants {
       kRightElevatorConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
-      // Not using these currently, uncomment if needed
-      // .maxMotion
-      // .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
-      // .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
+          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD)
+          // Now using these, comment them out if it breaks
+          .maxMotion
+          .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
+          .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
 
       kRightElevatorConfig.encoder.positionConversionFactor(kConversionFactor);
 
@@ -159,6 +176,11 @@ public final class Constants {
   // TODO: find like all of these
   public static final class Handler {
     public static final class Coral {
+
+      // Beam Break
+
+      public static final DigitalInput kBeamBreak = new DigitalInput(5);
+
       // TODO: figure these out
       public static final int kLeftMotorCANid = 11;
       public static final int kRightMotorCANid = 12;
@@ -179,13 +201,14 @@ public final class Constants {
           new HashMap<>() {
             {
               put(CoralHandlerState.INACTIVE, 0.0);
-              put(CoralHandlerState.GRAB, 0.6);
-              put(CoralHandlerState.RELEASE, 0.4);
+              put(CoralHandlerState.GRAB, 0.3);
+              put(CoralHandlerState.RELEASE, 0.3);
+              put(CoralHandlerState.REVERSE, -0.3);
             }
           };
 
       // TODO: find these
-      public static final double kDetectionDelayTimeMS = 1000;
+      public static final double kDetectionDelayTimeMS = 150;
       public static final double kReleaseTimeMS = 1000;
 
       static {
@@ -208,14 +231,6 @@ public final class Constants {
     // TODO: find out if it's inverted
     public static final boolean kClimberInverted = false;
 
-    public static final SparkClosedLoopController kClimberController =
-        kClimberSparkMax.getClosedLoopController();
-
-    public static final PIDConstants kClimberPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
-
-    // TODO: confirm that this is right
-    public static final double kConversionFactor = Math.PI * 2;
-
     // TODO: find these
     public static final HashMap<ClimberState, Double> kSpeeds =
         new HashMap<ClimberState, Double>() {
@@ -223,37 +238,37 @@ public final class Constants {
             put(ClimberState.INACTIVE, 0.0);
             put(ClimberState.UP, 0.4);
             put(ClimberState.DOWN, -1.0);
+            put(ClimberState.DOWNSLOW, -0.4);
           }
         };
 
     // TODO: find this
-    public static final double[] kClimberLimits = {0.0, 0.0};
+    public static final double[] kClimberLimits = {20.0, 180.0};
 
     // TODO: find this
-    public static final double kClimberTolerance = 0.01;
+    public static final double kDownPosition = 90.0;
 
     static {
-      kClimberConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kClimberInverted);
-
       kClimberConfig
+          .idleMode(IdleMode.kBrake)
+          .smartCurrentLimit(50)
+          .inverted(kClimberInverted)
           .absoluteEncoder
-          .positionConversionFactor(kConversionFactor)
-          .velocityConversionFactor(kConversionFactor / 60.0);
-
-      kClimberConfig
-          .closedLoop
-          .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-          .pid(kClimberPIDConstants.kP, kClimberPIDConstants.kI, kClimberPIDConstants.kD)
-          .outputRange(-1, 1);
+          .positionConversionFactor(360)
+          .inverted(true);
     }
   }
 
   public static final class Chute {
     public static final Servo kServo = new Servo(0);
 
-    // TODO: find these
-    public static final double kUp = 0.0;
-    public static final double kDown = 90.0;
+    public static final HashMap<ChuteState, Double> kPositions =
+        new HashMap<ChuteState, Double>() {
+          {
+            put(ChuteState.UP, 0.0);
+            put(ChuteState.DOWN, 90.0);
+          }
+        };
   }
 
   public static final class DriveConstants {
@@ -267,6 +282,6 @@ public final class Constants {
 
     // First one is normal, second is slow
     public static final double[] kRotationSpeeds = {0.7, 0.3};
-    public static final double[] kDrivingSpeeds = {0.5, 0.3};
+    public static final double[] kDrivingSpeeds = {0.7, 0.3};
   }
 }

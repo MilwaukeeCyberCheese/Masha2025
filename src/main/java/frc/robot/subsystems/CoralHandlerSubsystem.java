@@ -19,6 +19,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     INACTIVE,
     GRAB,
     RELEASE,
+    REVERSE,
     CUSTOM
   }
 
@@ -27,6 +28,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
   private Optional<Double> m_customSpeed = Optional.empty();
   protected double m_speed;
 
+  /** Creates a new CoralHandlerSubsystem. */
   public CoralHandlerSubsystem() {
     Coral.kLeftSparkMax.configure(
         Coral.kLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -118,12 +120,17 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     setState(CoralHandlerState.INACTIVE);
   }
 
+  /** Set state to reverse */
+  public void reverse() {
+    setState(CoralHandlerState.REVERSE);
+  }
+
   /**
    * Check if the coral handler has a coral
    *
    * @return boolean
    */
   public boolean hasCoral() {
-    return m_hasCoral;
+    return !Coral.kBeamBreak.get();
   }
 }
