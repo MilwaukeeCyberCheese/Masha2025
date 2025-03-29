@@ -87,7 +87,7 @@ public class Drive extends Command {
                         * m_throttle.orElse(() -> 1.0).getAsDouble());
 
     headingMode =
-        rotationMode.headingWhile(true).withControllerHeadingAxis(m_rotationX, m_rotationY);
+        rotationMode.copy().headingWhile(true).withControllerHeadingAxis(m_rotationX, m_rotationY);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

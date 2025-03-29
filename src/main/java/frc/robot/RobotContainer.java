@@ -86,6 +86,8 @@ public class RobotContainer {
     //         m_controller::getLeftY,
     //         m_controller::getLeftX,
     //         () -> -m_controller.getRightX(),
+    //         () -> m_controller.getRightY(),
+    //         () -> m_controller.leftBumper().getAsBoolean(),
     //         () -> m_controller.rightBumper().getAsBoolean(),
     //         Optional.empty()));
 
@@ -165,7 +167,7 @@ public class RobotContainer {
           .onFalse(Commands.runOnce(m_climber::inactive));
 
       // Coral controls
-      m_controller.leftBumper().whileTrue(new GrabCoral(m_coral));
+      //   m_controller.leftBumper().whileTrue(new GrabCoral(m_coral));
       m_controller
           .leftTrigger()
           .onTrue(Commands.runOnce(m_coral::release))
