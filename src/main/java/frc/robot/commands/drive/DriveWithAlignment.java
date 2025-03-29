@@ -3,7 +3,7 @@ package frc.robot.commands.drive;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.Vision.HandlerCamera;
+import frc.robot.Constants.Vision.LeftCamera;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
@@ -16,7 +16,7 @@ public class DriveWithAlignment extends Command {
 
   private final SwerveSubsystem m_drive;
   private final DoubleSupplier m_x;
-  private DoubleSupplier m_y;
+  private DoubleSupplier m_y = () -> 0.0;
   private final DoubleSupplier m_rotationX;
   private final DoubleSupplier m_rotationY;
   private final BooleanSupplier m_rotationMode;
@@ -25,9 +25,9 @@ public class DriveWithAlignment extends Command {
   private SwerveInputStream rotationMode;
   private SwerveInputStream headingMode;
 
-  private final PhotonCamera m_camera = new PhotonCamera(HandlerCamera.kCameraName);
+  private final PhotonCamera m_camera = new PhotonCamera(LeftCamera.kCameraName);
 
-  private final PIDController m_yController = new PIDController(0.005, 0, 0);
+  private final PIDController m_yController = new PIDController(0.02, 0, 0);
 
   public DriveWithAlignment(
       SwerveSubsystem drive,
@@ -74,7 +74,7 @@ public class DriveWithAlignment extends Command {
     headingMode =
         rotationMode.copy().headingWhile(true).withControllerHeadingAxis(m_rotationX, m_rotationY);
 
-    m_yController.setSetpoint(0.0);
+    m_yController.setSetpoint(16.5);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -82,7 +82,14 @@ public class DriveWithAlignment extends Command {
   public void execute() {
     PhotonTrackedTarget target = m_camera.getLatestResult().getBestTarget();
 
-    m_y = () -> (target != null) ? m_yController.calculate(target.getYaw()) : 0.0;
+   
+
+    // m_y = () -> (target != null) ? m_yController.calculate(target.getYaw()) : 0.0;
+    m_y = () -> 0.3;
+
+  
+      System.out.println(m_y.getAsDouble());
+    
 
     m_drive.driveFieldOriented(
         m_rotationMode.getAsBoolean() ? rotationMode.get() : headingMode.get());

@@ -9,12 +9,14 @@ import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
 import frc.robot.commands.GrabCoral;
 import frc.robot.commands.drive.Drive;
+import frc.robot.commands.drive.DriveWithAlignment;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
@@ -119,7 +121,17 @@ public class RobotContainer {
     {
       // Left joystick intakes coral, right joystick aligns to reef.  When both are held at once,
       // coral is released.
-      // m_rightJoystick.getTriggerActive().whileTrue(); // Align to reef
+      m_rightJoystick
+          .getTriggerActive()
+          .whileTrue(
+              new DriveWithAlignment(
+                  m_drive,
+                  m_rightJoystick::getX,
+                  m_leftJoystick::getX,
+                  m_leftJoystick::getY,
+                  () -> m_leftJoystick.getTriggerActive().getAsBoolean(),
+                  () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
+                  Optional.of(() -> m_rightJoystick.getThrottle())));
       m_leftJoystick
           .getTriggerActive()
           .and(m_rightJoystick.getTriggerActive())
@@ -136,7 +148,7 @@ public class RobotContainer {
           .onFalse(Commands.runOnce(m_climber::inactive));
       m_leftJoystick
           .getButtonTen()
-          .onTrue(Commands.runOnce(m_climber::down))
+          .onTrue(Commands.runOnce(m_climber::downSlow))
           .onFalse(Commands.runOnce(m_climber::inactive));
 
       // Reset gyro and set swerve drive to X-mode
@@ -194,9 +206,10 @@ public class RobotContainer {
     }
   }
 
-  public void ResetStates() {
-    Commands.runOnce(m_climber::inactive);
-    Commands.runOnce(m_elevator::disable);
-    Commands.runOnce(m_coral::inactive);
+  public Command ResetStates() {
+    return Commands.sequence(
+        Commands.runOnce(m_climber::inactive),
+        Commands.runOnce(m_elevator::disable),
+        Commands.runOnce(m_coral::inactive));
   }
 }
