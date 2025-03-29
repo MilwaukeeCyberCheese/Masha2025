@@ -66,9 +66,7 @@
     "transitory": {
       "SmartDashboard": {
         "Auto Chooser": {
-          "string[]##v_/SmartDashboard/Auto Chooser/options": {
-            "open": true
-          }
+          "open": true
         },
         "Auto Controllers": {
           "X": {

@@ -65,18 +65,17 @@ public class RobotContainer {
   private final AutoFactory m_autoFactory =
       new AutoFactory(
           m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive);
-  private final Routines m_routines = new Routines(m_autoFactory);
+  private final Routines m_routines = new Routines(m_autoFactory, m_elevator, m_coral);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureButtonBindings();
 
     // Add routines to auto chooser
-    m_autoChooser.addRoutine("Test Routine", m_routines::test);
-    m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
-    m_autoChooser.addRoutine("Blue Coral Station Routine", m_routines::blueCoralStation);
-    m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
-    m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
+    m_autoChooser.addRoutine("Drive Out", m_routines::driveOut);
+    m_autoChooser.addRoutine("Left Score India 4", m_routines::scoreIndia4);
+    m_autoChooser.addRoutine("Left Score India 4 Kilo 4", m_routines::scoreIndia4Kilo4);
+
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
 
     // Drive with controller

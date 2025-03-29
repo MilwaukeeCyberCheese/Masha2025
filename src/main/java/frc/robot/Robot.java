@@ -111,9 +111,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {
-    // RobotContainer.m_drive.drive(new ChassisSpeeds(1, 0, 0));
-  }
+  public void autonomousPeriodic() {}
 
   @Override
   public void teleopInit() {

@@ -4,7 +4,120 @@
  "type":"Swerve",
  "variables":{
   "expressions":{},
-  "poses":{}
+  "poses":{
+   "delta":{
+    "x":{
+     "exp":"3.95 m",
+     "val":3.95
+    },
+    "y":{
+     "exp":"2.75 m",
+     "val":2.75
+    },
+    "heading":{
+     "exp":"60 deg",
+     "val":1.0471975511965976
+    }
+   },
+   "foxtrot":{
+    "x":{
+     "exp":"5.325 m",
+     "val":5.325
+    },
+    "y":{
+     "exp":"2.875 m",
+     "val":2.875
+    },
+    "heading":{
+     "exp":"120 deg",
+     "val":2.0943951023931953
+    }
+   },
+   "india":{
+    "x":{
+     "exp":"5.35 m",
+     "val":5.35
+    },
+    "y":{
+     "exp":"5.2 m",
+     "val":5.2
+    },
+    "heading":{
+     "exp":"240 deg",
+     "val":4.1887902047863905
+    }
+   },
+   "kilo":{
+    "x":{
+     "exp":"3.9 m",
+     "val":3.9
+    },
+    "y":{
+     "exp":"5.38 m",
+     "val":5.38
+    },
+    "heading":{
+     "exp":"300 deg",
+     "val":5.235987755982989
+    }
+   },
+   "leftStart":{
+    "x":{
+     "exp":"8 m",
+     "val":8.0
+    },
+    "y":{
+     "exp":"7.675 m",
+     "val":7.675
+    },
+    "heading":{
+     "exp":"180 deg",
+     "val":3.141592653589793
+    }
+   },
+   "leftStation":{
+    "x":{
+     "exp":"1.6 m",
+     "val":1.6
+    },
+    "y":{
+     "exp":"7.375 m",
+     "val":7.375
+    },
+    "heading":{
+     "exp":"306 deg",
+     "val":5.340707511102648
+    }
+   },
+   "rightStart":{
+    "x":{
+     "exp":"8 m",
+     "val":8.0
+    },
+    "y":{
+     "exp":"0.4 m",
+     "val":0.4
+    },
+    "heading":{
+     "exp":"180 deg",
+     "val":3.141592653589793
+    }
+   },
+   "rightStation":{
+    "x":{
+     "exp":"1.65 m",
+     "val":1.65
+    },
+    "y":{
+     "exp":"0.6 m",
+     "val":0.6
+    },
+    "heading":{
+     "exp":"54 deg",
+     "val":0.942477796076938
+    }
+   }
+  }
  },
  "config":{
   "frontLeft":{
@@ -57,15 +170,15 @@
   },
   "bumper":{
    "front":{
-    "exp":"0.4572 m",
+    "exp":"18 in",
     "val":0.4572
    },
    "side":{
-    "exp":"0.4064 m",
-    "val":0.4064
+    "exp":"14 in",
+    "val":0.35559999999999997
    },
    "back":{
-    "exp":"0.4572 m",
+    "exp":"18 in",
     "val":0.4572
    }
   },
