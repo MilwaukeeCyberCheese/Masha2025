@@ -3,6 +3,7 @@ package frc.robot;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.GrabCoral;
 import frc.robot.subsystems.CoralHandlerSubsystem;
@@ -30,27 +31,20 @@ public class Routines {
   }
 
   public AutoRoutine scoreIndia4() {
-    AutoRoutine routine = m_factory.newRoutine("scoreIndia4");
+    AutoRoutine routine = m_factory.newRoutine("leftIndia4");
     AutoTrajectory leftStartToIndia = routine.trajectory("leftStartToIndia");
 
     routine
         .active()
         .onTrue(
             Commands.sequence(
-                leftStartToIndia.resetOdometry(),
-                leftStartToIndia.cmd(),
-                Commands.runOnce(m_elevator::L4),
-                new WaitCommandMilli(200),
-                Commands.runOnce(m_coral::release),
-                new WaitCommandMilli(400),
-                Commands.runOnce(m_coral::inactive),
-                Commands.runOnce(m_elevator::L1)));
+                leftStartToIndia.resetOdometry(), leftStartToIndia.cmd(), upScore4Down()));
 
     return routine;
   }
 
   public AutoRoutine scoreIndia4Kilo4() {
-    AutoRoutine routine = m_factory.newRoutine("scoreIndia4Kilo4");
+    AutoRoutine routine = m_factory.newRoutine("leftIndia4Kilo4");
     AutoTrajectory leftStartToIndia = routine.trajectory("leftStartToIndia");
     AutoTrajectory indiaToLeftStation = routine.trajectory("indiaToLeftStation");
     AutoTrajectory leftStationToKilo = routine.trajectory("leftStationToKilo");
@@ -61,47 +55,30 @@ public class Routines {
             Commands.sequence(
                 leftStartToIndia.resetOdometry(),
                 leftStartToIndia.cmd(),
-                Commands.runOnce(m_elevator::L4),
-                new WaitCommandMilli(200),
-                Commands.runOnce(m_coral::release),
-                new WaitCommandMilli(400),
-                Commands.runOnce(m_coral::inactive),
-                Commands.runOnce(m_elevator::L1),
+                upScore4Down(),
                 indiaToLeftStation.cmd(),
                 new GrabCoral(m_coral),
                 leftStationToKilo.cmd(),
-                Commands.runOnce(m_elevator::L4),
-                new WaitCommandMilli(200),
-                Commands.runOnce(m_coral::release),
-                new WaitCommandMilli(400),
-                Commands.runOnce(m_coral::inactive),
-                Commands.runOnce(m_elevator::L1)));
+                upScore4Down()));
 
     return routine;
   }
 
   public AutoRoutine scoreFoxtrot4() {
-    AutoRoutine routine = m_factory.newRoutine("scoreFoxtrot4");
+    AutoRoutine routine = m_factory.newRoutine("leftFoxtrot4");
     AutoTrajectory rightStartToFoxtrot = routine.trajectory("rightStartToFoxtrot");
 
     routine
         .active()
         .onTrue(
             Commands.sequence(
-                rightStartToFoxtrot.resetOdometry(),
-                rightStartToFoxtrot.cmd(),
-                Commands.runOnce(m_elevator::L4),
-                new WaitCommandMilli(200),
-                Commands.runOnce(m_coral::release),
-                new WaitCommandMilli(400),
-                Commands.runOnce(m_coral::inactive),
-                Commands.runOnce(m_elevator::L1)));
+                rightStartToFoxtrot.resetOdometry(), rightStartToFoxtrot.cmd(), upScore4Down()));
 
     return routine;
   }
 
   public AutoRoutine scoreFoxtrot4Delta4() {
-    AutoRoutine routine = m_factory.newRoutine("scoreFoxtrot4Delta4");
+    AutoRoutine routine = m_factory.newRoutine("leftFoxtrot4Delta4");
     AutoTrajectory rightStartToFoxtrot = routine.trajectory("rightStartToFoxtrot");
     AutoTrajectory foxtrotToRightStation = routine.trajectory("foxtrotToRightStation");
     AutoTrajectory rightStationToDelta = routine.trajectory("rightStationToDelta");
@@ -112,22 +89,66 @@ public class Routines {
             Commands.sequence(
                 rightStartToFoxtrot.resetOdometry(),
                 rightStartToFoxtrot.cmd(),
-                Commands.runOnce(m_elevator::L4),
-                new WaitCommandMilli(200),
-                Commands.runOnce(m_coral::release),
-                new WaitCommandMilli(400),
-                Commands.runOnce(m_coral::inactive),
-                Commands.runOnce(m_elevator::L1),
+                upScore4Down(),
                 foxtrotToRightStation.cmd(),
                 new GrabCoral(m_coral),
                 rightStationToDelta.cmd(),
-                Commands.runOnce(m_elevator::L4),
-                new WaitCommandMilli(200),
-                Commands.runOnce(m_coral::release),
-                new WaitCommandMilli(400),
-                Commands.runOnce(m_coral::inactive),
-                Commands.runOnce(m_elevator::L1)));
+                upScore4Down()));
 
     return routine;
+  }
+
+  public AutoRoutine middleOwnIndia4() {
+    AutoRoutine routine = m_factory.newRoutine("middleOwnIndia4");
+    AutoTrajectory middleToIndia = routine.trajectory("middleOwnToIndia");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(middleToIndia.resetOdometry(), middleToIndia.cmd(), upScore4Down()));
+
+    return routine;
+  }
+
+  public AutoRoutine middleOpposingIndia4() {
+    AutoRoutine routine = m_factory.newRoutine("middleOpposingIndia4");
+    AutoTrajectory middleToIndia = routine.trajectory("middleOpposingToIndia");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(middleToIndia.resetOdometry(), middleToIndia.cmd(), upScore4Down()));
+
+    return routine;
+  }
+
+  private Command upScore2Down() {
+    return Commands.sequence(
+        Commands.runOnce(m_elevator::L2),
+        new WaitCommandMilli(200),
+        Commands.runOnce(m_coral::release),
+        new WaitCommandMilli(400),
+        Commands.runOnce(m_coral::inactive),
+        Commands.runOnce(m_elevator::L1));
+  }
+
+  private Command upScore3Down() {
+    return Commands.sequence(
+        Commands.runOnce(m_elevator::L3),
+        new WaitCommandMilli(200),
+        Commands.runOnce(m_coral::release),
+        new WaitCommandMilli(400),
+        Commands.runOnce(m_coral::inactive),
+        Commands.runOnce(m_elevator::L1));
+  }
+
+  private Command upScore4Down() {
+    return Commands.sequence(
+        Commands.runOnce(m_elevator::L4),
+        new WaitCommandMilli(200),
+        Commands.runOnce(m_coral::release),
+        new WaitCommandMilli(400),
+        Commands.runOnce(m_coral::inactive),
+        Commands.runOnce(m_elevator::L1));
   }
 }

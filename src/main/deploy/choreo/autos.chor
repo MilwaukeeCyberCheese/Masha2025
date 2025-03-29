@@ -89,6 +89,34 @@
      "val":5.340707511102648
     }
    },
+   "middleStartOpposing":{
+    "x":{
+     "exp":"8 m",
+     "val":8.0
+    },
+    "y":{
+     "exp":"3 m",
+     "val":3.0
+    },
+    "heading":{
+     "exp":"180 deg",
+     "val":3.141592653589793
+    }
+   },
+   "middleStartOwn":{
+    "x":{
+     "exp":"8 m",
+     "val":8.0
+    },
+    "y":{
+     "exp":"5 m",
+     "val":5.0
+    },
+    "heading":{
+     "exp":"180 deg",
+     "val":3.141592653589793
+    }
+   },
    "rightStart":{
     "x":{
      "exp":"8 m",
