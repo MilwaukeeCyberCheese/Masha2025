@@ -64,6 +64,33 @@ public class Routines {
     return routine;
   }
 
+  public AutoRoutine leftIndia4Kilo4Lima4() {
+    AutoRoutine routine = m_factory.newRoutine("leftIndia4Kilo4Lima4");
+    AutoTrajectory leftStartToIndia = routine.trajectory("leftStartToIndia");
+    AutoTrajectory indiaToLeftStation = routine.trajectory("indiaToLeftStation");
+    AutoTrajectory leftStationToKilo = routine.trajectory("leftStationToKilo");
+    AutoTrajectory kiloToLeftStation = routine.trajectory("kiloToLeftStation");
+    AutoTrajectory leftStationToLima = routine.trajectory("leftStationToLima");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                leftStartToIndia.resetOdometry(),
+                leftStartToIndia.cmd(),
+                upScore4Down(),
+                indiaToLeftStation.cmd(),
+                new GrabCoral(m_coral),
+                leftStationToKilo.cmd(),
+                upScore4Down(),
+                kiloToLeftStation.cmd(),
+                new GrabCoral(m_coral),
+                leftStationToLima.cmd(),
+                upScore4Down()));
+
+    return routine;
+  }
+
   public AutoRoutine rightFoxtrot4() {
     AutoRoutine routine = m_factory.newRoutine("leftFoxtrot4");
     AutoTrajectory rightStartToFoxtrot = routine.trajectory("rightStartToFoxtrot");
@@ -93,6 +120,33 @@ public class Routines {
                 foxtrotToRightStation.cmd(),
                 new GrabCoral(m_coral),
                 rightStationToDelta.cmd(),
+                upScore4Down()));
+
+    return routine;
+  }
+
+  public AutoRoutine rightFoxtrot4Delta4Charlie4() {
+    AutoRoutine routine = m_factory.newRoutine("leftFoxtrot4Delta4Charlie4");
+    AutoTrajectory rightStartToFoxtrot = routine.trajectory("rightStartToFoxtrot");
+    AutoTrajectory foxtrotToRightStation = routine.trajectory("foxtrotToRightStation");
+    AutoTrajectory rightStationToDelta = routine.trajectory("rightStationToDelta");
+    AutoTrajectory deltaToRightStation = routine.trajectory("deltaToRightStation");
+    AutoTrajectory rightStationToCharlie = routine.trajectory("rightStationToCharlie");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                rightStartToFoxtrot.resetOdometry(),
+                rightStartToFoxtrot.cmd(),
+                upScore4Down(),
+                foxtrotToRightStation.cmd(),
+                new GrabCoral(m_coral),
+                rightStationToDelta.cmd(),
+                upScore4Down(),
+                deltaToRightStation.cmd(),
+                new GrabCoral(m_coral),
+                rightStationToCharlie.cmd(),
                 upScore4Down()));
 
     return routine;
