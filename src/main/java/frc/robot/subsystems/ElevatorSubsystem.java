@@ -47,21 +47,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // System.out.println(Elevator.kRightElevatorSparkMax.configAccessor.closedLoop.getP());
 
-    // Elevator.kElevatorController.setReference(m_height, ControlType.kPosition);
-
-    
-  }
-
-  public void upManual() {
-    Elevator.kRightElevatorSparkMax.set(0.4);
-  }
-
-  public void downManual() {
-    Elevator.kRightElevatorSparkMax.set(-0.4);
-  }
-
-  public void stop() {
-    Elevator.kRightElevatorSparkMax.set(0.0);
+    Elevator.kElevatorController.setReference(m_height, ControlType.kPosition);
   }
 
   public void log() {
@@ -167,14 +153,23 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void customUp() {
-    m_customHeight = Optional.of(m_customHeight.orElse(Elevator.kHeights.get(getState())) + 0.5);
+    m_customHeight =
+        Optional.of(
+            (getState().equals(ElevatorState.CUSTOM))
+                ? m_customHeight.orElse(Elevator.kHeights.get(getState())) + 0.5
+                : Elevator.kHeights.get(getState()) + 0.5);
     setState(ElevatorState.CUSTOM);
   }
 
   public void customDown() {
-    m_customHeight = Optional.of(m_customHeight.orElse(0.0) + 0.5);
+    m_customHeight =
+        Optional.of(
+            (getState().equals(ElevatorState.CUSTOM))
+                ? m_customHeight.orElse(Elevator.kHeights.get(getState())) - 0.5
+                : Elevator.kHeights.get(getState()) - 0.5);
     setState(ElevatorState.CUSTOM);
   }
+
   // TODO: test this
   /**
    * Zero the absolute encoder of the elevator

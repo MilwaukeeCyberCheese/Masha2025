@@ -75,24 +75,26 @@ public class Drive extends Command {
                             ? DriveConstants.kDrivingSpeeds[1]
                             : DriveConstants.kDrivingSpeeds[0])
                         * m_throttle.orElse(() -> 1.0).getAsDouble())
-            
             .deadband(0.1)
             .scaleTranslation(0.8)
-            .allianceRelativeControl(true).withControllerRotationAxis(() ->
-            m_rotationX.getAsDouble()
-                * (m_slowMode.getAsBoolean()
-                    ? DriveConstants.kRotationSpeeds[1]
-                    : DriveConstants.kRotationSpeeds[0])
-                * m_throttle.orElse(() -> 1.0).getAsDouble());
+            .allianceRelativeControl(true)
+            .withControllerRotationAxis(
+                () ->
+                    m_rotationX.getAsDouble()
+                        * (m_slowMode.getAsBoolean()
+                            ? DriveConstants.kRotationSpeeds[1]
+                            : DriveConstants.kRotationSpeeds[0])
+                        * m_throttle.orElse(() -> 1.0).getAsDouble());
 
-      headingMode = rotationMode.headingWhile(true).withControllerHeadingAxis(
-        m_rotationX, m_rotationY);
+    headingMode =
+        rotationMode.headingWhile(true).withControllerHeadingAxis(m_rotationX, m_rotationY);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drive.driveFieldOriented(m_rotationMode.getAsBoolean() ? rotationMode.get() : headingMode.get());
+    m_drive.driveFieldOriented(
+        m_rotationMode.getAsBoolean() ? rotationMode.get() : headingMode.get());
   }
 
   // Called once the command ends or is interrupted.

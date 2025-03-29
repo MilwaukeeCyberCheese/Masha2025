@@ -100,8 +100,4 @@ public class FilteredButton {
   public Trigger getC3() {
     return new Trigger(() -> controller.getRawButton(9));
   }
-
-  
-
- 
 }

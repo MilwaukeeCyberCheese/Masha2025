@@ -23,7 +23,6 @@ import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
 import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.FilteredButton;
-
 import frc.robot.utils.FilteredJoystick;
 import java.io.File;
 import java.util.Optional;
@@ -100,10 +99,8 @@ public class RobotContainer {
             () -> m_leftJoystick.getY(),
             () -> m_leftJoystick.getButtonThree().getAsBoolean(),
             () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
-        
             Optional.of(m_rightJoystick::getThrottle)));
-
-      }
+  }
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -152,9 +149,7 @@ public class RobotContainer {
     // BUTTON BOARD
     {
       // Elevator controls
-      
 
-      
     }
 
     // CONTROLLER
@@ -191,9 +186,6 @@ public class RobotContainer {
           .leftStick()
           .and(m_controller.rightStick())
           .onTrue(Commands.runOnce(m_chute::drop));
-
-    m_leftJoystick.getButtonEight().onTrue(Commands.runOnce(m_elevator::upManual)).onFalse(Commands.runOnce(m_elevator::stop));
-    m_leftJoystick.getButtonEight().onTrue(Commands.runOnce(m_elevator::downManual)).onFalse(Commands.runOnce(m_elevator::stop));
     }
   }
 
