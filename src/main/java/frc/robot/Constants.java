@@ -23,7 +23,6 @@ import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
 import frc.robot.utils.PIDConstants;
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -68,7 +67,8 @@ public final class Constants {
                   Units.inchesToMeters(10.75)),
               new Rotation3d(0, 0, Math.PI));
 
-      public static final DoubleSupplier kAlignOffset = () -> 0.12;
+      public static final Transform3d kAlignOffset =
+          new Transform3d(new Translation3d(0.1, 0.12, 0.0), new Rotation3d());
     }
 
     public static final class RightCamera {
@@ -83,7 +83,8 @@ public final class Constants {
                   Units.inchesToMeters(10.75)),
               new Rotation3d(0, 0, Math.PI));
 
-      public static final DoubleSupplier kAlignOffset = () -> 0.12;
+      public static final Transform3d kAlignOffset =
+          new Transform3d(new Translation3d(0.1, 0.12, 0.0), new Rotation3d());
     }
   }
 

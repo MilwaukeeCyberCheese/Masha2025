@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.Vision;
 import frc.robot.commands.GrabCoral;
+import frc.robot.commands.drive.AlignWithReef;
 import frc.robot.commands.drive.Drive;
 import frc.robot.commands.drive.DriveWithAlignment;
 import frc.robot.subsystems.ChuteSubsystem;
@@ -129,11 +130,13 @@ public class RobotContainer {
               new DriveWithAlignment(
                   m_drive,
                   //   m_buttons.getSwitch2() ?
-                  Vision.LeftCamera.kCameraName,
-                  //   : Vision.RightCamera.kCameraName,
+                  Vision.LeftCamera.kCameraName
+                  //   : Vision.RightCamera.kCameraName
+                  ,
                   //   m_buttons.getSwitch2() ?
-                  Vision.LeftCamera.kAlignOffset,
-                  //   : Vision.RightCamera.kAlignOffset,
+                  () -> Vision.LeftCamera.kAlignOffset.getY()
+                  //   : () -> Vision.RightCamera.kAlignOffset.getY()
+                  ,
                   m_rightJoystick::getY,
                   m_leftJoystick::getX,
                   m_leftJoystick::getY,
@@ -142,13 +145,28 @@ public class RobotContainer {
                   Optional.of(() -> m_rightJoystick.getThrottle())));
       m_leftJoystick
           .getTriggerActive()
-          .and(m_rightJoystick.getTriggerActive())
+          .and(m_rightJoystick.getTriggerActive().or(m_rightJoystick.getButtonFive()))
           .whileTrue(Commands.runOnce(m_coral::release))
           .onFalse(Commands.runOnce(m_coral::inactive));
       m_leftJoystick
           .getTriggerActive()
           .and(m_rightJoystick.getTriggerActive().negate())
           .whileTrue(new GrabCoral(m_coral));
+
+      m_rightJoystick
+          .getButtonFive()
+          .whileTrue(
+              new AlignWithReef(
+                  m_drive,
+
+                  //   m_buttons.getSwitch2() ?
+                  Vision.LeftCamera.kAlignOffset
+                  //   : Vision.RightCamera.kAlignOffset
+                  ,
+                  //   m_buttons.getSwitch2() ?
+                  Vision.LeftCamera.kCameraName
+                  //   : Vision.RightCamera.kCameraName
+                  ));
 
       // Climber controls
       m_leftJoystick
