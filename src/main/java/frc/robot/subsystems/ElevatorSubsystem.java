@@ -80,6 +80,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (m_state == ElevatorState.DISABLED) {
       Elevator.kLeftElevatorSparkMax.set(0);
       Elevator.kRightElevatorSparkMax.set(0);
+      m_height = 0;
       return;
     }
 

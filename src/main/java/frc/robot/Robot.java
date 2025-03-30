@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    m_robotContainer.ResetStates().schedule();
+    m_robotContainer.resetStates().schedule();
   }
 
   @Override
@@ -123,7 +123,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    m_robotContainer.ResetStates();
+    m_robotContainer.resetStates();
   }
 
   /** This function is called periodically during operator control. */
