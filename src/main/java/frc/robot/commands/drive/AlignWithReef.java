@@ -56,7 +56,7 @@ public class AlignWithReef extends Command {
     m_thetaController.reset();
     m_thetaController.setSetpoint(m_offset.getRotation().getZ());
     // TODO: find error tolerance
-    m_thetaController.enableContinuousInput(0, Math.PI * 2);
+    m_thetaController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   private PhotonTrackedTarget getClosestAprilTag(PhotonCamera cam) {
