@@ -94,7 +94,8 @@ public class Drive extends Command {
   @Override
   public void execute() {
     m_drive.driveFieldOriented(
-        m_rotationMode.getAsBoolean() ? rotationMode.get() : headingMode.get());
+        // m_rotationMode.getAsBoolean() ? rotationMode.get() : headingMode.get());
+        rotationMode.get());
   }
 
   // Called once the command ends or is interrupted.
