@@ -17,6 +17,7 @@ import frc.robot.commands.GrabCoralCommand;
 import frc.robot.commands.ReleaseCoralCommand;
 import frc.robot.commands.drive.Drive;
 import frc.robot.subsystems.ChuteSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
@@ -34,13 +35,14 @@ import java.io.File;
 public class RobotContainer {
   public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
-  private final ElevatorSubsystem m_elevator =
+  public final ElevatorSubsystem m_elevator =
       Robot.isReal() ? new ElevatorSubsystem() : new ElevatorSubsystemSim();
   private final CoralHandlerSubsystem m_coral =
       Robot.isReal()
           ? new CoralHandlerSubsystem()
           : new CoralHandlerSubsystemSim(m_drive.getSimDrive(), m_elevator);
   private final ChuteSubsystem m_chute = new ChuteSubsystem();
+  private final ClimberSubsystem m_climber = new ClimberSubsystem();
 
   private final Controllers controllers = new Controllers();
 
@@ -61,8 +63,8 @@ public class RobotContainer {
     m_drive.setDefaultCommand(
         new Drive(
             m_drive,
-            controllers::getControllerY,
             controllers::getControllerX,
+            controllers::getControllerY,
             controllers::getControllerRotation,
             controllers::getControllerSlow,
             controllers::getControllerThrottle));
@@ -86,10 +88,39 @@ public class RobotContainer {
 
     if (Robot.isSimulation()) {
       this.controllers
-          .controller
+              .controller
+              .b()
+              .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
+    }
+
+    this.controllers.controller
+        .rightTrigger()
+        .onTrue(Commands.runOnce(m_coral::release))
+        .onFalse(Commands.runOnce(m_coral::inactive));
+
+    this.controllers.controller
+        .povDown()
+        .onTrue(Commands.runOnce(m_climber::down))
+        .onFalse(Commands.runOnce(m_climber::inactive));
+    this.controllers.controller
+        .povUp()
+        .onTrue(Commands.runOnce(m_climber::up))
+        .onFalse(Commands.runOnce(m_climber::inactive));
+
+    // drop chute
+    m_buttons.getChuteSwitch().onTrue(Commands.runOnce(m_chute::drop));
+
+    // Zero gyro with A button
+    this.controllers.controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
+
+    if (!Robot.isReal()) {
+      this.controllers.controller
           .b()
           .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
     }
+
+    this.controllers.controller.rightBumper().onTrue(new ReleaseCoralCommand(m_coral));
+    this.controllers.controller.leftBumper().onTrue(new GrabCoralCommand(m_coral));
 
     m_buttons.getChuteSwitch().onTrue(Commands.runOnce(m_chute::drop));
 
