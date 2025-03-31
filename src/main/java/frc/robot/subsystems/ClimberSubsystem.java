@@ -49,7 +49,9 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public void log() {
     SmartDashboard.putNumber(
-        "Climber Position", Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition());
+        "Climber Position Absolute", Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition());
+    SmartDashboard.putNumber(
+        "Climber Position Relative", Climber.kClimberSparkMax.getEncoder().getPosition());
   }
 
   // TODO: add logic for limits
