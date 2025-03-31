@@ -118,8 +118,8 @@ public final class Constants {
 
     // TODO: veloc and accel is in inches per second and inches per second squared
     public static final PIDConstants kElevatorPIDConstants =
-        new PIDConstants(0.0, 0.0, 0.0, 0.5, 0.5);
-    public static final double kG = 0.5;
+        new PIDConstants(0.2, 0.0, 0.0, 0.5, 0.5);
+    public static final double kG = 0.35;
 
     // TODO: figure out the heights
     public static final HashMap<ElevatorState, Double> kHeights =
