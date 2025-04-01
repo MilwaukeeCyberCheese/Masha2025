@@ -15,9 +15,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IOConstants;
-import frc.robot.Constants.Vision;
 import frc.robot.commands.GrabCoral;
 import frc.robot.commands.drive.Drive;
+import frc.robot.commands.elevator.ManualElevatorPosition;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
@@ -27,7 +27,6 @@ import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.FilteredButton;
 import java.io.File;
-import org.photonvision.PhotonCamera;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -58,9 +57,6 @@ public class RobotContainer {
 
   // Button Board
   private final FilteredButton m_buttons = new FilteredButton(IOConstants.kButtonBoardPort);
-
-  private final PhotonCamera m_leftCam = new PhotonCamera(Vision.LeftCamera.kCameraName);
-  private final PhotonCamera m_rightCam = new PhotonCamera(Vision.RightCamera.kCameraName);
 
   // More auto stuff
   public final AutoChooser m_autoChooser = new AutoChooser();
@@ -168,6 +164,10 @@ public class RobotContainer {
           .leftStick()
           .and(m_operatorController.rightStick())
           .onTrue(Commands.runOnce(m_chute::drop));
+
+      m_operatorController
+          .rightBumper()
+          .whileTrue(new ManualElevatorPosition(m_elevator, m_operatorController::getRightY));
     }
   }
 
