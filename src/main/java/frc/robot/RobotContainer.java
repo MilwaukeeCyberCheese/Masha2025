@@ -9,8 +9,8 @@ import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.IOConstants;
 import frc.robot.commands.GrabCoralCommand;
@@ -24,9 +24,7 @@ import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
 import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.FilteredButton;
-import frc.robot.utils.FilteredJoystick;
 import java.io.File;
-import java.util.Optional;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -46,15 +44,7 @@ public class RobotContainer {
   private final ChuteSubsystem m_chute = new ChuteSubsystem();
   private final ClimberSubsystem m_climber = new ClimberSubsystem();
 
-  // Driver joysticks
-  private final FilteredJoystick m_leftJoystick =
-      new FilteredJoystick(IOConstants.kLeftJoystickPort);
-  private final FilteredJoystick m_rightJoystick =
-      new FilteredJoystick(IOConstants.kRightJoystickPort);
-
-  // Operator controller
-  private final CommandXboxController m_controller =
-      new CommandXboxController(IOConstants.kControllerPort);
+  private final Controllers controllers = new Controllers();
 
   // Button Board
   private final FilteredButton m_buttons = new FilteredButton(IOConstants.kButtonBoardPort);
@@ -69,32 +59,22 @@ public class RobotContainer {
   public RobotContainer() {
     configureButtonBindings();
 
+    // Set default drive command
+    m_drive.setDefaultCommand(
+        new Drive(
+            m_drive,
+            controllers::getControllerX,
+            controllers::getControllerY,
+            controllers::getControllerRotation,
+            controllers::getControllerSlow,
+            controllers::getControllerThrottle));
+
     m_autoChooser.addRoutine("Test Routine", m_routines::test);
     m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
     m_autoChooser.addRoutine("Blue Coral Station Routine", m_routines::blueCoralStation);
     m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
     m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
-
-    if (IOConstants.kTestMode) {
-      m_drive.setDefaultCommand(
-          new Drive(
-              m_drive,
-              m_controller::getLeftY,
-              m_controller::getLeftX,
-              () -> -m_controller.getRightX(),
-              () -> m_controller.rightBumper().getAsBoolean(),
-              Optional.empty()));
-    } else {
-      m_drive.setDefaultCommand(
-          new Drive(
-              m_drive,
-              m_leftJoystick::getY,
-              m_leftJoystick::getX,
-              m_rightJoystick::getX,
-              () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
-              Optional.of(m_rightJoystick::getThrottle)));
-    }
   }
 
   /**
@@ -104,41 +84,61 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+    this.controllers.controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
 
-    m_controller
+    if (Robot.isSimulation()) {
+      this.controllers
+              .controller
+              .b()
+              .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
+    }
+
+    this.controllers.controller
         .rightTrigger()
         .onTrue(Commands.runOnce(m_coral::release))
         .onFalse(Commands.runOnce(m_coral::inactive));
 
-    m_controller
+    this.controllers.controller
         .povDown()
         .onTrue(Commands.runOnce(m_climber::down))
         .onFalse(Commands.runOnce(m_climber::inactive));
-    m_controller
+    this.controllers.controller
         .povUp()
         .onTrue(Commands.runOnce(m_climber::up))
         .onFalse(Commands.runOnce(m_climber::inactive));
 
-    // Test mode allows everything to be run on a single controller
-    // Test mode should not be enabled in competition
-    if (IOConstants.kTestMode) {
-      m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
-    } else {
+    // drop chute
+    m_buttons.getChuteSwitch().onTrue(Commands.runOnce(m_chute::drop));
 
-      // drop chute
-      m_buttons.getChuteSwitch().onTrue(Commands.runOnce(m_chute::drop));
+    // Zero gyro with A button
+    this.controllers.controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
 
-      // Zero gyro with A button
-      m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
-
-      if (!Robot.isReal()) {
-        m_controller
-            .b()
-            .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
-      }
-
-      m_controller.rightBumper().onTrue(new ReleaseCoralCommand(m_coral));
-      m_controller.leftBumper().onTrue(new GrabCoralCommand(m_coral));
+    if (!Robot.isReal()) {
+      this.controllers.controller
+          .b()
+          .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
     }
+
+    this.controllers.controller.rightBumper().onTrue(new ReleaseCoralCommand(m_coral));
+    this.controllers.controller.leftBumper().onTrue(new GrabCoralCommand(m_coral));
+
+    m_buttons.getChuteSwitch().onTrue(Commands.runOnce(m_chute::drop));
+
+    this.controllers.controller.rightBumper().onTrue(new ReleaseCoralCommand(m_coral));
+    this.controllers.controller.leftBumper().onTrue(new GrabCoralCommand(m_coral));
+  }
+
+  public void updateControllerConnections() {
+    this.controllers.updateControllerConnections();
+  }
+
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand() {
+    // return autoChooser.getSelected();
+    return null;
   }
 }

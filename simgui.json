@@ -71,8 +71,8 @@
             "open": true
           }
         },
-        "Auto Controllers": {
-          "X": {
+        "Controllers": {
+          "Xbox": {
             "open": true
           },
           "open": true
@@ -87,8 +87,7 @@
         "swerve": {
           "modules": {
             "open": true
-          },
-          "open": true
+          }
         }
       }
     }

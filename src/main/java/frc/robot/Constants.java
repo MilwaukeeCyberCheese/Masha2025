@@ -46,10 +46,6 @@ public final class Constants {
     public static final int kRightJoystickPort = 2;
     public static final int kButtonBoardPort = 3;
     public static final double kDriveDeadband = 0.05;
-
-    // When test mode is enabled, the operator controller is used for driving and testing
-    // This should always be false on the main branch
-    public static final boolean kTestMode = false;
   }
 
   public static final class Vision {

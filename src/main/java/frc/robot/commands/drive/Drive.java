@@ -3,7 +3,6 @@ package frc.robot.commands.drive;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveInputStream;
@@ -15,7 +14,7 @@ public class Drive extends Command {
   final DoubleSupplier m_y;
   final DoubleSupplier m_rotation;
   final BooleanSupplier m_slow;
-  final Optional<DoubleSupplier> m_throttle;
+  final DoubleSupplier m_throttle;
   SwerveInputStream driveInput;
 
   public Drive(
@@ -24,7 +23,7 @@ public class Drive extends Command {
       DoubleSupplier y,
       DoubleSupplier rotation,
       BooleanSupplier slow,
-      Optional<DoubleSupplier> throttle) {
+      DoubleSupplier throttle) {
     m_drive = drive;
     m_x = x;
     m_y = y;
@@ -45,20 +44,20 @@ public class Drive extends Command {
                         * (m_slow.getAsBoolean()
                             ? DriveConstants.kDrivingSpeeds[1]
                             : DriveConstants.kDrivingSpeeds[0])
-                        * m_throttle.orElse(() -> 1.0).getAsDouble(),
+                        * m_throttle.getAsDouble(),
                 () ->
                     m_y.getAsDouble()
                         * (m_slow.getAsBoolean()
                             ? DriveConstants.kDrivingSpeeds[1]
                             : DriveConstants.kDrivingSpeeds[0])
-                        * m_throttle.orElse(() -> 1.0).getAsDouble())
+                        * m_throttle.getAsDouble())
             .withControllerRotationAxis(
                 () ->
                     m_rotation.getAsDouble()
                         * (m_slow.getAsBoolean()
                             ? DriveConstants.kRotationSpeeds[1]
                             : DriveConstants.kRotationSpeeds[0])
-                        * m_throttle.orElse(() -> 1.0).getAsDouble())
+                        * m_throttle.getAsDouble())
             .deadband(0.1)
             .scaleTranslation(0.8)
             .allianceRelativeControl(true);
