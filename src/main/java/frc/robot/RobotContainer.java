@@ -16,6 +16,7 @@ import frc.robot.Constants.IOConstants;
 import frc.robot.commands.GrabCoralCommand;
 import frc.robot.commands.ReleaseCoralCommand;
 import frc.robot.commands.drive.Drive;
+import frc.robot.commands.drive.DriveCOR;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
@@ -87,13 +88,14 @@ public class RobotContainer {
               Optional.empty()));
     } else {
       m_drive.setDefaultCommand(
-          new Drive(
+          new DriveCOR(
               m_drive,
               m_leftJoystick::getY,
               m_leftJoystick::getX,
               m_rightJoystick::getX,
               () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
-              Optional.of(m_rightJoystick::getThrottle)));
+              Optional.of(m_rightJoystick::getThrottle),
+              Optional.of(m_leftJoystick::getPovState)));
     }
   }
 
