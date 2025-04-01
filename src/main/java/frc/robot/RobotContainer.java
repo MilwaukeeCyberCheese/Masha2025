@@ -87,8 +87,8 @@ public class RobotContainer {
             m_driverController::getLeftY,
             m_driverController::getLeftY,
             m_driverController::getRightX,
-            () -> m_driverController.leftBumper().getAsBoolean(),
-            () -> m_driverController.rightBumper().getAsBoolean()));
+            () -> m_driverController.rightBumper().getAsBoolean(),
+            () -> m_driverController.leftBumper().getAsBoolean()));
   }
 
   /**
