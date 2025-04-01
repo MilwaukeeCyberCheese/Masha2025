@@ -7,7 +7,6 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Elevator;
-import java.util.Optional;
 
 // TODO: add sim support
 public class ElevatorSubsystem extends SubsystemBase {
@@ -23,7 +22,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   private ElevatorState m_state = ElevatorState.DISABLED;
-  private Optional<Double> m_customHeight = Optional.empty();
   protected double m_height;
 
   /** Creates a new ElevatorSubsystem. */
@@ -54,12 +52,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void log() {
     // Log sensor data, etc. here
-    // SmartDashboard.putNumber("Elevator Height", m_height);
+    SmartDashboard.putNumber("Expected Elevator Height", m_height);
     SmartDashboard.putNumber(
-        "PID Tuning Shit", Elevator.kRightElevatorSparkMax.getEncoder().getPosition());
-    SmartDashboard.putNumber("ELEvator Shit", Elevator.kRightElevatorSparkMax.get());
+        "Elevator Height", Elevator.kRightElevatorSparkMax.getEncoder().getPosition());
+    SmartDashboard.putNumber("Elevator Speed", Elevator.kRightElevatorSparkMax.get());
     SmartDashboard.putString("Elevator State", m_state.toString());
-    // System.out.println(m_customHeight.orElse(-2000000.0));
   }
 
   // TODO: add limits logic
@@ -70,11 +67,9 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   protected void setState(ElevatorState state) {
 
-    if (state == ElevatorState.CUSTOM && m_customHeight.isEmpty()) {
-      return;
-    }
-
     m_state = state;
+
+    if (state == ElevatorState.CUSTOM) return;
 
     // TODO: check that this overrides the PID
     if (m_state == ElevatorState.DISABLED) {
@@ -84,7 +79,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       return;
     }
 
-    m_height = state == ElevatorState.CUSTOM ? m_customHeight.get() : Elevator.kHeights.get(state);
+    m_height = Elevator.kHeights.get(state);
   }
 
   /**
@@ -94,16 +89,6 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public ElevatorState getState() {
     return m_state;
-  }
-
-  /**
-   * Set the custom target height, this will also change the state of the elevator
-   *
-   * @param target double
-   */
-  public void setCustomTarget(double target) {
-    m_customHeight = Optional.of(target);
-    setState(ElevatorState.CUSTOM);
   }
 
   /**
@@ -121,7 +106,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return boolean
    */
   public boolean atHeight() {
-    return Math.abs(m_height - Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition())
+    return Math.abs(m_height - Elevator.kRightElevatorSparkMax.getEncoder().getPosition())
         < Elevator.kElevatorTolerance;
   }
 
@@ -155,21 +140,28 @@ public class ElevatorSubsystem extends SubsystemBase {
     setState(ElevatorState.L4);
   }
 
+  /**
+   * Increase the elevator's height slightly
+   *
+   * @param increment
+   */
   public void customUp() {
-    m_customHeight =
-        Optional.of(
-            (getState().equals(ElevatorState.CUSTOM))
-                ? m_customHeight.orElse(Elevator.kHeights.get(getState())) + 0.5
-                : Elevator.kHeights.get(getState()) + 0.5);
+    m_height += Elevator.kCustomStep;
     setState(ElevatorState.CUSTOM);
   }
 
   public void customDown() {
-    m_customHeight =
-        Optional.of(
-            (getState().equals(ElevatorState.CUSTOM))
-                ? m_customHeight.orElse(Elevator.kHeights.get(getState())) - 0.5
-                : Elevator.kHeights.get(getState()) - 0.5);
+    m_height -= Elevator.kCustomStep;
+    setState(ElevatorState.CUSTOM);
+  }
+
+  /**
+   * Adjust the elevator height by a custom increment
+   *
+   * @param increment
+   */
+  public void customAdjust(double increment) {
+    m_height += increment;
     setState(ElevatorState.CUSTOM);
   }
 

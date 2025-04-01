@@ -143,6 +143,8 @@ public final class Constants {
     // distance that the elevator steps when zeroing
     public static final double kZeroingStep = 0.01;
 
+    public static final double kCustomStep = 0.25;
+
     /*
      * TODO: TEST IN SIMULATION THE DIRECTION THE LIFT MOTORS SPIN
      * ISTFG WE HAVE TO DO THIS CAUSE THEY'RE MECHANICALLY LINKED
