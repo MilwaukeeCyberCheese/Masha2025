@@ -32,6 +32,8 @@ import frc.robot.utils.FilteredJoystick;
 import java.io.File;
 import java.util.Optional;
 
+import org.photonvision.PhotonCamera;
+
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -65,6 +67,9 @@ public class RobotContainer {
   // Button Board
   private final FilteredButton m_buttons = new FilteredButton(IOConstants.kButtonBoardPort);
 
+  private final PhotonCamera m_leftCam = new PhotonCamera(Vision.LeftCamera.kCameraName);
+  private final PhotonCamera m_rightCam = new PhotonCamera(Vision.RightCamera.kCameraName);
+
   // More auto stuff
   public final AutoChooser m_autoChooser = new AutoChooser();
   private final AutoFactory m_autoFactory =
@@ -88,28 +93,28 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
 
     // Drive with controller
-    // m_drive.setDefaultCommand(
-    //     new Drive(
-    //         m_drive,
-    //         m_controller::getLeftY,
-    //         m_controller::getLeftX,
-    //         () -> -m_controller.getRightX(),
-    //         () -> m_controller.getRightY(),
-    //         () -> m_controller.leftBumper().getAsBoolean(),
-    //         () -> m_controller.rightBumper().getAsBoolean(),
-    //         Optional.empty()));
-
-    // Drive with joysticks
     m_drive.setDefaultCommand(
         new Drive(
             m_drive,
-            () -> m_rightJoystick.getY(),
-            () -> -m_rightJoystick.getX(),
-            () -> -m_leftJoystick.getX(),
-            () -> m_leftJoystick.getY(),
-            () -> m_leftJoystick.getButtonThree().getAsBoolean(),
-            () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
-            Optional.of(m_rightJoystick::getThrottle)));
+            () -> -m_controller.getLeftY(),
+            () -> -m_controller.getLeftX(),
+            () -> -m_controller.getRightX(),
+            () -> m_controller.getRightY(),
+            () -> m_controller.leftBumper().getAsBoolean(),
+            () -> m_controller.rightBumper().getAsBoolean(),
+            Optional.empty()));
+
+    // Drive with joysticks
+//     m_drive.setDefaultCommand(
+//         new Drive(
+//             m_drive,
+//             () -> m_rightJoystick.getY(),
+//             () -> -m_rightJoystick.getX(),
+//             () -> -m_leftJoystick.getX(),
+//             () -> m_leftJoystick.getY(),
+//             () -> m_leftJoystick.getButtonThree().getAsBoolean(),
+//             () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
+//             Optional.of(m_rightJoystick::getThrottle)));
   }
 
   /**
@@ -130,12 +135,12 @@ public class RobotContainer {
               new DriveWithAlignment(
                   m_drive,
                   //   m_buttons.getSwitch2() ?
-                  Vision.LeftCamera.kCameraName
-                  //   : Vision.RightCamera.kCameraName
+                //   Vision.LeftCamera.kCameraName :
+                     Vision.RightCamera.kCameraName
                   ,
                   //   m_buttons.getSwitch2() ?
-                  () -> Vision.LeftCamera.kAlignOffset.getY()
-                  //   : () -> Vision.RightCamera.kAlignOffset.getY()
+                //   () -> Vision.LeftCamera.kAlignOffset.getY() :
+                     () -> Vision.RightCamera.kAlignOffset.getY()
                   ,
                   m_leftJoystick::getY,
                   m_rightJoystick::getX,
@@ -160,12 +165,12 @@ public class RobotContainer {
                   m_drive,
 
                   //   m_buttons.getSwitch2() ?
-                  Vision.LeftCamera.kAlignOffset
-                  //   : Vision.RightCamera.kAlignOffset
+                  Vision.LeftCamera.kAlignOffset 
+                    //  Vision.RightCamera.kAlignOffset
                   ,
                   //   m_buttons.getSwitch2() ?
-                  Vision.LeftCamera.kCameraName
-                  //   : Vision.RightCamera.kCameraName
+                  m_leftCam 
+                //  m_rightCam
                   ));
 
       // Climber controls

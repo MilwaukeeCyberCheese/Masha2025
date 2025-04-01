@@ -68,7 +68,7 @@ public final class Constants {
               new Rotation3d(0, 0, Math.PI));
 
       public static final Transform3d kAlignOffset =
-          new Transform3d(new Translation3d(0.1, 0.12, 0.0), new Rotation3d());
+          new Transform3d(new Translation3d(0.1, 0.12, 0.0), new Rotation3d(0, 0, Units.degreesToRadians(10)));
     }
 
     public static final class RightCamera {
@@ -84,7 +84,7 @@ public final class Constants {
               new Rotation3d(0, 0, Math.PI));
 
       public static final Transform3d kAlignOffset =
-          new Transform3d(new Translation3d(0.1, 0.12, 0.0), new Rotation3d());
+          new Transform3d(new Translation3d(0.1, 0.12, 0.0), new Rotation3d(0, 0, Units.degreesToRadians(10)));
     }
   }
 
@@ -283,7 +283,7 @@ public final class Constants {
     public static final double kMaxAngularSpeed = kTau; // radians per second
 
     // First one is normal, second is slow
-    public static final double[] kRotationSpeeds = {0.7, 0.3};
-    public static final double[] kDrivingSpeeds = {0.7, 0.3};
+    public static final double[] kRotationSpeeds = {1.2, 0.7};
+    public static final double[] kDrivingSpeeds = {1.2, 0.7};
   }
 }

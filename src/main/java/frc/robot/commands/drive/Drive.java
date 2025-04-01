@@ -75,7 +75,7 @@ public class Drive extends Command {
                             ? DriveConstants.kDrivingSpeeds[1]
                             : DriveConstants.kDrivingSpeeds[0])
                         * m_throttle.orElse(() -> 1.0).getAsDouble())
-            .deadband(0.1)
+            .deadband(0.1).cubeTranslationControllerAxis(true).cubeRotationControllerAxis(true)
             .scaleTranslation(0.8)
             .allianceRelativeControl(true)
             .withControllerRotationAxis(

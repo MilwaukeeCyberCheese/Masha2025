@@ -18,13 +18,13 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class AlignWithReef extends Command {
   private final SwerveSubsystem m_drive;
   private final Transform3d m_offset;
-  private final String m_camName;
+  private final PhotonCamera m_camName;
 
   // TODO: tune, should be similar to pathplanner values
   // TODO: after tuning, move to constants
   private PIDController m_xController = new PIDController(2.5, 0, 0);
   private PIDController m_yController = new PIDController(2.5, 0, 0);
-  private PIDController m_thetaController = new PIDController(0.0003, 0, 0);
+  private PIDController m_thetaController = new PIDController(0.3, 0, 0);
 
   /**
    * Snap to a certain angle relative to the field, and then line up with the apriltag indicated in
@@ -34,7 +34,7 @@ public class AlignWithReef extends Command {
    * @param cameraSubsystem
    * @param id id of the apriltag to orient to
    */
-  public AlignWithReef(SwerveSubsystem driveSubsystem, Transform3d offset, String camName) {
+  public AlignWithReef(SwerveSubsystem driveSubsystem, Transform3d offset, PhotonCamera camName) {
     m_drive = driveSubsystem;
     m_offset = offset;
     m_camName = camName;
@@ -68,9 +68,9 @@ public class AlignWithReef extends Command {
     List<PhotonTrackedTarget> reefTargets = new LinkedList<>();
     for (PhotonTrackedTarget target : targets) {
       if (target.getFiducialId()
-              >= (DriverStation.getAlliance().equals(DriverStation.Alliance.Red) ? 6 : 11)
+              >= (DriverStation.getAlliance().equals(DriverStation.Alliance.Red) ? 6 : 17)
           && target.getFiducialId()
-              <= (DriverStation.getAlliance().equals(DriverStation.Alliance.Red) ? 22 : 17)) {
+              <= (DriverStation.getAlliance().equals(DriverStation.Alliance.Red) ? 11 : 22)) {
         reefTargets.add(target);
       }
     }
@@ -96,7 +96,8 @@ public class AlignWithReef extends Command {
     double yOutput = 0;
     double thetaOutput = 0;
 
-    PhotonTrackedTarget target = getClosestAprilTag(new PhotonCamera(m_camName));
+    PhotonTrackedTarget target = getClosestAprilTag(m_camName);
+    System.out.println(target);
     // Check if target is present
     if (target != null) {
       // If target is present, get transform and calculate outputs
@@ -107,7 +108,9 @@ public class AlignWithReef extends Command {
       thetaOutput = m_thetaController.calculate(transform.getRotation().getZ());
     }
 
-    m_drive.drive(new ChassisSpeeds(xOutput, yOutput, thetaOutput));
+    ChassisSpeeds speeds = new ChassisSpeeds(-xOutput, -yOutput, thetaOutput);
+    // System.out.println(speeds);
+    m_drive.drive(speeds);
   }
 
   @Override
