@@ -38,10 +38,9 @@ public final class Constants {
   public static class Sensors {}
 
   public static final class IOConstants {
-    public static final int kControllerPort = 0;
-    public static final int kLeftJoystickPort = 1;
-    public static final int kRightJoystickPort = 2;
-    public static final int kButtonBoardPort = 3;
+    public static final int kOperatorControllerPort = 0;
+    public static final int kDriverControllerPort = 1;
+    public static final int kButtonBoardPort = 2;
     public static final double kDriveDeadband = 0.05;
 
     // When test mode is enabled, the operator controller is used for driving and testing
@@ -68,7 +67,8 @@ public final class Constants {
               new Rotation3d(0, 0, Math.PI));
 
       public static final Transform3d kAlignOffset =
-          new Transform3d(new Translation3d(0.1, 0.12, 0.0), new Rotation3d(0, 0, Units.degreesToRadians(10)));
+          new Transform3d(
+              new Translation3d(0.1, 0.12, 0.0), new Rotation3d(0, 0, Units.degreesToRadians(10)));
     }
 
     public static final class RightCamera {
@@ -84,7 +84,8 @@ public final class Constants {
               new Rotation3d(0, 0, Math.PI));
 
       public static final Transform3d kAlignOffset =
-          new Transform3d(new Translation3d(0.1, 0.12, 0.0), new Rotation3d(0, 0, Units.degreesToRadians(10)));
+          new Transform3d(
+              new Translation3d(0.1, 0.12, 0.0), new Rotation3d(0, 0, Units.degreesToRadians(10)));
     }
   }
 
@@ -159,10 +160,10 @@ public final class Constants {
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
           .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
-          // Now using these, comment them out if it breaks
-          // .maxMotion
-          // .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
-          // .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
+      // Now using these, comment them out if it breaks
+      // .maxMotion
+      // .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
+      // .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
 
       kRightElevatorConfig.encoder.positionConversionFactor(kConversionFactor);
 

@@ -17,9 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.Vision;
 import frc.robot.commands.GrabCoral;
-import frc.robot.commands.drive.AlignWithReef;
 import frc.robot.commands.drive.Drive;
-import frc.robot.commands.drive.DriveWithAlignment;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
@@ -28,10 +26,7 @@ import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
 import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.FilteredButton;
-import frc.robot.utils.FilteredJoystick;
 import java.io.File;
-import java.util.Optional;
-
 import org.photonvision.PhotonCamera;
 
 /*
@@ -55,14 +50,11 @@ public class RobotContainer {
   private final ClimberSubsystem m_climber = new ClimberSubsystem();
 
   // Driver joysticks
-  private final FilteredJoystick m_leftJoystick =
-      new FilteredJoystick(IOConstants.kLeftJoystickPort);
-  private final FilteredJoystick m_rightJoystick =
-      new FilteredJoystick(IOConstants.kRightJoystickPort);
-
+  private final CommandXboxController m_driverController =
+      new CommandXboxController(IOConstants.kDriverControllerPort);
   // Operator controller
-  private final CommandXboxController m_controller =
-      new CommandXboxController(IOConstants.kControllerPort);
+  private final CommandXboxController m_operatorController =
+      new CommandXboxController(IOConstants.kOperatorControllerPort);
 
   // Button Board
   private final FilteredButton m_buttons = new FilteredButton(IOConstants.kButtonBoardPort);
@@ -96,25 +88,11 @@ public class RobotContainer {
     m_drive.setDefaultCommand(
         new Drive(
             m_drive,
-            () -> -m_controller.getLeftY(),
-            () -> -m_controller.getLeftX(),
-            () -> -m_controller.getRightX(),
-            () -> m_controller.getRightY(),
-            () -> m_controller.leftBumper().getAsBoolean(),
-            () -> m_controller.rightBumper().getAsBoolean(),
-            Optional.empty()));
-
-    // Drive with joysticks
-//     m_drive.setDefaultCommand(
-//         new Drive(
-//             m_drive,
-//             () -> m_rightJoystick.getY(),
-//             () -> -m_rightJoystick.getX(),
-//             () -> -m_leftJoystick.getX(),
-//             () -> m_leftJoystick.getY(),
-//             () -> m_leftJoystick.getButtonThree().getAsBoolean(),
-//             () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
-//             Optional.of(m_rightJoystick::getThrottle)));
+            m_driverController::getLeftY,
+            m_driverController::getLeftY,
+            m_driverController::getRightX,
+            () -> m_driverController.leftBumper().getAsBoolean(),
+            () -> m_driverController.rightBumper().getAsBoolean()));
   }
 
   /**
@@ -125,74 +103,28 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    // DRIVER JOYSTICKS
+    // DRIVER CONTROLLER
     {
-      // Left joystick intakes coral, right joystick aligns to reef.  When both are held at once,
-      // coral is released.
-      m_rightJoystick
-          .getTriggerActive()
-          .whileTrue(
-              new DriveWithAlignment(
-                  m_drive,
-                  //   m_buttons.getSwitch2() ?
-                //   Vision.LeftCamera.kCameraName :
-                     Vision.RightCamera.kCameraName
-                  ,
-                  //   m_buttons.getSwitch2() ?
-                //   () -> Vision.LeftCamera.kAlignOffset.getY() :
-                     () -> Vision.RightCamera.kAlignOffset.getY()
-                  ,
-                  m_leftJoystick::getY,
-                  m_rightJoystick::getX,
-                  m_rightJoystick::getY,
-                  () -> m_leftJoystick.getTriggerActive().getAsBoolean(),
-                  () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
-                  Optional.of(() -> m_rightJoystick.getThrottle())));
-      m_leftJoystick
-          .getTriggerActive()
-          .and(m_rightJoystick.getTriggerActive().or(m_rightJoystick.getButtonFive()))
+      m_driverController
+          .rightTrigger()
           .whileTrue(Commands.runOnce(m_coral::release))
           .onFalse(Commands.runOnce(m_coral::inactive));
-      m_leftJoystick
-          .getTriggerActive()
-          .and(m_rightJoystick.getTriggerActive().negate())
-          .whileTrue(new GrabCoral(m_coral));
-
-      m_rightJoystick
-          .getButtonFive()
-          .whileTrue(
-              new AlignWithReef(
-                  m_drive,
-
-                  //   m_buttons.getSwitch2() ?
-                  Vision.LeftCamera.kAlignOffset 
-                    //  Vision.RightCamera.kAlignOffset
-                  ,
-                  //   m_buttons.getSwitch2() ?
-                  m_leftCam 
-                //  m_rightCam
-                  ));
+      m_driverController.leftTrigger().whileTrue(new GrabCoral(m_coral));
 
       // Climber controls
-      m_leftJoystick
-          .getButtonEleven()
+      m_driverController
+          .povUp()
           .onTrue(Commands.runOnce(m_climber::up))
           .onFalse(Commands.runOnce(m_climber::inactive));
-      m_leftJoystick
-          .getButtonTen()
+
+      m_driverController
+          .povDown()
           .onTrue(Commands.runOnce(m_climber::downSlow))
           .onFalse(Commands.runOnce(m_climber::inactive));
 
       // Reset gyro and set swerve drive to X-mode
-      m_rightJoystick.getButtonThree().whileTrue(Commands.runOnce(m_drive::zeroGyro));
-      m_rightJoystick.getButtonFour().whileTrue(Commands.runOnce(m_drive::lock));
-
-      // Zero lift
-      m_rightJoystick.getButtonEleven().onTrue(Commands.runOnce(m_elevator::zero));
-
-      // Custom elevator
-      m_leftJoystick.getButtonSix().whileTrue(Commands.runOnce(m_elevator::customUp));
-      m_leftJoystick.getButtonSeven().whileTrue(Commands.runOnce(m_elevator::customDown));
+      m_driverController.povLeft().onTrue(Commands.runOnce(m_drive::zeroGyro));
+      m_driverController.povRight().whileTrue(Commands.runOnce(m_drive::lock));
     }
 
     // BUTTON BOARD
@@ -200,39 +132,41 @@ public class RobotContainer {
       new Trigger(() -> m_buttons.getSwitch3()).onTrue(Commands.runOnce(m_chute::drop));
     }
 
-    // CONTROLLER
+    // OPERATOR CONTROLLER
     {
       // Climber controls
-      m_controller
+      m_operatorController
           .povUp()
           .onTrue(Commands.runOnce(m_climber::up))
           .onFalse(Commands.runOnce(m_climber::inactive));
-      m_controller
+      m_operatorController
           .povDown()
           .onTrue(Commands.runOnce(m_climber::downSlow))
           .onFalse(Commands.runOnce(m_climber::inactive));
 
+      m_operatorController.povLeft().onTrue(Commands.runOnce(m_elevator::zero));
+
       // Coral controls
-      //   m_controller.leftBumper().whileTrue(new GrabCoral(m_coral));
-      m_controller
+      m_operatorController.leftBumper().whileTrue(new GrabCoral(m_coral));
+      m_operatorController
           .leftTrigger()
           .onTrue(Commands.runOnce(m_coral::release))
           .onFalse(Commands.runOnce(m_coral::inactive));
-      m_controller
+      m_operatorController
           .rightTrigger()
           .onTrue(Commands.runOnce(m_coral::reverse))
           .onFalse(Commands.runOnce(m_coral::inactive));
 
       // Elevator Controls
-      m_controller.a().onTrue(Commands.runOnce(m_elevator::L1));
-      m_controller.x().onTrue(Commands.runOnce(m_elevator::L2));
-      m_controller.b().onTrue(Commands.runOnce(m_elevator::L3));
-      m_controller.y().onTrue(Commands.runOnce(m_elevator::L4));
+      m_operatorController.a().onTrue(Commands.runOnce(m_elevator::L1));
+      m_operatorController.x().onTrue(Commands.runOnce(m_elevator::L2));
+      m_operatorController.b().onTrue(Commands.runOnce(m_elevator::L3));
+      m_operatorController.y().onTrue(Commands.runOnce(m_elevator::L4));
 
       // Chute drop
-      m_controller
+      m_operatorController
           .leftStick()
-          .and(m_controller.rightStick())
+          .and(m_operatorController.rightStick())
           .onTrue(Commands.runOnce(m_chute::drop));
     }
   }

@@ -3,7 +3,6 @@ package frc.robot.commands.drive;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveInputStream;
@@ -13,13 +12,10 @@ public class Drive extends Command {
   final SwerveSubsystem m_drive;
   final DoubleSupplier m_x;
   final DoubleSupplier m_y;
-  final DoubleSupplier m_rotationX;
-  final DoubleSupplier m_rotationY;
-  final BooleanSupplier m_rotationMode;
+  final DoubleSupplier m_rotation;
+  final BooleanSupplier m_fieldCentric;
   final BooleanSupplier m_slowMode;
-  final Optional<DoubleSupplier> m_throttle;
-  SwerveInputStream rotationMode;
-  SwerveInputStream headingMode;
+  SwerveInputStream inputStream;
 
   /**
    * Drives the robot using field-oriented control
@@ -31,71 +27,65 @@ public class Drive extends Command {
    * @param drive
    * @param x
    * @param y
-   * @param rotationX
-   * @param rotationY
-   * @param rotationMode false is heading, true is rotation
+   * @param rotation
+   * @param fieldCentric
    * @param slowMode
-   * @param throttle
    */
   public Drive(
       SwerveSubsystem drive,
       DoubleSupplier x,
       DoubleSupplier y,
-      DoubleSupplier rotationX,
-      DoubleSupplier rotationY,
-      BooleanSupplier rotationMode,
-      BooleanSupplier slowMode,
-      Optional<DoubleSupplier> throttle) {
+      DoubleSupplier rotation,
+      BooleanSupplier fieldCentric,
+      BooleanSupplier slowMode) {
     m_drive = drive;
     m_x = x;
     m_y = y;
-    m_rotationX = rotationX;
-    m_rotationY = rotationY;
-    m_rotationMode = rotationMode;
+    m_rotation = rotation;
+    m_fieldCentric = fieldCentric;
     m_slowMode = slowMode;
-    m_throttle = throttle;
     addRequirements(m_drive);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    rotationMode =
+    inputStream =
         SwerveInputStream.of(
                 m_drive.getSwerveDrive(),
                 () ->
                     m_x.getAsDouble()
                         * (m_slowMode.getAsBoolean()
                             ? DriveConstants.kDrivingSpeeds[1]
-                            : DriveConstants.kDrivingSpeeds[0])
-                        * m_throttle.orElse(() -> 1.0).getAsDouble(),
+                            : DriveConstants.kDrivingSpeeds[0]),
                 () ->
                     m_y.getAsDouble()
                         * (m_slowMode.getAsBoolean()
                             ? DriveConstants.kDrivingSpeeds[1]
-                            : DriveConstants.kDrivingSpeeds[0])
-                        * m_throttle.orElse(() -> 1.0).getAsDouble())
-            .deadband(0.1).cubeTranslationControllerAxis(true).cubeRotationControllerAxis(true)
+                            : DriveConstants.kDrivingSpeeds[0]))
+            .deadband(0.1)
+            .cubeTranslationControllerAxis(true)
+            .cubeRotationControllerAxis(true)
             .scaleTranslation(0.8)
             .allianceRelativeControl(true)
             .withControllerRotationAxis(
                 () ->
-                    m_rotationX.getAsDouble()
+                    m_rotation.getAsDouble()
                         * (m_slowMode.getAsBoolean()
                             ? DriveConstants.kRotationSpeeds[1]
-                            : DriveConstants.kRotationSpeeds[0])
-                        * m_throttle.orElse(() -> 1.0).getAsDouble());
-
-    headingMode =
-        rotationMode.copy().headingWhile(true).withControllerHeadingAxis(m_rotationX, m_rotationY);
+                            : DriveConstants.kRotationSpeeds[0]));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drive.driveFieldOriented(
-        // m_rotationMode.getAsBoolean() ? rotationMode.get() : headingMode.get());
-        rotationMode.get());
+
+    if (m_fieldCentric.getAsBoolean()) {
+      m_drive.driveFieldOriented(inputStream.get());
+
+    } else {
+      m_drive.drive(inputStream.get());
+    }
   }
 
   // Called once the command ends or is interrupted.
