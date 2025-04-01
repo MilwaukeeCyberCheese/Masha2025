@@ -18,6 +18,6 @@ public class ManualElevatorPosition extends Command {
 
   @Override
   public void execute() {
-    m_elevator.customAdjust(m_change.getAsDouble());
+    m_elevator.customAdjust(m_change.getAsDouble() * -0.25);
   }
 }

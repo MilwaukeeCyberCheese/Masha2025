@@ -286,7 +286,7 @@ public final class Constants {
     public static final double kMaxAngularSpeed = kTau; // radians per second
 
     // First one is normal, second is slow
-    public static final double[] kRotationSpeeds = {1.2, 0.7};
+    public static final double[] kRotationSpeeds = {1.0, 0.7};
     public static final double[] kDrivingSpeeds = {1.2, 0.7};
   }
 }
