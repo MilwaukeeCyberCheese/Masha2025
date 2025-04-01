@@ -54,6 +54,10 @@ public class Robot extends TimedRobot {
       DriverStation.silenceJoystickConnectionWarning(true);
       SimulatedArena.getInstance().resetFieldForAuto();
     }
+
+    if (Constants.IOConstants.kTestMode) {
+      System.out.println("Test Mode Enabled\nNot for competition use");
+    }
   }
 
   public static Robot getInstance() {
@@ -80,13 +84,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData(CommandScheduler.getInstance());
 
     if (Constants.IOConstants.kTestMode) {
-      System.out.println("Test Mode Enabled\nNot for competition use");
+      //      System.out.println("Test Mode Enabled\nNot for competition use");
     }
   }
-
-  /** This function is called once each time the robot enters Disabled mode. */
-  @Override
-  public void disabledInit() {}
 
   @Override
   public void disabledPeriodic() {

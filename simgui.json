@@ -13,9 +13,9 @@
       "/SmartDashboard/IMU": "Alerts",
       "/SmartDashboard/JSON": "Alerts",
       "/SmartDashboard/Motors": "Alerts",
-      "/SmartDashboard/PathPlanner": "Alerts",
       "/SmartDashboard/Scheduler": "Scheduler",
-      "/SmartDashboard/Swerve Drive": "Alerts"
+      "/SmartDashboard/Swerve Drive": "Alerts",
+      "/SmartDashboard/VisionSystemSim-Vision/Sim Field": "Field2d"
     },
     "windows": {
       "/SmartDashboard/Field": {
@@ -51,7 +51,6 @@
           "width": 0.30000001192092896
         },
         "bottom": 1638,
-        "builtin": "2025 Reefscape",
         "height": 8.051901817321777,
         "left": 534,
         "right": 3466,
@@ -71,8 +70,8 @@
             "open": true
           }
         },
-        "Auto Controllers": {
-          "X": {
+        "Controllers": {
+          "Xbox": {
             "open": true
           },
           "open": true
@@ -87,8 +86,7 @@
         "swerve": {
           "modules": {
             "open": true
-          },
-          "open": true
+          }
         }
       }
     }
