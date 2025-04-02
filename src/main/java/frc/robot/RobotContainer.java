@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IOConstants;
+import frc.robot.Routines.CoralLevel;
 import frc.robot.commands.ChuteDrop;
 import frc.robot.commands.GrabCoral;
 import frc.robot.commands.drive.Drive;
@@ -71,12 +72,19 @@ public class RobotContainer {
 
     // Add routines to auto chooser
     m_autoChooser.addRoutine("Drive Out", m_routines::driveOut);
-    m_autoChooser.addRoutine("Left Score India 4", m_routines::leftIndia4);
-    m_autoChooser.addRoutine("Left Score India 4 Kilo 4", m_routines::leftIndia4Kilo4);
-    m_autoChooser.addRoutine("Right Score Foxtrot 4", m_routines::rightFoxtrot4);
-    m_autoChooser.addRoutine("Right Score Foxtrot 4 Delta 4", m_routines::rightFoxtrot4Delta4);
-    m_autoChooser.addRoutine("Middle Own India 4", m_routines::middleOwnIndia4);
-    m_autoChooser.addRoutine("Middle Opposing Foxtrot 4", m_routines::middleOpposingFoxtrot4);
+    m_autoChooser.addRoutine("Left Score India L4", () -> m_routines.leftIndia(CoralLevel.L4));
+    m_autoChooser.addRoutine(
+        "Left Score India Kilo L4", () -> m_routines.leftIndiaKilo(CoralLevel.L4));
+    m_autoChooser.addRoutine(
+        "Right Score Foxtrot L4", () -> m_routines.rightFoxtrot(CoralLevel.L4));
+    m_autoChooser.addRoutine(
+        "Right Score Foxtrot Delta L4", () -> m_routines.rightFoxtrotDelta(CoralLevel.L4));
+    m_autoChooser.addRoutine("Middle Own India L4", () -> m_routines.middleOwnIndia(CoralLevel.L4));
+    m_autoChooser.addRoutine("Middle Own Hotel L4", () -> m_routines.middleOwnHotel(CoralLevel.L4));
+    m_autoChooser.addRoutine(
+        "Middle Opposing Foxtrot L4", () -> m_routines.middleOpposingFoxtrot(CoralLevel.L4));
+    m_autoChooser.addRoutine(
+        "Middle Opposing Gamma L4", () -> m_routines.middleOpposingGamma(CoralLevel.L4));
 
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
 

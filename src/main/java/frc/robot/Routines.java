@@ -21,6 +21,13 @@ public class Routines {
     m_coral = coral;
   }
 
+  public static enum CoralLevel {
+    L1,
+    L2,
+    L3,
+    L4
+  }
+
   public AutoRoutine driveOut() {
     AutoRoutine routine = m_factory.newRoutine("driveOut");
     AutoTrajectory driveOut = routine.trajectory("driveOut");
@@ -30,21 +37,23 @@ public class Routines {
     return routine;
   }
 
-  public AutoRoutine leftIndia4() {
-    AutoRoutine routine = m_factory.newRoutine("leftIndia4");
+  public AutoRoutine leftIndia(CoralLevel level) {
+    AutoRoutine routine = m_factory.newRoutine("leftIndia" + level);
     AutoTrajectory leftStartToIndia = routine.trajectory("leftStartToIndia");
 
     routine
         .active()
         .onTrue(
             Commands.sequence(
-                leftStartToIndia.resetOdometry(), leftStartToIndia.cmd(), upScore3Down()));
+                leftStartToIndia.resetOdometry(),
+                leftStartToIndia.cmd(),
+                levelSelectorHelper(level)));
 
     return routine;
   }
 
-  public AutoRoutine leftIndia4Kilo4() {
-    AutoRoutine routine = m_factory.newRoutine("leftIndia4Kilo4");
+  public AutoRoutine leftIndiaKilo(CoralLevel level) {
+    AutoRoutine routine = m_factory.newRoutine("leftIndiaKilo" + level);
     AutoTrajectory leftStartToIndia = routine.trajectory("leftStartToIndia");
     AutoTrajectory indiaToLeftStation = routine.trajectory("indiaToLeftStation");
     AutoTrajectory leftStationToKilo = routine.trajectory("leftStationToKilo");
@@ -55,17 +64,17 @@ public class Routines {
             Commands.sequence(
                 leftStartToIndia.resetOdometry(),
                 leftStartToIndia.cmd(),
-                upScore3Down(),
+                levelSelectorHelper(level),
                 indiaToLeftStation.cmd(),
                 new GrabCoral(m_coral),
                 leftStationToKilo.cmd(),
-                upScore3Down()));
+                levelSelectorHelper(level)));
 
     return routine;
   }
 
-  public AutoRoutine leftIndia4Kilo4Lima4() {
-    AutoRoutine routine = m_factory.newRoutine("leftIndia4Kilo4Lima4");
+  public AutoRoutine leftIndiaKiloLima(CoralLevel level) {
+    AutoRoutine routine = m_factory.newRoutine("leftIndiaKiloLima" + level);
     AutoTrajectory leftStartToIndia = routine.trajectory("leftStartToIndia");
     AutoTrajectory indiaToLeftStation = routine.trajectory("indiaToLeftStation");
     AutoTrajectory leftStationToKilo = routine.trajectory("leftStationToKilo");
@@ -78,34 +87,36 @@ public class Routines {
             Commands.sequence(
                 leftStartToIndia.resetOdometry(),
                 leftStartToIndia.cmd(),
-                upScore3Down(),
+                levelSelectorHelper(level),
                 indiaToLeftStation.cmd(),
                 new GrabCoral(m_coral),
                 leftStationToKilo.cmd(),
-                upScore3Down(),
+                levelSelectorHelper(level),
                 kiloToLeftStation.cmd(),
                 new GrabCoral(m_coral),
                 leftStationToLima.cmd(),
-                upScore3Down()));
+                levelSelectorHelper(level)));
 
     return routine;
   }
 
-  public AutoRoutine rightFoxtrot4() {
-    AutoRoutine routine = m_factory.newRoutine("leftFoxtrot4");
+  public AutoRoutine rightFoxtrot(CoralLevel level) {
+    AutoRoutine routine = m_factory.newRoutine("rightFoxtrot" + level);
     AutoTrajectory rightStartToFoxtrot = routine.trajectory("rightStartToFoxtrot");
 
     routine
         .active()
         .onTrue(
             Commands.sequence(
-                rightStartToFoxtrot.resetOdometry(), rightStartToFoxtrot.cmd(), upScore3Down()));
+                rightStartToFoxtrot.resetOdometry(),
+                rightStartToFoxtrot.cmd(),
+                levelSelectorHelper(level)));
 
     return routine;
   }
 
-  public AutoRoutine rightFoxtrot4Delta4() {
-    AutoRoutine routine = m_factory.newRoutine("leftFoxtrot4Delta4");
+  public AutoRoutine rightFoxtrotDelta(CoralLevel level) {
+    AutoRoutine routine = m_factory.newRoutine("rightFoxtrotDelta" + level);
     AutoTrajectory rightStartToFoxtrot = routine.trajectory("rightStartToFoxtrot");
     AutoTrajectory foxtrotToRightStation = routine.trajectory("foxtrotToRightStation");
     AutoTrajectory rightStationToDelta = routine.trajectory("rightStationToDelta");
@@ -116,17 +127,17 @@ public class Routines {
             Commands.sequence(
                 rightStartToFoxtrot.resetOdometry(),
                 rightStartToFoxtrot.cmd(),
-                upScore3Down(),
+                levelSelectorHelper(level),
                 foxtrotToRightStation.cmd(),
                 new GrabCoral(m_coral),
                 rightStationToDelta.cmd(),
-                upScore3Down()));
+                levelSelectorHelper(level)));
 
     return routine;
   }
 
-  public AutoRoutine rightFoxtrot4Delta4Charlie4() {
-    AutoRoutine routine = m_factory.newRoutine("leftFoxtrot4Delta4Charlie4");
+  public AutoRoutine rightFoxtrotDeltaCharlie(CoralLevel level) {
+    AutoRoutine routine = m_factory.newRoutine("rightFoxtrotDeltaCharlie" + level);
     AutoTrajectory rightStartToFoxtrot = routine.trajectory("rightStartToFoxtrot");
     AutoTrajectory foxtrotToRightStation = routine.trajectory("foxtrotToRightStation");
     AutoTrajectory rightStationToDelta = routine.trajectory("rightStationToDelta");
@@ -139,42 +150,80 @@ public class Routines {
             Commands.sequence(
                 rightStartToFoxtrot.resetOdometry(),
                 rightStartToFoxtrot.cmd(),
-                upScore3Down(),
+                levelSelectorHelper(level),
                 foxtrotToRightStation.cmd(),
                 new GrabCoral(m_coral),
                 rightStationToDelta.cmd(),
-                upScore3Down(),
+                levelSelectorHelper(level),
                 deltaToRightStation.cmd(),
                 new GrabCoral(m_coral),
                 rightStationToCharlie.cmd(),
-                upScore3Down()));
+                levelSelectorHelper(level)));
 
     return routine;
   }
 
-  public AutoRoutine middleOwnIndia4() {
-    AutoRoutine routine = m_factory.newRoutine("middleOwnIndia4");
+  public AutoRoutine middleOwnIndia(CoralLevel level) {
+    AutoRoutine routine = m_factory.newRoutine("middleOwnIndia" + level);
     AutoTrajectory middleToIndia = routine.trajectory("middleOwnToIndia");
 
     routine
         .active()
         .onTrue(
-            Commands.sequence(middleToIndia.resetOdometry(), middleToIndia.cmd(), upScore3Down()));
+            Commands.sequence(
+                middleToIndia.resetOdometry(), middleToIndia.cmd(), levelSelectorHelper(level)));
 
     return routine;
   }
 
-  public AutoRoutine middleOpposingFoxtrot4() {
-    AutoRoutine routine = m_factory.newRoutine("middleOpposingFoxtrot4");
+  public AutoRoutine middleOwnHotel(CoralLevel level) {
+    AutoRoutine routine = m_factory.newRoutine("middleOwnHotel" + level);
+    AutoTrajectory middleToHotel = routine.trajectory("middleOwnToHotel");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                middleToHotel.resetOdometry(), middleToHotel.cmd(), levelSelectorHelper(level)));
+
+    return routine;
+  }
+
+  public AutoRoutine middleOpposingFoxtrot(CoralLevel level) {
+    AutoRoutine routine = m_factory.newRoutine("middleOpposingFoxtrot" + level);
     AutoTrajectory middleToFoxtrot = routine.trajectory("middleOpposingToFoxtrot");
 
     routine
         .active()
         .onTrue(
             Commands.sequence(
-                middleToFoxtrot.resetOdometry(), middleToFoxtrot.cmd(), upScore3Down()));
+                middleToFoxtrot.resetOdometry(),
+                middleToFoxtrot.cmd(),
+                levelSelectorHelper(level)));
 
     return routine;
+  }
+
+  public AutoRoutine middleOpposingGamma(CoralLevel level) {
+    AutoRoutine routine = m_factory.newRoutine("middleOpposingGamma" + level);
+    AutoTrajectory middleToGamma = routine.trajectory("middleOpposingToGamma");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                middleToGamma.resetOdometry(), middleToGamma.cmd(), levelSelectorHelper(level)));
+
+    return routine;
+  }
+
+  private Command levelSelectorHelper(CoralLevel level) {
+    return switch (level) {
+      case L1 -> null;
+      case L2 -> upScore2Down();
+      case L3 -> upScore3Down();
+      case L4 -> upScore4Down();
+    };
   }
 
   private Command upScore2Down() {
