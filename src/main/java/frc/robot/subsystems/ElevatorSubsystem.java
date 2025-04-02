@@ -59,6 +59,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         "Elevator Height", Elevator.kRightElevatorSparkMax.getEncoder().getPosition());
     SmartDashboard.putNumber("Elevator Speed", Elevator.kRightElevatorSparkMax.get());
     SmartDashboard.putString("Elevator State", m_state.toString());
+    SmartDashboard.putBoolean("Elevator at Bottom", atBottom());
   }
 
   // TODO: add limits logic
