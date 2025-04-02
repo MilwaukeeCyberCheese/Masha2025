@@ -36,4 +36,12 @@ public class ChuteSubsystem extends SubsystemBase {
   public void raise() {
     setState(ChuteState.UP);
   }
+
+  public boolean isDown() {
+    return m_state == ChuteState.DOWN;
+  }
+
+  public boolean isUp() {
+    return m_state == ChuteState.UP;
+  }
 }

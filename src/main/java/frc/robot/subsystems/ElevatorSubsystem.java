@@ -38,13 +38,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     setState(m_state);
   }
 
-  // Methods to set motor speeds, etc. go here
-
   @Override
   public void periodic() {
     log();
-
-    // System.out.println(Elevator.kRightElevatorSparkMax.configAccessor.closedLoop.getP());
 
     Elevator.kElevatorController.setReference(
         m_height, ControlType.kPosition, ClosedLoopSlot.kSlot0, Elevator.kG);
@@ -140,11 +136,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     setState(ElevatorState.L4);
   }
 
-  /**
-   * Increase the elevator's height slightly
-   *
-   * @param increment
-   */
   public void customUp() {
     m_height += Elevator.kCustomStep;
     setState(ElevatorState.CUSTOM);
@@ -165,21 +156,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     setState(ElevatorState.CUSTOM);
   }
 
-  // TODO: test this
-  /**
-   * Zero the absolute encoder of the elevator
-   *
-   * <p>Should only be called when the elevator is at the bottom
-   *
-   * @param persistMode {@link PersistMode} only call this when intending to save the new offset,
-   *     note that this will cause the spark to become unresponsive for a short period of time
-   */
+  /** Zero the elevator encoder */
   public void zero() {
     Elevator.kRightElevatorSparkMax.getEncoder().setPosition(0);
   }
 
   public boolean atBottom() {
-    // return Elevator.kElevatorLimitSwitch.isPressed();
-    return false;
+    return Elevator.kElevatorLimitSwitch.isPressed();
   }
 }
