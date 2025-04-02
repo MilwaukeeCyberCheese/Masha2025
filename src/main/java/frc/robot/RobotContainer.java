@@ -140,7 +140,7 @@ public class RobotContainer {
           .onTrue(Commands.runOnce(m_climber::downSlow))
           .onFalse(Commands.runOnce(m_climber::inactive));
 
-      m_operatorController.povLeft().onTrue(Commands.runOnce(m_elevator::zero));
+      m_operatorController.povRight().onTrue(Commands.runOnce(m_elevator::zero));
 
       // Coral controls
       m_operatorController.leftBumper().whileTrue(new GrabCoral(m_coral));
