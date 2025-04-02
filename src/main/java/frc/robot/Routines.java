@@ -38,7 +38,7 @@ public class Routines {
         .active()
         .onTrue(
             Commands.sequence(
-                leftStartToIndia.resetOdometry(), leftStartToIndia.cmd(), upScore4Down()));
+                leftStartToIndia.resetOdometry(), leftStartToIndia.cmd(), upScore3Down()));
 
     return routine;
   }
@@ -55,11 +55,11 @@ public class Routines {
             Commands.sequence(
                 leftStartToIndia.resetOdometry(),
                 leftStartToIndia.cmd(),
-                upScore4Down(),
+                upScore3Down(),
                 indiaToLeftStation.cmd(),
                 new GrabCoral(m_coral),
                 leftStationToKilo.cmd(),
-                upScore4Down()));
+                upScore3Down()));
 
     return routine;
   }
@@ -78,15 +78,15 @@ public class Routines {
             Commands.sequence(
                 leftStartToIndia.resetOdometry(),
                 leftStartToIndia.cmd(),
-                upScore4Down(),
+                upScore3Down(),
                 indiaToLeftStation.cmd(),
                 new GrabCoral(m_coral),
                 leftStationToKilo.cmd(),
-                upScore4Down(),
+                upScore3Down(),
                 kiloToLeftStation.cmd(),
                 new GrabCoral(m_coral),
                 leftStationToLima.cmd(),
-                upScore4Down()));
+                upScore3Down()));
 
     return routine;
   }
@@ -99,7 +99,7 @@ public class Routines {
         .active()
         .onTrue(
             Commands.sequence(
-                rightStartToFoxtrot.resetOdometry(), rightStartToFoxtrot.cmd(), upScore4Down()));
+                rightStartToFoxtrot.resetOdometry(), rightStartToFoxtrot.cmd(), upScore3Down()));
 
     return routine;
   }
@@ -116,11 +116,11 @@ public class Routines {
             Commands.sequence(
                 rightStartToFoxtrot.resetOdometry(),
                 rightStartToFoxtrot.cmd(),
-                upScore4Down(),
+                upScore3Down(),
                 foxtrotToRightStation.cmd(),
                 new GrabCoral(m_coral),
                 rightStationToDelta.cmd(),
-                upScore4Down()));
+                upScore3Down()));
 
     return routine;
   }
@@ -139,15 +139,15 @@ public class Routines {
             Commands.sequence(
                 rightStartToFoxtrot.resetOdometry(),
                 rightStartToFoxtrot.cmd(),
-                upScore4Down(),
+                upScore3Down(),
                 foxtrotToRightStation.cmd(),
                 new GrabCoral(m_coral),
                 rightStationToDelta.cmd(),
-                upScore4Down(),
+                upScore3Down(),
                 deltaToRightStation.cmd(),
                 new GrabCoral(m_coral),
                 rightStationToCharlie.cmd(),
-                upScore4Down()));
+                upScore3Down()));
 
     return routine;
   }
@@ -159,7 +159,7 @@ public class Routines {
     routine
         .active()
         .onTrue(
-            Commands.sequence(middleToIndia.resetOdometry(), middleToIndia.cmd(), upScore4Down()));
+            Commands.sequence(middleToIndia.resetOdometry(), middleToIndia.cmd(), upScore3Down()));
 
     return routine;
   }
@@ -172,7 +172,7 @@ public class Routines {
         .active()
         .onTrue(
             Commands.sequence(
-                middleToFoxtrot.resetOdometry(), middleToFoxtrot.cmd(), upScore4Down()));
+                middleToFoxtrot.resetOdometry(), middleToFoxtrot.cmd(), upScore3Down()));
 
     return routine;
   }
