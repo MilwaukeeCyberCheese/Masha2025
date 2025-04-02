@@ -104,7 +104,7 @@ public final class Constants {
 
     // TODO: determine reverse or forward
     public static final SparkLimitSwitch kElevatorLimitSwitch =
-        kRightElevatorSparkMax.getReverseLimitSwitch();
+        kRightElevatorSparkMax.getForwardLimitSwitch();
 
     public static final SparkMaxConfig kLeftElevatorConfig = new SparkMaxConfig();
     public static final SparkMaxConfig kRightElevatorConfig = new SparkMaxConfig();
