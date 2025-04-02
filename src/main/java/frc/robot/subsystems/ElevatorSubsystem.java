@@ -165,6 +165,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   /** Zero the elevator encoder */
   public void zero() {
     Elevator.kRightElevatorSparkMax.getEncoder().setPosition(0);
+    setState(ElevatorState.DOWN);
   }
 
   public boolean atBottom() {
