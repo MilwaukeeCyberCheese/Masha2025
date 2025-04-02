@@ -42,6 +42,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     log();
 
+    // Re-zero the elevator when it's down
+    if (atBottom()) {
+      zero();
+    }
+
+    // Set the elevator to the desired height
     Elevator.kElevatorController.setReference(
         m_height, ControlType.kPosition, ClosedLoopSlot.kSlot0, Elevator.kG);
   }

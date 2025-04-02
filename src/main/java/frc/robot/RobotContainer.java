@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IOConstants;
+import frc.robot.commands.ChuteDrop;
 import frc.robot.commands.GrabCoral;
 import frc.robot.commands.drive.Drive;
 import frc.robot.commands.elevator.ManualElevatorPosition;
@@ -125,7 +126,7 @@ public class RobotContainer {
 
     // BUTTON BOARD
     {
-      new Trigger(() -> m_buttons.getSwitch3()).onTrue(Commands.runOnce(m_chute::drop));
+      new Trigger(() -> m_buttons.getSwitch3()).onTrue(new ChuteDrop(m_chute, m_climber));
     }
 
     // OPERATOR CONTROLLER
@@ -163,7 +164,7 @@ public class RobotContainer {
       m_operatorController
           .leftStick()
           .and(m_operatorController.rightStick())
-          .onTrue(Commands.runOnce(m_chute::drop));
+          .onTrue(new ChuteDrop(m_chute, m_climber));
 
       m_operatorController
           .rightBumper()
