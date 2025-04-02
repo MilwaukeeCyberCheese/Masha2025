@@ -141,11 +141,6 @@ public final class Constants {
 
     public static final double kCustomStep = 0.25;
 
-    /*
-     * TODO: TEST IN SIMULATION THE DIRECTION THE LIFT MOTORS SPIN
-     * ISTFG WE HAVE TO DO THIS CAUSE THEY'RE MECHANICALLY LINKED
-     * IF IT GETS MESSED UP, I'M LOSING IT
-     */
     static {
       kLeftElevatorConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(30);
       kRightElevatorConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(30).inverted(true);
@@ -197,7 +192,6 @@ public final class Constants {
       public static final boolean kLeftInverted = true;
       public static final boolean kRightInverted = false;
 
-      // TODO: find these
       public static final HashMap<CoralHandlerState, Double> kSpeeds =
           new HashMap<>() {
             {
@@ -229,7 +223,6 @@ public final class Constants {
 
     public static final SparkMaxConfig kClimberConfig = new SparkMaxConfig();
 
-    // TODO: find out if it's inverted
     public static final boolean kClimberInverted = false;
 
     // TODO: find these
