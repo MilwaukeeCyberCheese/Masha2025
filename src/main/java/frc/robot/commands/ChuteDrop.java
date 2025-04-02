@@ -23,10 +23,14 @@ public class ChuteDrop extends Command {
 
   @Override
   public void execute() {
-    if (m_climber.isDown()) {
+    if (m_climber.isDown() && m_chute.isUp()) {
       m_chute.drop();
-    } else {
+    } else if (m_chute.isUp()) {
       m_climber.downSlow();
+    }
+
+    if (m_chute.isDown() && !m_climber.isUp()) {
+      m_climber.up();
     }
   }
 

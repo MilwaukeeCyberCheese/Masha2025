@@ -107,6 +107,15 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   /**
+   * Get whether the climber is fully up
+   *
+   * @return boolean
+   */
+  public boolean isUp() {
+    return getPosition() >= Climber.kClimberUpPosition;
+  }
+
+  /**
    * Set the custom position of the climber Changes the state of the climber
    *
    * @param position

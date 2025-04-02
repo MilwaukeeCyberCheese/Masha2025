@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
@@ -89,14 +90,8 @@ public final class Constants {
     }
   }
 
-  // TODO: figure out the best way to run the elevator
-  // is it separate PIDs running locally? (also this one means another encoder is
-  // needed)
-  // or is it a single PID running on the roborio?
-  // or is it a single PID running locally, and one slaved to it? (probably this
-  // one)
   public static final class Elevator {
-    // TODO: figure these out
+    // These are inverted, but I'm not gonna change it cause it'll probably break something
     public static final int kLeftElevatorCANid = 9;
     public static final int kRightElevatorCANid = 10;
 
@@ -107,8 +102,9 @@ public final class Constants {
     public static final SparkMax kRightElevatorSparkMax =
         new SparkMax(kRightElevatorCANid, MotorType.kBrushless);
 
-    // public static final SparkLimitSwitch kElevatorLimitSwitch =
-    //     kRightElevatorSparkMax.getReverseLimitSwitch();
+    // TODO: determine reverse or forward
+    public static final SparkLimitSwitch kElevatorLimitSwitch =
+        kRightElevatorSparkMax.getReverseLimitSwitch();
 
     public static final SparkMaxConfig kLeftElevatorConfig = new SparkMaxConfig();
     public static final SparkMaxConfig kRightElevatorConfig = new SparkMaxConfig();
@@ -145,11 +141,6 @@ public final class Constants {
 
     public static final double kCustomStep = 0.25;
 
-    /*
-     * TODO: TEST IN SIMULATION THE DIRECTION THE LIFT MOTORS SPIN
-     * ISTFG WE HAVE TO DO THIS CAUSE THEY'RE MECHANICALLY LINKED
-     * IF IT GETS MESSED UP, I'M LOSING IT
-     */
     static {
       kLeftElevatorConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(30);
       kRightElevatorConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(30).inverted(true);
@@ -201,7 +192,6 @@ public final class Constants {
       public static final boolean kLeftInverted = true;
       public static final boolean kRightInverted = false;
 
-      // TODO: find these
       public static final HashMap<CoralHandlerState, Double> kSpeeds =
           new HashMap<>() {
             {
@@ -233,7 +223,6 @@ public final class Constants {
 
     public static final SparkMaxConfig kClimberConfig = new SparkMaxConfig();
 
-    // TODO: find out if it's inverted
     public static final boolean kClimberInverted = false;
 
     // TODO: find these
@@ -251,7 +240,9 @@ public final class Constants {
     public static final double[] kClimberLimits = {20.0, 180.0};
 
     // TODO: find this
-    public static final double kDownPosition = 90.0;
+    public static final double kDownPosition = 0.0;
+    public static final double kClimberUpPosition = 35.0;
+    public static final double kClimberDownPosition = -35.0;
 
     static {
       kClimberConfig
