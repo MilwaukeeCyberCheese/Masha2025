@@ -172,11 +172,9 @@ public class RobotContainer {
     }
   }
 
-  public Command resetStates() {
-    return Commands.parallel(
-        Commands.runOnce(m_climber::inactive),
-        Commands.runOnce(m_elevator::disable),
-        Commands.runOnce(m_coral::inactive),
-        Commands.print("Resetting states"));
-  }
+  public void resetStates() {
+    m_elevator.L1();
+    m_climber.inactive();
+    m_coral.inactive();
+}
 }
