@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -103,8 +104,7 @@ public final class Constants {
         new SparkMax(kRightElevatorCANid, MotorType.kBrushless);
 
     // TODO: determine reverse or forward
-    public static final SparkLimitSwitch kElevatorLimitSwitch =
-        kRightElevatorSparkMax.getForwardLimitSwitch();
+    public static final DigitalInput kElevatorLimitSwitch = new DigitalInput(4);
 
     public static final SparkMaxConfig kLeftElevatorConfig = new SparkMaxConfig();
     public static final SparkMaxConfig kRightElevatorConfig = new SparkMaxConfig();
@@ -115,7 +115,7 @@ public final class Constants {
 
     // TODO: veloc and accel is in inches per second and inches per second squared
     public static final PIDConstants kElevatorPIDConstants =
-        new PIDConstants(0.2, 0.0, 0.0, 0.5, 0.5);
+        new PIDConstants(0.15, 0.0, 0.0, 0.5, 0.5);
     public static final double kG = 0.35;
 
     // TODO: figure out the heights
@@ -126,7 +126,7 @@ public final class Constants {
             put(ElevatorState.L1, 0.0);
             put(ElevatorState.L2, 5.75);
             put(ElevatorState.L3, 13.0);
-            put(ElevatorState.L4, 27.0);
+            put(ElevatorState.L4, 28.0);
           }
         };
 
@@ -152,20 +152,20 @@ public final class Constants {
       kRightElevatorConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
+          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD)
       // Now using these, comment them out if it breaks
-      // .maxMotion
-      // .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
-      // .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
+      .maxMotion
+      .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
+      .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
 
       kRightElevatorConfig.encoder.positionConversionFactor(kConversionFactor);
 
       // TODO: see if this is right
       // it's not on there yet :(
-      // kRightElevatorConfig
-      //     .limitSwitch
-      //     .reverseLimitSwitchEnabled(true)
-      //     .reverseLimitSwitchType(Type.kNormallyOpen);
+      kRightElevatorConfig
+          .limitSwitch
+          .forwardLimitSwitchEnabled(false)
+          .forwardLimitSwitchType(Type.kNormallyOpen);
     }
   }
 
