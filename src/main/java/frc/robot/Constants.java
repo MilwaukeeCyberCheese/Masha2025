@@ -103,7 +103,7 @@ public final class Constants {
         new SparkMax(kRightElevatorCANid, MotorType.kBrushless);
 
     // TODO: determine reverse or forward
-    public static final DigitalInput kElevatorLimitSwitch = new DigitalInput(4);
+    public static final DigitalInput kElevatorLimitSwitch = new DigitalInput(0);
 
     public static final SparkMaxConfig kLeftElevatorConfig = new SparkMaxConfig();
     public static final SparkMaxConfig kRightElevatorConfig = new SparkMaxConfig();
@@ -124,7 +124,7 @@ public final class Constants {
             put(ElevatorState.DOWN, 0.0);
             put(ElevatorState.L1, 0.0);
             put(ElevatorState.L2, 5.75);
-            put(ElevatorState.L3, 13.0);
+            put(ElevatorState.L3, 14.0);
             put(ElevatorState.L4, 28.0);
           }
         };

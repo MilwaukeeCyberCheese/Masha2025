@@ -43,9 +43,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     log();
 
     // Re-zero the elevator when it's down
-    if (atBottom()) {
-      zero();
-    }
+    if (atBottom()) zero();
+    
 
     // Set the elevator to the desired height
     Elevator.kElevatorController.setReference(
@@ -166,10 +165,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   /** Zero the elevator encoder */
   public void zero() {
     Elevator.kRightElevatorSparkMax.getEncoder().setPosition(0);
-    setState(ElevatorState.DOWN);
   }
 
   public boolean atBottom() {
-    return Elevator.kElevatorLimitSwitch.get();
+    return !Elevator.kElevatorLimitSwitch.get();
   }
 }
