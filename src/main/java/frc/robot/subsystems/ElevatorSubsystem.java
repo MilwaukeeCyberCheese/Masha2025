@@ -47,7 +47,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     log();
 
-    // Re-zero the elevator when it's down, and debounce it so it doesn't occur more than once per second
+    // Re-zero the elevator when it's down, and debounce it so it doesn't occur more than once per
+    // second
     if (atBottom() && m_zeroDebouncer.getTime() > 1000) zero();
 
     // Set the elevator to the desired height

@@ -6,6 +6,7 @@ package frc.robot;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -189,9 +190,12 @@ public class RobotContainer {
     }
   }
 
-  public void resetStates() {
+  public void teleOpReset() {
     m_elevator.L1();
     m_climber.inactive();
     m_coral.inactive();
+    // At the beginning of teleop, if the robot is connected to FMS, invert the rotation so that
+    // field oriented drive works
+    if (DriverStation.isFMSAttached()) m_drive.invertRotation();
   }
 }

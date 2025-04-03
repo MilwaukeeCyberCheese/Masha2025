@@ -440,6 +440,13 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.zeroGyro();
   }
 
+  public void invertRotation() {
+    resetOdometry(
+        new Pose2d(
+            getPose().getTranslation(),
+            Rotation2d.fromDegrees((getPose().getRotation().getDegrees() + 180) % 360)));
+  }
+
   /**
    * Checks if the alliance is red, defaults to false if alliance isn't available.
    *
