@@ -49,7 +49,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Re-zero the elevator when it's down
     if (atBottom() && m_zeroDebouncer.getTime() > 1000) zero();
-    
 
     // Set the elevator to the desired height
     Elevator.kElevatorController.setReference(
@@ -170,6 +169,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   /** Zero the elevator encoder */
   public void zero() {
     Elevator.kRightElevatorSparkMax.getEncoder().setPosition(0);
+    m_height = 0;
+    setState(ElevatorState.DOWN);
     m_zeroDebouncer.reset();
     m_zeroDebouncer.start();
   }
