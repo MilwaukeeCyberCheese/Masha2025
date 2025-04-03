@@ -137,6 +137,13 @@ public class RobotContainer {
     // BUTTON BOARD
     {
       new Trigger(() -> m_buttons.getSwitch3()).onTrue(new ChuteDrop(m_chute, m_climber));
+      // Elevator Controls
+      m_buttons.getA1().onTrue(Commands.runOnce(m_elevator::L1));
+      m_buttons.getA2().onTrue(Commands.runOnce(m_elevator::L2));
+      m_buttons.getA3().onTrue(Commands.runOnce(m_elevator::L3));
+      m_buttons.getB1().onTrue(Commands.runOnce(m_elevator::L4));
+
+      m_buttons.getB3().onTrue(Commands.runOnce(m_elevator::disable));
     }
 
     // OPERATOR CONTROLLER
