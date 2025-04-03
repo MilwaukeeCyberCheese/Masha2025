@@ -7,6 +7,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Elevator;
+import frc.robot.utils.Stopwatch;
 
 // TODO: add sim support
 public class ElevatorSubsystem extends SubsystemBase {
@@ -23,6 +24,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private ElevatorState m_state = ElevatorState.DISABLED;
   protected double m_height;
+  private Stopwatch m_zeroDebouncer = new Stopwatch();
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
@@ -36,6 +38,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         PersistMode.kPersistParameters);
 
     setState(m_state);
+
+    m_zeroDebouncer.reset();
+    m_zeroDebouncer.start();
   }
 
   @Override
@@ -43,7 +48,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     log();
 
     // Re-zero the elevator when it's down
-    if (atBottom()) zero();
+    if (atBottom() && m_zeroDebouncer.getTime() > 1000) zero();
     
 
     // Set the elevator to the desired height
@@ -165,6 +170,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   /** Zero the elevator encoder */
   public void zero() {
     Elevator.kRightElevatorSparkMax.getEncoder().setPosition(0);
+    m_zeroDebouncer.reset();
+    m_zeroDebouncer.start();
   }
 
   public boolean atBottom() {
