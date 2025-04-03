@@ -37,6 +37,19 @@ public class Routines {
     return routine;
   }
 
+  public AutoRoutine driveOutScore(CoralLevel coral) {
+    AutoRoutine routine = m_factory.newRoutine("driveOutScore" + coral);
+    AutoTrajectory driveOut = routine.trajectory("driveOut");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                driveOut.resetOdometry(), driveOut.cmd(), levelSelectorHelper(coral)));
+
+    return routine;
+  }
+
   public AutoRoutine leftIndia(CoralLevel level) {
     AutoRoutine routine = m_factory.newRoutine("leftIndia" + level);
     AutoTrajectory leftStartToIndia = routine.trajectory("leftStartToIndia");

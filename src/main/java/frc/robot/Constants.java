@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
@@ -153,10 +152,10 @@ public final class Constants {
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
           .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD)
-      // Now using these, comment them out if it breaks
-      .maxMotion
-      .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
-      .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
+          // Now using these, comment them out if it breaks
+          .maxMotion
+          .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
+          .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
 
       kRightElevatorConfig.encoder.positionConversionFactor(kConversionFactor);
 

@@ -72,6 +72,9 @@ public class RobotContainer {
 
     // Add routines to auto chooser
     m_autoChooser.addRoutine("Drive Out", m_routines::driveOut);
+    m_autoChooser.addRoutine("Drive Out Score L2", () -> m_routines.driveOutScore(CoralLevel.L2));
+    m_autoChooser.addRoutine("Drive Out Score L3", () -> m_routines.driveOutScore(CoralLevel.L3));
+    m_autoChooser.addRoutine("Drive Out Score L4", () -> m_routines.driveOutScore(CoralLevel.L4));
     m_autoChooser.addRoutine("Left Score India L4", () -> m_routines.leftIndia(CoralLevel.L4));
     m_autoChooser.addRoutine(
         "Left Score India Kilo L4", () -> m_routines.leftIndiaKilo(CoralLevel.L4));
