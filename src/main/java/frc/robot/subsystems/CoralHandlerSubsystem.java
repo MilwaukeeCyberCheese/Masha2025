@@ -19,14 +19,18 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     INACTIVE,
     GRAB,
     RELEASE,
+    REVERSE,
+    INVERSE,
     CUSTOM
   }
 
   private CoralHandlerState m_state = CoralHandlerState.INACTIVE;
   protected boolean m_hasCoral = false;
   private Optional<Double> m_customSpeed = Optional.empty();
-  protected double m_speed;
+  protected double m_leftSpeed;
+  protected double m_rightSpeed;
 
+  /** Creates a new CoralHandlerSubsystem. */
   public CoralHandlerSubsystem() {
     Coral.kLeftSparkMax.configure(
         Coral.kLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -43,20 +47,21 @@ public class CoralHandlerSubsystem extends SubsystemBase {
       // update m_hasCoral
     }
 
-    setSpeed(m_speed);
+    setSpeed(m_leftSpeed, m_rightSpeed);
 
     log();
   }
 
   public void log() {
     SmartDashboard.putBoolean("Coral Handler Has Coral", m_hasCoral);
-    SmartDashboard.putNumber("Coral Handler Speed", m_speed);
+    SmartDashboard.putNumber("Coral Handler Left Speed", m_leftSpeed);
+    SmartDashboard.putNumber("Coral Handler Right Speed", m_rightSpeed);
   }
 
-  public void setSpeed(double speed) {
+  public void setSpeed(double leftSpeed, double rightSpeed) {
 
-    Coral.kLeftSparkMax.set(-speed);
-    Coral.kRightSparkMax.set(-speed);
+    Coral.kLeftSparkMax.set(-leftSpeed);
+    Coral.kRightSparkMax.set(-rightSpeed);
   }
 
   /**
@@ -71,7 +76,10 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     }
 
     m_state = state;
-    m_speed = m_state == CoralHandlerState.CUSTOM ? m_customSpeed.get() : Coral.kSpeeds.get(state);
+    m_leftSpeed =
+        m_state == CoralHandlerState.CUSTOM ? m_customSpeed.get() : Coral.kSpeeds.get(state)[0];
+    m_rightSpeed =
+        m_state == CoralHandlerState.CUSTOM ? m_customSpeed.get() : Coral.kSpeeds.get(state)[1];
   }
 
   /**
@@ -100,7 +108,7 @@ public class CoralHandlerSubsystem extends SubsystemBase {
    * @return double
    */
   public double getSpeed() {
-    return m_speed;
+    return m_leftSpeed;
   }
 
   /** Set state to index */
@@ -118,12 +126,21 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     setState(CoralHandlerState.INACTIVE);
   }
 
+  /** Set state to reverse */
+  public void reverse() {
+    setState(CoralHandlerState.REVERSE);
+  }
+
+  public void inverse() {
+    setState(CoralHandlerState.INVERSE);
+  }
+
   /**
    * Check if the coral handler has a coral
    *
    * @return boolean
    */
   public boolean hasCoral() {
-    return m_hasCoral;
+    return !Coral.kBeamBreak.get();
   }
 }

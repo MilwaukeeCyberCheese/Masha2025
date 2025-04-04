@@ -1,7 +1,6 @@
 package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.Elevator;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ZeroElevatorCommand extends Command {
@@ -16,7 +15,7 @@ public class ZeroElevatorCommand extends Command {
 
   @Override
   public void execute() {
-    m_elevatorSubsystem.setCustomTarget(m_elevatorSubsystem.getHeight() - Elevator.kZeroingStep);
+    m_elevatorSubsystem.zero();
   }
 
   // Returns true when the command should end.
