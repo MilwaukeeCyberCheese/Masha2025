@@ -158,11 +158,9 @@ public class RobotContainer {
           .onTrue(Commands.runOnce(m_climber::downSlow))
           .onFalse(Commands.runOnce(m_climber::inactive));
 
-      m_operatorController.povRight().onTrue(Commands.runOnce(m_elevator::zero));
-
       // Coral controls
       m_operatorController.leftBumper().whileTrue(new GrabCoral(m_coral));
-      m_operatorController.rightBumper().whileTrue(Commands.runOnce(m_coral::inverse));
+      m_operatorController.povRight().onTrue(Commands.runOnce(m_coral::inverse)).onFalse(Commands.runOnce(m_coral::inactive));
       m_operatorController
           .leftTrigger()
           .onTrue(Commands.runOnce(m_coral::release))
