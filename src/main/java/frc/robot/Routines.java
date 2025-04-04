@@ -242,7 +242,7 @@ public class Routines {
   private Command upScore2Down() {
     return Commands.sequence(
         Commands.runOnce(m_elevator::L2),
-        new WaitCommandMilli(200),
+        new WaitCommandMilli(400),
         Commands.runOnce(m_coral::release),
         new WaitCommandMilli(400),
         Commands.runOnce(m_coral::inactive),
@@ -252,7 +252,7 @@ public class Routines {
   private Command upScore3Down() {
     return Commands.sequence(
         Commands.runOnce(m_elevator::L3),
-        new WaitCommandMilli(200),
+        new WaitCommandMilli(800),
         Commands.runOnce(m_coral::release),
         new WaitCommandMilli(400),
         Commands.runOnce(m_coral::inactive),
@@ -262,7 +262,7 @@ public class Routines {
   private Command upScore4Down() {
     return Commands.sequence(
         Commands.runOnce(m_elevator::L4),
-        new WaitCommandMilli(200),
+        new WaitCommandMilli(1200),
         Commands.runOnce(m_coral::release),
         new WaitCommandMilli(400),
         Commands.runOnce(m_coral::inactive),
