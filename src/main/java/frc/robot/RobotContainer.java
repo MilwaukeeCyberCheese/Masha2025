@@ -163,6 +163,7 @@ public class RobotContainer {
 
       // Coral controls
       m_operatorController.leftBumper().whileTrue(new GrabCoral(m_coral));
+      m_operatorController.rightBumper().whileTrue(Commands.runOnce(m_coral::inverse));
       m_operatorController
           .leftTrigger()
           .onTrue(Commands.runOnce(m_coral::release))
