@@ -137,7 +137,7 @@ public class RobotContainer {
 
     // BUTTON BOARD
     {
-      new Trigger(() -> m_buttons.getSwitch3()).onTrue(new ChuteDrop(m_chute, m_climber));
+      new Trigger(() -> m_buttons.getSwitch3()).onTrue(Commands.runOnce(m_chute::drop));
       // Elevator Controls
       m_buttons.getA1().onTrue(Commands.runOnce(m_elevator::L1));
       m_buttons.getA2().onTrue(Commands.runOnce(m_elevator::L2));
@@ -182,7 +182,7 @@ public class RobotContainer {
       m_operatorController
           .leftStick()
           .and(m_operatorController.rightStick())
-          .onTrue(new ChuteDrop(m_chute, m_climber));
+          .onTrue(Commands.runOnce(m_chute::drop));
 
       m_operatorController
           .rightBumper()
