@@ -191,16 +191,14 @@ public final class Constants {
       public static final boolean kLeftInverted = true;
       public static final boolean kRightInverted = false;
 
-
-
       public static final HashMap<CoralHandlerState, double[]> kSpeeds =
           new HashMap<>() {
             {
-              put(CoralHandlerState.INACTIVE, new double[]{0.0, 0.0});
-              put(CoralHandlerState.GRAB, new double[]{0.3, 0.3});
-              put(CoralHandlerState.RELEASE, new double[]{0.3, 0.3});
-              put(CoralHandlerState.REVERSE, new double[]{-0.1, -0.1});
-              put(CoralHandlerState.INVERSE, new double[]{0.2, 1.0});
+              put(CoralHandlerState.INACTIVE, new double[] {0.0, 0.0});
+              put(CoralHandlerState.GRAB, new double[] {0.3, 0.3});
+              put(CoralHandlerState.RELEASE, new double[] {0.3, 0.3});
+              put(CoralHandlerState.REVERSE, new double[] {-0.1, -0.1});
+              put(CoralHandlerState.INVERSE, new double[] {0.2, 1.0});
             }
           };
 

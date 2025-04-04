@@ -76,8 +76,10 @@ public class CoralHandlerSubsystem extends SubsystemBase {
     }
 
     m_state = state;
-    m_leftSpeed = m_state == CoralHandlerState.CUSTOM ? m_customSpeed.get() : Coral.kSpeeds.get(state)[0];
-    m_rightSpeed = m_state == CoralHandlerState.CUSTOM ? m_customSpeed.get() : Coral.kSpeeds.get(state)[1];
+    m_leftSpeed =
+        m_state == CoralHandlerState.CUSTOM ? m_customSpeed.get() : Coral.kSpeeds.get(state)[0];
+    m_rightSpeed =
+        m_state == CoralHandlerState.CUSTOM ? m_customSpeed.get() : Coral.kSpeeds.get(state)[1];
   }
 
   /**
