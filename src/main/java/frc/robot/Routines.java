@@ -242,7 +242,7 @@ public class Routines {
 
   private Command levelSelectorHelper(CoralLevel level) {
     return switch (level) {
-      case L1 -> null;
+      case L1 -> Commands.runOnce(m_elevator::L1);
       case L2 -> Commands.runOnce(m_elevator::L2);
       case L3 -> Commands.runOnce(m_elevator::L3);
       case L4 -> Commands.runOnce(m_elevator::L4);
@@ -253,7 +253,7 @@ public class Routines {
     return Commands.sequence(
         levelSelectorHelper(level),
         new WaitCommandMilli(1200),
-        Commands.runOnce(m_coral::release),
+        Commands.runOnce((level.equals(CoralLevel.L1) ? m_coral::inverse : m_coral::release)),
         new WaitCommandMilli(1200),
         Commands.runOnce(m_coral::inactive),
         Commands.runOnce(m_elevator::L1));

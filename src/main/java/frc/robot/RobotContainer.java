@@ -81,7 +81,7 @@ public class RobotContainer {
     m_autoChooser.addRoutine(
         "Right Score Foxtrot L4", () -> m_routines.rightFoxtrot(CoralLevel.L4));
     m_autoChooser.addRoutine(
-        "Right Score Foxtrot Delta L4", () -> m_routines.rightFoxtrotDelta(CoralLevel.L4));
+        "Right Score Foxtrot Delta L1", () -> m_routines.rightFoxtrotDelta(CoralLevel.L1));
     m_autoChooser.addRoutine("Middle Own India L4", () -> m_routines.middleOwnIndia(CoralLevel.L4));
     m_autoChooser.addRoutine("Middle Own Hotel L4", () -> m_routines.middleOwnHotel(CoralLevel.L4));
     m_autoChooser.addRoutine(
