@@ -118,6 +118,11 @@ public class RobotContainer {
           .onFalse(Commands.runOnce(m_coral::inactive));
       m_driverController.leftTrigger().whileTrue(new GrabCoral(m_coral));
 
+      m_driverController.a().onTrue(Commands.runOnce(m_elevator::L1));
+      m_driverController.x().onTrue(Commands.runOnce(m_elevator::L2));
+      m_driverController.b().onTrue(Commands.runOnce(m_elevator::L3));
+      m_driverController.y().onTrue(Commands.runOnce(m_elevator::L4));
+
       // Climber controls
       m_driverController
           .povUp()
@@ -131,7 +136,7 @@ public class RobotContainer {
 
       // Reset gyro and set swerve drive to X-mode
       m_driverController.povLeft().onTrue(Commands.runOnce(m_drive::zeroGyro));
-      m_driverController.povRight().whileTrue(Commands.runOnce(m_drive::lock));
+      m_driverController.povRight().whileTrue(Commands.runOnce(m_climber::zero));
     }
 
     // BUTTON BOARD
@@ -160,7 +165,10 @@ public class RobotContainer {
 
       // Coral controls
       m_operatorController.leftBumper().whileTrue(new GrabCoral(m_coral));
-      m_operatorController.povRight().onTrue(Commands.runOnce(m_coral::inverse)).onFalse(Commands.runOnce(m_coral::inactive));
+      m_operatorController
+          .povRight()
+          .onTrue(Commands.runOnce(m_coral::inverse))
+          .onFalse(Commands.runOnce(m_coral::inactive));
       m_operatorController
           .leftTrigger()
           .onTrue(Commands.runOnce(m_coral::release))

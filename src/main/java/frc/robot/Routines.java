@@ -45,7 +45,9 @@ public class Routines {
         .active()
         .onTrue(
             Commands.sequence(
-                driveOut.resetOdometry(), driveOut.cmd(), levelSelectorHelper(coral)));
+                driveOut.resetOdometry(),
+                Commands.parallel(driveOut.cmd(), levelSelectorHelper(coral)),
+                upScoreDown(coral)));
 
     return routine;
   }
@@ -60,7 +62,7 @@ public class Routines {
             Commands.sequence(
                 leftStartToIndia.resetOdometry(),
                 leftStartToIndia.cmd(),
-                levelSelectorHelper(level)));
+                upScoreDown(level)));
 
     return routine;
   }
@@ -77,11 +79,11 @@ public class Routines {
             Commands.sequence(
                 leftStartToIndia.resetOdometry(),
                 leftStartToIndia.cmd(),
-                levelSelectorHelper(level),
+                upScoreDown(level),
                 indiaToLeftStation.cmd(),
                 new GrabCoral(m_coral),
                 leftStationToKilo.cmd(),
-                levelSelectorHelper(level)));
+                upScoreDown(level)));
 
     return routine;
   }
@@ -100,15 +102,15 @@ public class Routines {
             Commands.sequence(
                 leftStartToIndia.resetOdometry(),
                 leftStartToIndia.cmd(),
-                levelSelectorHelper(level),
+                upScoreDown(level),
                 indiaToLeftStation.cmd(),
                 new GrabCoral(m_coral),
                 leftStationToKilo.cmd(),
-                levelSelectorHelper(level),
+                upScoreDown(level),
                 kiloToLeftStation.cmd(),
                 new GrabCoral(m_coral),
                 leftStationToLima.cmd(),
-                levelSelectorHelper(level)));
+                upScoreDown(level)));
 
     return routine;
   }
@@ -123,7 +125,7 @@ public class Routines {
             Commands.sequence(
                 rightStartToFoxtrot.resetOdometry(),
                 rightStartToFoxtrot.cmd(),
-                levelSelectorHelper(level)));
+                upScoreDown(level)));
 
     return routine;
   }
@@ -140,11 +142,11 @@ public class Routines {
             Commands.sequence(
                 rightStartToFoxtrot.resetOdometry(),
                 rightStartToFoxtrot.cmd(),
-                levelSelectorHelper(level),
+                upScoreDown(level),
                 foxtrotToRightStation.cmd(),
                 new GrabCoral(m_coral),
                 rightStationToDelta.cmd(),
-                levelSelectorHelper(level)));
+                upScoreDown(level)));
 
     return routine;
   }
@@ -163,15 +165,15 @@ public class Routines {
             Commands.sequence(
                 rightStartToFoxtrot.resetOdometry(),
                 rightStartToFoxtrot.cmd(),
-                levelSelectorHelper(level),
+                upScoreDown(level),
                 foxtrotToRightStation.cmd(),
                 new GrabCoral(m_coral),
                 rightStationToDelta.cmd(),
-                levelSelectorHelper(level),
+                upScoreDown(level),
                 deltaToRightStation.cmd(),
                 new GrabCoral(m_coral),
                 rightStationToCharlie.cmd(),
-                levelSelectorHelper(level)));
+                upScoreDown(level)));
 
     return routine;
   }
@@ -184,7 +186,7 @@ public class Routines {
         .active()
         .onTrue(
             Commands.sequence(
-                middleToIndia.resetOdometry(), middleToIndia.cmd(), levelSelectorHelper(level)));
+                middleToIndia.resetOdometry(), middleToIndia.cmd(), upScoreDown(level)));
 
     return routine;
   }
@@ -197,7 +199,7 @@ public class Routines {
         .active()
         .onTrue(
             Commands.sequence(
-                middleToHotel.resetOdometry(), middleToHotel.cmd(), levelSelectorHelper(level)));
+                middleToHotel.resetOdometry(), middleToHotel.cmd(), upScoreDown(level)));
 
     return routine;
   }
@@ -212,7 +214,7 @@ public class Routines {
             Commands.sequence(
                 middleToFoxtrot.resetOdometry(),
                 middleToFoxtrot.cmd(),
-                levelSelectorHelper(level)));
+                upScoreDown(level)));
 
     return routine;
   }
@@ -225,7 +227,7 @@ public class Routines {
         .active()
         .onTrue(
             Commands.sequence(
-                middleToGamma.resetOdometry(), middleToGamma.cmd(), levelSelectorHelper(level)));
+                middleToGamma.resetOdometry(), middleToGamma.cmd(), upScoreDown(level)));
 
     return routine;
   }
@@ -233,35 +235,15 @@ public class Routines {
   private Command levelSelectorHelper(CoralLevel level) {
     return switch (level) {
       case L1 -> null;
-      case L2 -> upScore2Down();
-      case L3 -> upScore3Down();
-      case L4 -> upScore4Down();
+      case L2 -> Commands.runOnce(m_elevator::L2);
+      case L3 -> Commands.runOnce(m_elevator::L3);
+      case L4 -> Commands.runOnce(m_elevator::L4);
     };
   }
 
-  private Command upScore2Down() {
+  private Command upScoreDown(CoralLevel level) {
     return Commands.sequence(
-        Commands.runOnce(m_elevator::L2),
-        new WaitCommandMilli(400),
-        Commands.runOnce(m_coral::release),
-        new WaitCommandMilli(400),
-        Commands.runOnce(m_coral::inactive),
-        Commands.runOnce(m_elevator::L1));
-  }
-
-  private Command upScore3Down() {
-    return Commands.sequence(
-        Commands.runOnce(m_elevator::L3),
-        new WaitCommandMilli(800),
-        Commands.runOnce(m_coral::release),
-        new WaitCommandMilli(400),
-        Commands.runOnce(m_coral::inactive),
-        Commands.runOnce(m_elevator::L1));
-  }
-
-  private Command upScore4Down() {
-    return Commands.sequence(
-        Commands.runOnce(m_elevator::L4),
+        levelSelectorHelper(level),
         new WaitCommandMilli(1200),
         Commands.runOnce(m_coral::release),
         new WaitCommandMilli(400),

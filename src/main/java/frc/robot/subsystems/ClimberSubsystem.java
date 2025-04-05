@@ -142,4 +142,8 @@ public class ClimberSubsystem extends SubsystemBase {
   public void downSlow() {
     setState(ClimberState.DOWNSLOW);
   }
+
+  public void zero() {
+    Climber.kClimberSparkMax.getEncoder().setPosition(0);
+  }
 }

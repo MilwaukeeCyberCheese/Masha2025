@@ -203,7 +203,7 @@ public final class Constants {
           };
 
       // TODO: find these
-      public static final double kDetectionDelayTimeMS = 150;
+      public static final double kDetectionDelayTimeMS = 100;
       public static final double kReleaseTimeMS = 1000;
 
       static {
