@@ -85,7 +85,11 @@ public class Drive extends Command {
       m_drive.driveFieldOriented(inputStream.get());
 
     } else {
-      m_drive.drive(new ChassisSpeeds(-inputStream.get().vxMetersPerSecond, -inputStream.get().vyMetersPerSecond, inputStream.get().omegaRadiansPerSecond));
+      m_drive.drive(
+          new ChassisSpeeds(
+              -inputStream.get().vxMetersPerSecond,
+              -inputStream.get().vyMetersPerSecond,
+              inputStream.get().omegaRadiansPerSecond));
     }
   }
 

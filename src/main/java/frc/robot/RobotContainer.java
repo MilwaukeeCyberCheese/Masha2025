@@ -4,18 +4,16 @@
 
 package frc.robot;
 
-import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IOConstants;
-import frc.robot.Routines.CoralLevel;
 import frc.robot.commands.GrabCoral;
 import frc.robot.commands.drive.Drive;
 import frc.robot.commands.elevator.ManualElevatorPosition;
@@ -60,37 +58,42 @@ public class RobotContainer {
   private final FilteredButton m_buttons = new FilteredButton(IOConstants.kButtonBoardPort);
 
   // More auto stuff
-  public final AutoChooser m_autoChooser = new AutoChooser();
+  //   public final AutoChooser m_autoChooser = new AutoChooser();
   private final AutoFactory m_autoFactory =
       new AutoFactory(
           m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive);
-  private final Routines m_routines = new Routines(m_autoFactory, m_elevator, m_coral);
+  public final Routines m_routines = new Routines(m_autoFactory, m_elevator, m_coral);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureButtonBindings();
 
     // Add routines to auto chooser
-    m_autoChooser.addRoutine("Drive Out", m_routines::driveOut);
-    m_autoChooser.addRoutine("Drive Out Score L2", () -> m_routines.driveOutScore(CoralLevel.L2));
-    m_autoChooser.addRoutine("Drive Out Score L3", () -> m_routines.driveOutScore(CoralLevel.L3));
-    m_autoChooser.addRoutine("Drive Out Score L4", () -> m_routines.driveOutScore(CoralLevel.L4));
-    m_autoChooser.addRoutine("Left Score India L4", () -> m_routines.leftIndia(CoralLevel.L4));
-    m_autoChooser.addRoutine(
-        "Left Score India Kilo L4", () -> m_routines.leftIndiaKilo(CoralLevel.L4));
-    m_autoChooser.addRoutine(
-        "Right Score Foxtrot L4", () -> m_routines.rightFoxtrot(CoralLevel.L4));
-    m_autoChooser.addRoutine(
-        "Right Score Foxtrot Delta L1", () -> m_routines.rightFoxtrotDelta(CoralLevel.L1));
-    m_autoChooser.addRoutine("Middle Own India L4", () -> m_routines.middleOwnIndia(CoralLevel.L4));
-    m_autoChooser.addRoutine("Middle Own Hotel L4", () -> m_routines.middleOwnHotel(CoralLevel.L4));
-    m_autoChooser.addRoutine(
-        "Middle Opposing Foxtrot L4", () -> m_routines.middleOpposingFoxtrot(CoralLevel.L4));
-    m_autoChooser.addRoutine(
-        "Middle Opposing Gamma L4", () -> m_routines.middleOpposingGamma(CoralLevel.L4));
-        m_autoChooser.addRoutine("thing", m_routines::driveBig);
+    // m_autoChooser.addRoutine("Drive Out", m_routines::driveOut);
+    // m_autoChooser.addRoutine("Drive Out Score L2", () ->
+    // m_routines.driveOutScore(CoralLevel.L2));
+    // m_autoChooser.addRoutine("Drive Out Score L3", () ->
+    // m_routines.driveOutScore(CoralLevel.L3));
+    // m_autoChooser.addRoutine("Drive Out Score L4", () ->
+    // m_routines.driveOutScore(CoralLevel.L4));
+    // m_autoChooser.addRoutine("Left Score India L4", () -> m_routines.leftIndia(CoralLevel.L4));
+    // m_autoChooser.addRoutine(
+    //     "Left Score India Kilo L4", () -> m_routines.leftIndiaKilo(CoralLevel.L4));
+    // m_autoChooser.addRoutine(
+    //     "Right Score Foxtrot L4", () -> m_routines.rightFoxtrot(CoralLevel.L4));
+    // m_autoChooser.addRoutine(
+    //     "Right Score Foxtrot Delta L1", () -> m_routines.rightFoxtrotDelta(CoralLevel.L1));
+    // m_autoChooser.addRoutine("Middle Own India L4", () ->
+    // m_routines.middleOwnIndia(CoralLevel.L4));
+    // m_autoChooser.addRoutine("Middle Own Hotel L4", () ->
+    // m_routines.middleOwnHotel(CoralLevel.L4));
+    // m_autoChooser.addRoutine(
+    //     "Middle Opposing Foxtrot L4", () -> m_routines.middleOpposingFoxtrot(CoralLevel.L4));
+    // m_autoChooser.addRoutine(
+    //     "Middle Opposing Gamma L4", () -> m_routines.middleOpposingGamma(CoralLevel.L4));
+    //     m_autoChooser.addRoutine("thing", m_routines::driveBig);
 
-    SmartDashboard.putData("Auto Chooser", m_autoChooser);
+    // SmartDashboard.putData("Auto Chooser", m_autoChooser);
 
     // Drive with controller
     m_drive.setDefaultCommand(
@@ -114,15 +117,28 @@ public class RobotContainer {
     // DRIVER CONTROLLER
     {
       m_driverController
+          .leftTrigger()
+          .whileTrue(Commands.run(() -> m_drive.drive(new ChassisSpeeds(0.0, 0.5, 0))));
+      m_driverController
           .rightTrigger()
-          .whileTrue(Commands.runOnce(m_coral::release))
-          .onFalse(Commands.runOnce(m_coral::inactive));
-      m_driverController.leftTrigger().whileTrue(new GrabCoral(m_coral));
+          .whileTrue(Commands.run(() -> m_drive.drive(new ChassisSpeeds(0.0, -0.5, 0))));
 
-      m_driverController.a().and(new Trigger(m_coral::hasCoral)).onTrue(Commands.runOnce(m_elevator::L1));
-      m_driverController.x().and(new Trigger(m_coral::hasCoral)).onTrue(Commands.runOnce(m_elevator::L2));
-      m_driverController.b().and(new Trigger(m_coral::hasCoral)).onTrue(Commands.runOnce(m_elevator::L3));
-      m_driverController.y().and(new Trigger(m_coral::hasCoral)).onTrue(Commands.runOnce(m_elevator::L4));
+      m_driverController
+          .a()
+          .and(new Trigger(m_coral::hasCoral))
+          .onTrue(Commands.runOnce(m_elevator::L1));
+      m_driverController
+          .x()
+          .and(new Trigger(m_coral::hasCoral))
+          .onTrue(Commands.runOnce(m_elevator::L2));
+      m_driverController
+          .b()
+          .and(new Trigger(m_coral::hasCoral))
+          .onTrue(Commands.runOnce(m_elevator::L3));
+      m_driverController
+          .y()
+          .and(new Trigger(m_coral::hasCoral))
+          .onTrue(Commands.runOnce(m_elevator::L4));
 
       // Climber controls
       m_driverController

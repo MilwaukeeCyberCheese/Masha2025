@@ -60,9 +60,7 @@ public class Routines {
         .active()
         .onTrue(
             Commands.sequence(
-                leftStartToIndia.resetOdometry(),
-                leftStartToIndia.cmd(),
-                upScoreDown(level)));
+                leftStartToIndia.resetOdometry(), leftStartToIndia.cmd(), upScoreDown(level)));
 
     return routine;
   }
@@ -220,9 +218,7 @@ public class Routines {
         .active()
         .onTrue(
             Commands.sequence(
-                middleToFoxtrot.resetOdometry(),
-                middleToFoxtrot.cmd(),
-                upScoreDown(level)));
+                middleToFoxtrot.resetOdometry(), middleToFoxtrot.cmd(), upScoreDown(level)));
 
     return routine;
   }
