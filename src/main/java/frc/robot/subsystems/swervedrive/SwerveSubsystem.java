@@ -54,9 +54,9 @@ public class SwerveSubsystem extends SubsystemBase {
   /** PhotonVision class to keep an accurate odometry. */
   private Vision vision;
 
-  private final PIDController xController = new PIDController(50, 0.0, 0);
-  private final PIDController yController = new PIDController(50, 0.0, 0);
-  private final PIDController thetaController = new PIDController(0.75, 0.0, 0.0);
+  private final PIDController xController = new PIDController(10, 0.0, 0);
+  private final PIDController yController = new PIDController(10, 0.0, 0);
+  private final PIDController thetaController = new PIDController(1, 0.0, 0.0);
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -90,9 +90,10 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.setCosineCompensator(
         false); // !SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for
     // simulations since it causes discrepancies not seen in real life.
+    // TODO: tune this
     swerveDrive.setAngularVelocityCompensation(
         true, true,
-        0.1); // Correct for skew that gets worse as angular velocity increases. Start with a
+        -0.1); // Correct for skew that gets worse as angular velocity increases. Start with a
     // coefficient of 0.1.
     swerveDrive.setModuleEncoderAutoSynchronize(
         false, 1); // Enable if you want to resynchronize your absolute encoders and motor encoders
@@ -437,6 +438,13 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void zeroGyro() {
     swerveDrive.zeroGyro();
+  }
+
+  public void invertRotation() {
+    resetOdometry(
+        new Pose2d(
+            getPose().getTranslation(),
+            Rotation2d.fromDegrees((getPose().getRotation().getDegrees() + 180) % 360)));
   }
 
   /**

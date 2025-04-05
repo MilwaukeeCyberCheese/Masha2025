@@ -8,18 +8,16 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
+import frc.robot.subsystems.ChuteSubsystem.ChuteState;
 import frc.robot.subsystems.ClimberSubsystem.ClimberState;
 import frc.robot.subsystems.CoralHandlerSubsystem.CoralHandlerState;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorState;
@@ -41,10 +39,9 @@ public final class Constants {
   public static class Sensors {}
 
   public static final class IOConstants {
-    public static final int kControllerPort = 0;
-    public static final int kLeftJoystickPort = 1;
-    public static final int kRightJoystickPort = 2;
-    public static final int kButtonBoardPort = 3;
+    public static final int kOperatorControllerPort = 0;
+    public static final int kDriverControllerPort = 1;
+    public static final int kButtonBoardPort = 2;
     public static final double kDriveDeadband = 0.05;
 
     // When test mode is enabled, the operator controller is used for driving and testing
@@ -53,31 +50,48 @@ public final class Constants {
   }
 
   public static final class Vision {
-    public static final String kCameraName = "Brio_100";
-    // Cam mounted facing forward, half a meter forward of center, half a meter up
-    // from center.
-    public static final Transform3d kRobotToCam =
-        new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
 
-    // The layout of the AprilTags on the field
-    public static final AprilTagFieldLayout kTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+    public static final class HandlerCamera {
+      public static final String kCameraName = "handlerCamera";
+    }
 
-    // The standard deviations of our vision estimated poses, which affect
-    // correction rate
-    // (Fake values. Experiment and determine estimation noise on an actual robot.)
-    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+    public static final class LeftCamera {
+      public static final String kCameraName = "leftCamera";
+
+      // z is good
+      public static final Transform3d kRobotToCamera =
+          new Transform3d(
+              new Translation3d(
+                  Units.inchesToMeters(-6.94),
+                  Units.inchesToMeters(10.27),
+                  Units.inchesToMeters(10.75)),
+              new Rotation3d(0, 0, Math.PI));
+
+      public static final Transform3d kAlignOffset =
+          new Transform3d(
+              new Translation3d(0.1, 0.12, 0.0), new Rotation3d(0, 0, Units.degreesToRadians(10)));
+    }
+
+    public static final class RightCamera {
+      public static final String kCameraName = "rightCamera";
+
+      // z is good
+      public static final Transform3d kRobotToCamera =
+          new Transform3d(
+              new Translation3d(
+                  Units.inchesToMeters(-6.94),
+                  Units.inchesToMeters(-10.27),
+                  Units.inchesToMeters(10.75)),
+              new Rotation3d(0, 0, Math.PI));
+
+      public static final Transform3d kAlignOffset =
+          new Transform3d(
+              new Translation3d(0.1, 0.12, 0.0), new Rotation3d(0, 0, Units.degreesToRadians(10)));
+    }
   }
 
-  // TODO: figure out the best way to run the elevator
-  // is it separate PIDs running locally? (also this one means another encoder is
-  // needed)
-  // or is it a single PID running on the roborio?
-  // or is it a single PID running locally, and one slaved to it? (probably this
-  // one)
   public static final class Elevator {
-    // TODO: figure these out
+    // These are inverted, but I'm not gonna change it cause it'll probably break something
     public static final int kLeftElevatorCANid = 9;
     public static final int kRightElevatorCANid = 10;
 
@@ -88,8 +102,8 @@ public final class Constants {
     public static final SparkMax kRightElevatorSparkMax =
         new SparkMax(kRightElevatorCANid, MotorType.kBrushless);
 
-    // public static final SparkLimitSwitch kElevatorLimitSwitch =
-    //     kRightElevatorSparkMax.getReverseLimitSwitch();
+    // TODO: determine reverse or forward
+    public static final DigitalInput kElevatorLimitSwitch = new DigitalInput(0);
 
     public static final SparkMaxConfig kLeftElevatorConfig = new SparkMaxConfig();
     public static final SparkMaxConfig kRightElevatorConfig = new SparkMaxConfig();
@@ -100,7 +114,8 @@ public final class Constants {
 
     // TODO: veloc and accel is in inches per second and inches per second squared
     public static final PIDConstants kElevatorPIDConstants =
-        new PIDConstants(0.25, 0.0, 0.0, 0.5, 0.5);
+        new PIDConstants(0.15, 0.0, 0.0, 0.5, 0.5);
+    public static final double kG = 0.35;
 
     // TODO: figure out the heights
     public static final HashMap<ElevatorState, Double> kHeights =
@@ -108,9 +123,9 @@ public final class Constants {
           {
             put(ElevatorState.DOWN, 0.0);
             put(ElevatorState.L1, 0.0);
-            put(ElevatorState.L2, 5.5);
-            put(ElevatorState.L3, 12.75);
-            put(ElevatorState.L4, 26.6);
+            put(ElevatorState.L2, 5.75);
+            put(ElevatorState.L3, 14.0);
+            put(ElevatorState.L4, 28.0);
           }
         };
 
@@ -123,11 +138,8 @@ public final class Constants {
     // distance that the elevator steps when zeroing
     public static final double kZeroingStep = 0.01;
 
-    /*
-     * TODO: TEST IN SIMULATION THE DIRECTION THE LIFT MOTORS SPIN
-     * ISTFG WE HAVE TO DO THIS CAUSE THEY'RE MECHANICALLY LINKED
-     * IF IT GETS MESSED UP, I'M LOSING IT
-     */
+    public static final double kCustomStep = 0.25;
+
     static {
       kLeftElevatorConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(30);
       kRightElevatorConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(30).inverted(true);
@@ -139,26 +151,31 @@ public final class Constants {
       kRightElevatorConfig
           .closedLoop
           .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD);
-      // Not using these currently, uncomment if needed
-      // .maxMotion
-      // .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
-      // .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
+          .pid(kElevatorPIDConstants.kP, kElevatorPIDConstants.kI, kElevatorPIDConstants.kD)
+          // Now using these, comment them out if it breaks
+          .maxMotion
+          .maxAcceleration(kElevatorPIDConstants.kMaxAcceleration)
+          .maxVelocity(kElevatorPIDConstants.kMaxVelocity);
 
       kRightElevatorConfig.encoder.positionConversionFactor(kConversionFactor);
 
       // TODO: see if this is right
       // it's not on there yet :(
-      // kRightElevatorConfig
-      //     .limitSwitch
-      //     .reverseLimitSwitchEnabled(true)
-      //     .reverseLimitSwitchType(Type.kNormallyOpen);
+      kRightElevatorConfig
+          .limitSwitch
+          .forwardLimitSwitchEnabled(false)
+          .forwardLimitSwitchType(Type.kNormallyOpen);
     }
   }
 
   // TODO: find like all of these
   public static final class Handler {
     public static final class Coral {
+
+      // Beam Break
+
+      public static final DigitalInput kBeamBreak = new DigitalInput(5);
+
       // TODO: figure these out
       public static final int kLeftMotorCANid = 11;
       public static final int kRightMotorCANid = 12;
@@ -174,18 +191,19 @@ public final class Constants {
       public static final boolean kLeftInverted = true;
       public static final boolean kRightInverted = false;
 
-      // TODO: find these
-      public static final HashMap<CoralHandlerState, Double> kSpeeds =
+      public static final HashMap<CoralHandlerState, double[]> kSpeeds =
           new HashMap<>() {
             {
-              put(CoralHandlerState.INACTIVE, 0.0);
-              put(CoralHandlerState.GRAB, 0.6);
-              put(CoralHandlerState.RELEASE, 0.4);
+              put(CoralHandlerState.INACTIVE, new double[] {0.0, 0.0});
+              put(CoralHandlerState.GRAB, new double[] {0.3, 0.3});
+              put(CoralHandlerState.RELEASE, new double[] {0.3, 0.3});
+              put(CoralHandlerState.REVERSE, new double[] {-0.1, -0.1});
+              put(CoralHandlerState.INVERSE, new double[] {0.2, 1.0});
             }
           };
 
       // TODO: find these
-      public static final double kDetectionDelayTimeMS = 1000;
+      public static final double kDetectionDelayTimeMS = 100;
       public static final double kReleaseTimeMS = 1000;
 
       static {
@@ -205,16 +223,7 @@ public final class Constants {
 
     public static final SparkMaxConfig kClimberConfig = new SparkMaxConfig();
 
-    // TODO: find out if it's inverted
     public static final boolean kClimberInverted = false;
-
-    public static final SparkClosedLoopController kClimberController =
-        kClimberSparkMax.getClosedLoopController();
-
-    public static final PIDConstants kClimberPIDConstants = new PIDConstants(0.1, 0.0, 0.0);
-
-    // TODO: confirm that this is right
-    public static final double kConversionFactor = Math.PI * 2;
 
     // TODO: find these
     public static final HashMap<ClimberState, Double> kSpeeds =
@@ -223,37 +232,39 @@ public final class Constants {
             put(ClimberState.INACTIVE, 0.0);
             put(ClimberState.UP, 0.4);
             put(ClimberState.DOWN, -1.0);
+            put(ClimberState.DOWNSLOW, -0.4);
           }
         };
 
     // TODO: find this
-    public static final double[] kClimberLimits = {0.0, 0.0};
+    public static final double[] kClimberLimits = {20.0, 180.0};
 
     // TODO: find this
-    public static final double kClimberTolerance = 0.01;
+    public static final double kDownPosition = 0.0;
+    public static final double kClimberUpPosition = 35.0;
+    public static final double kClimberDownPosition = -35.0;
 
     static {
-      kClimberConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50).inverted(kClimberInverted);
-
       kClimberConfig
+          .idleMode(IdleMode.kBrake)
+          .smartCurrentLimit(50)
+          .inverted(kClimberInverted)
           .absoluteEncoder
-          .positionConversionFactor(kConversionFactor)
-          .velocityConversionFactor(kConversionFactor / 60.0);
-
-      kClimberConfig
-          .closedLoop
-          .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-          .pid(kClimberPIDConstants.kP, kClimberPIDConstants.kI, kClimberPIDConstants.kD)
-          .outputRange(-1, 1);
+          .positionConversionFactor(360)
+          .inverted(true);
     }
   }
 
   public static final class Chute {
     public static final Servo kServo = new Servo(0);
 
-    // TODO: find these
-    public static final double kUp = 0.0;
-    public static final double kDown = 90.0;
+    public static final HashMap<ChuteState, Double> kPositions =
+        new HashMap<ChuteState, Double>() {
+          {
+            put(ChuteState.UP, 0.0);
+            put(ChuteState.DOWN, 90.0);
+          }
+        };
   }
 
   public static final class DriveConstants {
@@ -266,7 +277,7 @@ public final class Constants {
     public static final double kMaxAngularSpeed = kTau; // radians per second
 
     // First one is normal, second is slow
-    public static final double[] kRotationSpeeds = {0.7, 0.3};
-    public static final double[] kDrivingSpeeds = {0.5, 0.3};
+    public static final double[] kRotationSpeeds = {0.9, 0.5};
+    public static final double[] kDrivingSpeeds = {1.2, 0.7};
   }
 }

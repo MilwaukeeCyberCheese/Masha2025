@@ -4,18 +4,19 @@
 
 package frc.robot;
 
-import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IOConstants;
-import frc.robot.commands.GrabCoralCommand;
-import frc.robot.commands.ReleaseCoralCommand;
+import frc.robot.commands.GrabCoral;
 import frc.robot.commands.drive.Drive;
+import frc.robot.commands.elevator.ManualElevatorPosition;
 import frc.robot.subsystems.ChuteSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralHandlerSubsystem;
@@ -24,9 +25,7 @@ import frc.robot.subsystems.sim.CoralHandlerSubsystemSim;
 import frc.robot.subsystems.sim.ElevatorSubsystemSim;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.utils.FilteredButton;
-import frc.robot.utils.FilteredJoystick;
 import java.io.File;
-import java.util.Optional;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -35,6 +34,8 @@ import java.util.Optional;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
+  // All da various subsystems
   public final SwerveSubsystem m_drive =
       new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/maxSwerve"));
   public final ElevatorSubsystem m_elevator =
@@ -47,54 +48,62 @@ public class RobotContainer {
   private final ClimberSubsystem m_climber = new ClimberSubsystem();
 
   // Driver joysticks
-  private final FilteredJoystick m_leftJoystick =
-      new FilteredJoystick(IOConstants.kLeftJoystickPort);
-  private final FilteredJoystick m_rightJoystick =
-      new FilteredJoystick(IOConstants.kRightJoystickPort);
-
+  private final CommandXboxController m_driverController =
+      new CommandXboxController(IOConstants.kDriverControllerPort);
   // Operator controller
-  private final CommandXboxController m_controller =
-      new CommandXboxController(IOConstants.kControllerPort);
+  private final CommandXboxController m_operatorController =
+      new CommandXboxController(IOConstants.kOperatorControllerPort);
 
   // Button Board
   private final FilteredButton m_buttons = new FilteredButton(IOConstants.kButtonBoardPort);
 
-  public final AutoChooser m_autoChooser = new AutoChooser();
+  // More auto stuff
+  //   public final AutoChooser m_autoChooser = new AutoChooser();
   private final AutoFactory m_autoFactory =
       new AutoFactory(
           m_drive::getPose, m_drive::resetOdometry, m_drive::followTrajectory, true, m_drive);
-  private final Routines m_routines = new Routines(m_autoFactory);
+  public final Routines m_routines = new Routines(m_autoFactory, m_elevator, m_coral);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureButtonBindings();
 
-    m_autoChooser.addRoutine("Test Routine", m_routines::test);
-    m_autoChooser.addRoutine("Blue Processor Routine", m_routines::blueProcessor);
-    m_autoChooser.addRoutine("Blue Coral Station Routine", m_routines::blueCoralStation);
-    m_autoChooser.addRoutine("Blue Reef K Routine", m_routines::blueCoralToReefK);
-    m_autoChooser.addRoutine("Blue Test Full Routine", m_routines::blueTestFull);
-    SmartDashboard.putData("Auto Chooser", m_autoChooser);
+    // Add routines to auto chooser
+    // m_autoChooser.addRoutine("Drive Out", m_routines::driveOut);
+    // m_autoChooser.addRoutine("Drive Out Score L2", () ->
+    // m_routines.driveOutScore(CoralLevel.L2));
+    // m_autoChooser.addRoutine("Drive Out Score L3", () ->
+    // m_routines.driveOutScore(CoralLevel.L3));
+    // m_autoChooser.addRoutine("Drive Out Score L4", () ->
+    // m_routines.driveOutScore(CoralLevel.L4));
+    // m_autoChooser.addRoutine("Left Score India L4", () -> m_routines.leftIndia(CoralLevel.L4));
+    // m_autoChooser.addRoutine(
+    //     "Left Score India Kilo L4", () -> m_routines.leftIndiaKilo(CoralLevel.L4));
+    // m_autoChooser.addRoutine(
+    //     "Right Score Foxtrot L4", () -> m_routines.rightFoxtrot(CoralLevel.L4));
+    // m_autoChooser.addRoutine(
+    //     "Right Score Foxtrot Delta L1", () -> m_routines.rightFoxtrotDelta(CoralLevel.L1));
+    // m_autoChooser.addRoutine("Middle Own India L4", () ->
+    // m_routines.middleOwnIndia(CoralLevel.L4));
+    // m_autoChooser.addRoutine("Middle Own Hotel L4", () ->
+    // m_routines.middleOwnHotel(CoralLevel.L4));
+    // m_autoChooser.addRoutine(
+    //     "Middle Opposing Foxtrot L4", () -> m_routines.middleOpposingFoxtrot(CoralLevel.L4));
+    // m_autoChooser.addRoutine(
+    //     "Middle Opposing Gamma L4", () -> m_routines.middleOpposingGamma(CoralLevel.L4));
+    //     m_autoChooser.addRoutine("thing", m_routines::driveBig);
 
-    if (IOConstants.kTestMode) {
-      m_drive.setDefaultCommand(
-          new Drive(
-              m_drive,
-              m_controller::getLeftY,
-              m_controller::getLeftX,
-              () -> -m_controller.getRightX(),
-              () -> m_controller.rightBumper().getAsBoolean(),
-              Optional.empty()));
-    } else {
-      m_drive.setDefaultCommand(
-          new Drive(
-              m_drive,
-              m_leftJoystick::getY,
-              m_leftJoystick::getX,
-              m_rightJoystick::getX,
-              () -> m_rightJoystick.getButtonTwo().getAsBoolean(),
-              Optional.of(m_rightJoystick::getThrottle)));
-    }
+    // SmartDashboard.putData("Auto Chooser", m_autoChooser);
+
+    // Drive with controller
+    m_drive.setDefaultCommand(
+        new Drive(
+            m_drive,
+            () -> -m_driverController.getLeftY(),
+            () -> -m_driverController.getLeftX(),
+            () -> -m_driverController.getRightX(),
+            () -> !m_driverController.rightBumper().getAsBoolean(),
+            () -> m_driverController.leftBumper().getAsBoolean()));
   }
 
   /**
@@ -105,40 +114,111 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    m_controller
-        .rightTrigger()
-        .onTrue(Commands.runOnce(m_coral::release))
-        .onFalse(Commands.runOnce(m_coral::inactive));
+    // DRIVER CONTROLLER
+    {
+      m_driverController
+          .leftTrigger()
+          .whileTrue(Commands.run(() -> m_drive.drive(new ChassisSpeeds(0.0, 0.5, 0))));
+      m_driverController
+          .rightTrigger()
+          .whileTrue(Commands.run(() -> m_drive.drive(new ChassisSpeeds(0.0, -0.5, 0))));
 
-    m_controller
-        .povDown()
-        .onTrue(Commands.runOnce(m_climber::down))
-        .onFalse(Commands.runOnce(m_climber::inactive));
-    m_controller
-        .povUp()
-        .onTrue(Commands.runOnce(m_climber::up))
-        .onFalse(Commands.runOnce(m_climber::inactive));
+      m_driverController
+          .a()
+          .and(new Trigger(m_coral::hasCoral))
+          .onTrue(Commands.runOnce(m_elevator::L1));
+      m_driverController
+          .x()
+          .and(new Trigger(m_coral::hasCoral))
+          .onTrue(Commands.runOnce(m_elevator::L2));
+      m_driverController
+          .b()
+          .and(new Trigger(m_coral::hasCoral))
+          .onTrue(Commands.runOnce(m_elevator::L3));
+      m_driverController
+          .y()
+          .and(new Trigger(m_coral::hasCoral))
+          .onTrue(Commands.runOnce(m_elevator::L4));
 
-    // Test mode allows everything to be run on a single controller
-    // Test mode should not be enabled in competition
-    if (IOConstants.kTestMode) {
-      m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
-    } else {
+      // Climber controls
+      m_driverController
+          .povUp()
+          .onTrue(Commands.runOnce(m_climber::up))
+          .onFalse(Commands.runOnce(m_climber::inactive));
 
-      // drop chute
-      m_buttons.getChuteSwitch().onTrue(Commands.runOnce(m_chute::drop));
+      m_driverController
+          .povDown()
+          .onTrue(Commands.runOnce(m_climber::downSlow))
+          .onFalse(Commands.runOnce(m_climber::inactive));
 
-      // Zero gyro with A button
-      m_controller.a().onTrue(Commands.runOnce(m_drive::zeroGyro));
-
-      if (!Robot.isReal()) {
-        m_controller
-            .b()
-            .onTrue(Commands.runOnce(() -> ((CoralHandlerSubsystemSim) m_coral).getSimCoral()));
-      }
-
-      m_controller.rightBumper().onTrue(new ReleaseCoralCommand(m_coral));
-      m_controller.leftBumper().onTrue(new GrabCoralCommand(m_coral));
+      // Reset gyro and set swerve drive to X-mode
+      m_driverController.povLeft().onTrue(Commands.runOnce(m_drive::zeroGyro));
+      m_driverController.povRight().whileTrue(Commands.runOnce(m_climber::zero));
     }
+
+    // BUTTON BOARD
+    {
+      new Trigger(() -> m_buttons.getSwitch3()).onTrue(Commands.runOnce(m_chute::toggle));
+      // Elevator Controls
+      m_buttons.getA1().onTrue(Commands.runOnce(m_elevator::L1));
+      m_buttons.getA2().onTrue(Commands.runOnce(m_elevator::L2));
+      m_buttons.getA3().onTrue(Commands.runOnce(m_elevator::L3));
+      m_buttons.getB1().onTrue(Commands.runOnce(m_elevator::L4));
+
+      m_buttons.getB3().onTrue(Commands.runOnce(m_elevator::disable));
+    }
+
+    // OPERATOR CONTROLLER
+    {
+      // Climber controls
+      m_operatorController
+          .povUp()
+          .onTrue(Commands.runOnce(m_climber::up))
+          .onFalse(Commands.runOnce(m_climber::inactive));
+      m_operatorController
+          .povDown()
+          .onTrue(Commands.runOnce(m_climber::downSlow))
+          .onFalse(Commands.runOnce(m_climber::inactive));
+
+      // Coral controls
+      m_operatorController.leftBumper().whileTrue(new GrabCoral(m_coral));
+      m_operatorController
+          .povRight()
+          .onTrue(Commands.runOnce(m_coral::inverse))
+          .onFalse(Commands.runOnce(m_coral::inactive));
+      m_operatorController
+          .leftTrigger()
+          .onTrue(Commands.runOnce(m_coral::release))
+          .onFalse(Commands.runOnce(m_coral::inactive));
+      m_operatorController
+          .rightTrigger()
+          .onTrue(Commands.runOnce(m_coral::reverse))
+          .onFalse(Commands.runOnce(m_coral::inactive));
+
+      // Elevator Controls
+      m_operatorController.a().onTrue(Commands.runOnce(m_elevator::L1));
+      m_operatorController.x().onTrue(Commands.runOnce(m_elevator::L2));
+      m_operatorController.b().onTrue(Commands.runOnce(m_elevator::L3));
+      m_operatorController.y().onTrue(Commands.runOnce(m_elevator::L4));
+
+      // Chute drop
+      m_operatorController
+          .leftStick()
+          .and(m_operatorController.rightStick())
+          .onTrue(Commands.runOnce(m_chute::toggle));
+
+      m_operatorController
+          .rightBumper()
+          .whileTrue(new ManualElevatorPosition(m_elevator, m_operatorController::getRightY));
+    }
+  }
+
+  public void teleOpReset() {
+    m_elevator.L1();
+    m_climber.inactive();
+    m_coral.inactive();
+    // At the beginning of teleop, if the robot is connected to FMS, invert the rotation so that
+    // field oriented drive works
+    if (DriverStation.isFMSAttached()) m_drive.invertRotation();
   }
 }

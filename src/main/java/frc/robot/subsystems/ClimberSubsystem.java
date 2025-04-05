@@ -14,6 +14,7 @@ public class ClimberSubsystem extends SubsystemBase {
     INACTIVE,
     UP,
     DOWN,
+    DOWNSLOW,
     CUSTOM
   }
 
@@ -21,6 +22,7 @@ public class ClimberSubsystem extends SubsystemBase {
   private Optional<Double> m_customSpeed = Optional.empty();
   protected double m_speed;
 
+  /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
     Climber.kClimberSparkMax.configure(
         Climber.kClimberConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -32,12 +34,22 @@ public class ClimberSubsystem extends SubsystemBase {
   public void periodic() {
     Climber.kClimberSparkMax.set(m_speed);
 
+    // System.out.println(getPosition());
+
+    // if (getPosition() < Climber.kClimberLimits[0] && getSpeed() > 0.0) {
+    //   Climber.kClimberSparkMax.set(0.0);
+    // }
+
+    // if (getPosition() > Climber.kClimberLimits[1] && getSpeed() < 0.0) {
+    //   Climber.kClimberSparkMax.set(0.0);
+    // }
+
     log();
   }
 
   public void log() {
     SmartDashboard.putNumber(
-        "Climber Position", Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition());
+        "Climber Position Relative", Climber.kClimberSparkMax.getEncoder().getPosition());
   }
 
   // TODO: add logic for limits
@@ -75,6 +87,33 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   /**
+   * Get the position of the climber
+   *
+   * @return double
+   */
+  private double getPosition() {
+    return Climber.kClimberSparkMax.getAbsoluteEncoder().getPosition();
+  }
+
+  /**
+   * Get whether the climber is fully down
+   *
+   * @return boolean
+   */
+  public boolean isDown() {
+    return getPosition() <= Climber.kDownPosition;
+  }
+
+  /**
+   * Get whether the climber is fully up
+   *
+   * @return boolean
+   */
+  public boolean isUp() {
+    return getPosition() >= Climber.kClimberUpPosition;
+  }
+
+  /**
    * Set the custom position of the climber Changes the state of the climber
    *
    * @param position
@@ -97,5 +136,14 @@ public class ClimberSubsystem extends SubsystemBase {
   /** Set the climber to go down */
   public void down() {
     setState(ClimberState.DOWN);
+  }
+
+  /** Set the climber to go down slow */
+  public void downSlow() {
+    setState(ClimberState.DOWNSLOW);
+  }
+
+  public void zero() {
+    Climber.kClimberSparkMax.getEncoder().setPosition(0);
   }
 }

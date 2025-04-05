@@ -25,7 +25,7 @@ public class FilteredButton {
    *
    * @return Trigger
    */
-  public Trigger getL1() {
+  public Trigger getA1() {
     return new Trigger(() -> controller.getRawButton(1));
   }
 
@@ -34,7 +34,7 @@ public class FilteredButton {
    *
    * @return Trigger
    */
-  public Trigger getL2() {
+  public Trigger getA2() {
     return new Trigger(() -> controller.getRawButton(2));
   }
 
@@ -43,35 +43,73 @@ public class FilteredButton {
    *
    * @return Trigger
    */
-  public Trigger getL3() {
+  public Trigger getA3() {
     return new Trigger(() -> controller.getRawButton(3));
   }
 
   /**
-   * Returns if the L4 button has been pressed
+   * Returns if the L1 button has been pressed
    *
    * @return Trigger
    */
-  public Trigger getL4() {
+  public Trigger getB1() {
     return new Trigger(() -> controller.getRawButton(4));
   }
 
   /**
-   * returns if the chute switch is on or off
+   * Returns if the L2 button has been pressed
    *
    * @return Trigger
    */
-  public Trigger getChuteSwitch() {
-    return new Trigger(() -> (controller.isConnected()) ? controller.getRawButton(5) : false);
+  public Trigger getB2() {
+    return new Trigger(() -> controller.getRawButton(5));
   }
 
-  // TODO: this may change if we get a three-state for coral
   /**
-   * returns if the bottom switch is on or off
+   * Returns if the L3 button has been pressed
    *
    * @return Trigger
    */
-  public Trigger getCoralSwitch() {
+  public Trigger getB3() {
     return new Trigger(() -> controller.getRawButton(6));
+  }
+
+  /**
+   * Returns if the L1 button has been pressed
+   *
+   * @return Trigger
+   */
+  public Trigger getC1() {
+    return new Trigger(() -> controller.getRawButton(7));
+  }
+
+  /**
+   * Returns if the L2 button has been pressed
+   *
+   * @return Trigger
+   */
+  public Trigger getC2() {
+    return new Trigger(() -> controller.getRawButton(8));
+  }
+
+  /**
+   * Returns if the L3 button has been pressed
+   *
+   * @return Trigger
+   */
+  public Trigger getC3() {
+    return new Trigger(() -> controller.getRawButton(9));
+  }
+
+  public boolean getSwitch1() {
+    return controller.getRawButton(10);
+  }
+
+  public boolean getSwitch2() {
+    return controller.getRawButton(11);
+  }
+
+  public boolean getSwitch3() {
+    return controller.getRawButton(12);
   }
 }

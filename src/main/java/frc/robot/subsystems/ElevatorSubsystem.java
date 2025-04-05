@@ -1,12 +1,13 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Elevator;
-import java.util.Optional;
+import frc.robot.utils.Stopwatch;
 
 // TODO: add sim support
 public class ElevatorSubsystem extends SubsystemBase {
@@ -22,9 +23,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   private ElevatorState m_state = ElevatorState.DISABLED;
-  private Optional<Double> m_customHeight = Optional.empty();
   protected double m_height;
+  private Stopwatch m_zeroDebouncer = new Stopwatch();
 
+  /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
     Elevator.kLeftElevatorSparkMax.configure(
         Elevator.kLeftElevatorConfig,
@@ -36,22 +38,32 @@ public class ElevatorSubsystem extends SubsystemBase {
         PersistMode.kPersistParameters);
 
     setState(m_state);
-  }
 
-  // Methods to set motor speeds, etc. go here
+    m_zeroDebouncer.reset();
+    m_zeroDebouncer.start();
+  }
 
   @Override
   public void periodic() {
     log();
 
-    // System.out.println(Elevator.kRightElevatorSparkMax.configAccessor.closedLoop.getP());
+    // Re-zero the elevator when it's down, and debounce it so it doesn't occur more than once per
+    // second
+    if (atBottom() && m_zeroDebouncer.getTime() > 1000) zero();
 
-    Elevator.kElevatorController.setReference(m_height, ControlType.kPosition);
+    // Set the elevator to the desired height
+    Elevator.kElevatorController.setReference(
+        m_height, ControlType.kPosition, ClosedLoopSlot.kSlot0, Elevator.kG);
   }
 
   public void log() {
     // Log sensor data, etc. here
-    SmartDashboard.putNumber("Elevator Height", m_height);
+    SmartDashboard.putNumber("Expected Elevator Height", m_height);
+    SmartDashboard.putNumber(
+        "Elevator Height", Elevator.kRightElevatorSparkMax.getEncoder().getPosition());
+    SmartDashboard.putNumber("Elevator Speed", Elevator.kRightElevatorSparkMax.get());
+    SmartDashboard.putString("Elevator State", m_state.toString());
+    SmartDashboard.putBoolean("Elevator at Bottom", atBottom());
   }
 
   // TODO: add limits logic
@@ -62,20 +74,19 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   protected void setState(ElevatorState state) {
 
-    if (state == ElevatorState.CUSTOM && m_customHeight.isEmpty()) {
-      return;
-    }
-
     m_state = state;
+
+    if (state == ElevatorState.CUSTOM) return;
 
     // TODO: check that this overrides the PID
     if (m_state == ElevatorState.DISABLED) {
       Elevator.kLeftElevatorSparkMax.set(0);
       Elevator.kRightElevatorSparkMax.set(0);
+      m_height = 0;
       return;
     }
 
-    m_height = state == ElevatorState.CUSTOM ? m_customHeight.get() : Elevator.kHeights.get(state);
+    m_height = Elevator.kHeights.get(state);
   }
 
   /**
@@ -85,16 +96,6 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public ElevatorState getState() {
     return m_state;
-  }
-
-  /**
-   * Set the custom target height, this will also change the state of the elevator
-   *
-   * @param target double
-   */
-  public void setCustomTarget(double target) {
-    m_customHeight = Optional.of(target);
-    setState(ElevatorState.CUSTOM);
   }
 
   /**
@@ -112,7 +113,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return boolean
    */
   public boolean atHeight() {
-    return Math.abs(m_height - Elevator.kLeftElevatorSparkMax.getAbsoluteEncoder().getPosition())
+    return Math.abs(m_height - Elevator.kRightElevatorSparkMax.getEncoder().getPosition())
         < Elevator.kElevatorTolerance;
   }
 
@@ -146,21 +147,36 @@ public class ElevatorSubsystem extends SubsystemBase {
     setState(ElevatorState.L4);
   }
 
-  // TODO: test this
+  public void customUp() {
+    m_height += Elevator.kCustomStep;
+    setState(ElevatorState.CUSTOM);
+  }
+
+  public void customDown() {
+    m_height -= Elevator.kCustomStep;
+    setState(ElevatorState.CUSTOM);
+  }
+
   /**
-   * Zero the absolute encoder of the elevator
+   * Adjust the elevator height by a custom increment
    *
-   * <p>Should only be called when the elevator is at the bottom
-   *
-   * @param persistMode {@link PersistMode} only call this when intending to save the new offset,
-   *     note that this will cause the spark to become unresponsive for a short period of time
+   * @param increment
    */
+  public void customAdjust(double increment) {
+    m_height += increment;
+    setState(ElevatorState.CUSTOM);
+  }
+
+  /** Zero the elevator encoder */
   public void zero() {
     Elevator.kRightElevatorSparkMax.getEncoder().setPosition(0);
+    m_height = 0;
+    setState(ElevatorState.DOWN);
+    m_zeroDebouncer.reset();
+    m_zeroDebouncer.start();
   }
 
   public boolean atBottom() {
-    // return Elevator.kElevatorLimitSwitch.isPressed();
-    return false;
+    return !Elevator.kElevatorLimitSwitch.get();
   }
 }
