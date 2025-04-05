@@ -88,6 +88,7 @@ public class RobotContainer {
         "Middle Opposing Foxtrot L4", () -> m_routines.middleOpposingFoxtrot(CoralLevel.L4));
     m_autoChooser.addRoutine(
         "Middle Opposing Gamma L4", () -> m_routines.middleOpposingGamma(CoralLevel.L4));
+        m_autoChooser.addRoutine("thing", m_routines::driveBig);
 
     SmartDashboard.putData("Auto Chooser", m_autoChooser);
 
@@ -118,10 +119,10 @@ public class RobotContainer {
           .onFalse(Commands.runOnce(m_coral::inactive));
       m_driverController.leftTrigger().whileTrue(new GrabCoral(m_coral));
 
-      m_driverController.a().onTrue(Commands.runOnce(m_elevator::L1));
-      m_driverController.x().onTrue(Commands.runOnce(m_elevator::L2));
-      m_driverController.b().onTrue(Commands.runOnce(m_elevator::L3));
-      m_driverController.y().onTrue(Commands.runOnce(m_elevator::L4));
+      m_driverController.a().and(new Trigger(m_coral::hasCoral)).onTrue(Commands.runOnce(m_elevator::L1));
+      m_driverController.x().and(new Trigger(m_coral::hasCoral)).onTrue(Commands.runOnce(m_elevator::L2));
+      m_driverController.b().and(new Trigger(m_coral::hasCoral)).onTrue(Commands.runOnce(m_elevator::L3));
+      m_driverController.y().and(new Trigger(m_coral::hasCoral)).onTrue(Commands.runOnce(m_elevator::L4));
 
       // Climber controls
       m_driverController
@@ -141,7 +142,7 @@ public class RobotContainer {
 
     // BUTTON BOARD
     {
-      new Trigger(() -> m_buttons.getSwitch3()).onTrue(Commands.runOnce(m_chute::drop));
+      new Trigger(() -> m_buttons.getSwitch3()).onTrue(Commands.runOnce(m_chute::toggle));
       // Elevator Controls
       m_buttons.getA1().onTrue(Commands.runOnce(m_elevator::L1));
       m_buttons.getA2().onTrue(Commands.runOnce(m_elevator::L2));
@@ -188,7 +189,7 @@ public class RobotContainer {
       m_operatorController
           .leftStick()
           .and(m_operatorController.rightStick())
-          .onTrue(Commands.runOnce(m_chute::drop));
+          .onTrue(Commands.runOnce(m_chute::toggle));
 
       m_operatorController
           .rightBumper()

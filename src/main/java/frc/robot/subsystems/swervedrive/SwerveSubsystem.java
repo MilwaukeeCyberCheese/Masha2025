@@ -56,7 +56,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private final PIDController xController = new PIDController(10, 0.0, 0);
   private final PIDController yController = new PIDController(10, 0.0, 0);
-  private final PIDController thetaController = new PIDController(10, 0.0, 0.0);
+  private final PIDController thetaController = new PIDController(1, 0.0, 0.0);
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.

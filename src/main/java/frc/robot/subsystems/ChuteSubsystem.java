@@ -44,4 +44,9 @@ public class ChuteSubsystem extends SubsystemBase {
   public boolean isUp() {
     return m_state == ChuteState.UP;
   }
+
+  public void toggle() {
+    if(isDown()) setState(ChuteState.UP);
+    if(isUp()) setState(ChuteState.DOWN);;
+  }
 }

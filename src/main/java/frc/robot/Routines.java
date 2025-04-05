@@ -204,6 +204,14 @@ public class Routines {
     return routine;
   }
 
+  public AutoRoutine driveBig() {
+    AutoRoutine routine = m_factory.newRoutine("Drive Fast");
+    AutoTrajectory drive = routine.trajectory("driveOutast");
+
+    routine.active().onTrue(Commands.sequence(drive.resetOdometry(), drive.cmd()));
+    return routine;
+  }
+
   public AutoRoutine middleOpposingFoxtrot(CoralLevel level) {
     AutoRoutine routine = m_factory.newRoutine("middleOpposingFoxtrot" + level);
     AutoTrajectory middleToFoxtrot = routine.trajectory("middleOpposingToFoxtrot");
@@ -246,7 +254,7 @@ public class Routines {
         levelSelectorHelper(level),
         new WaitCommandMilli(1200),
         Commands.runOnce(m_coral::release),
-        new WaitCommandMilli(400),
+        new WaitCommandMilli(1200),
         Commands.runOnce(m_coral::inactive),
         Commands.runOnce(m_elevator::L1));
   }

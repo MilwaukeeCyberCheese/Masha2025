@@ -1,5 +1,6 @@
 package frc.robot.commands.drive;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -84,7 +85,7 @@ public class Drive extends Command {
       m_drive.driveFieldOriented(inputStream.get());
 
     } else {
-      m_drive.drive(inputStream.get());
+      m_drive.drive(new ChassisSpeeds(-inputStream.get().vxMetersPerSecond, -inputStream.get().vyMetersPerSecond, inputStream.get().omegaRadiansPerSecond));
     }
   }
 
